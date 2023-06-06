@@ -151,13 +151,3 @@ private:
 };
 
 
-int main (int argc, char * argv []) {
-
-    std::ifstream file("./test");
-    Lexer * lexer = new Lexer(file);
-    lexer->printLexemes(lexer->scanTokens());
-    delete lexer;
-    lexer = nullptr;
-    return 0;
-
-}
