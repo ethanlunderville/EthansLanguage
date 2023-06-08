@@ -1,12 +1,18 @@
+#include <vector>
+#include "AST.h"
 class AST {
 
     public:
 
         AST() {
-            
+
         }
 
-        std::vector<AST> getChildren() {
+        void addChild(AST* tree) {
+            children.push_back(tree);
+        }
+
+        std::vector<AST*> getChildren() {
             return children;
         }
 
@@ -14,6 +20,6 @@ class AST {
 
     private:
 
-        std::vector<AST> children;
-        
-}
+        std::vector<AST*> children;
+
+};

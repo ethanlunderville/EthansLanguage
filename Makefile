@@ -1,7 +1,7 @@
 # Compiler and linker flags
 CC = g++
 CFLAGS = -std=c11 -Wall -Wextra -pedantic -lsfml-audio
-LDFLAGS = 
+LDFLAGS = -I$(shell pwd)
 
 # Object files directory
 OBJDIR = obj

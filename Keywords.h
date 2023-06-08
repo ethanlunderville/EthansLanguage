@@ -2,7 +2,6 @@
 #include <map>
 #include <string>
 
-
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
     COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
@@ -12,8 +11,8 @@ enum TokenType {
     LESS, LESS_EQUAL,
     IDENTIFIER, STRING, NUMBER,
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NONE, OR,
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
-    EOF_TOKEN
+    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, INT,
+    BOOL, EOF_TOKEN
 };
 
 static std::map<TokenType, std::string> tokenToStringMap = {
@@ -55,7 +54,9 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {TRUE, "TRUE"},
     {VAR, "VAR"},
     {WHILE, "WHILE"},
-    {EOF_TOKEN, "EOF_TOKEN"}
+    {EOF_TOKEN, "EOF_TOKEN"},
+    {INT, "INT"},
+    {BOOL, "BOOL"}
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {
@@ -72,5 +73,8 @@ static std::map<std::string, TokenType> stringToTokenMap = {
     {"true", TRUE},
     {"var", VAR},
     {"while", WHILE},
-    {"EOF", EOF_TOKEN}
+    {"EOF", EOF_TOKEN},
+    //TYPES
+    {"int", INT},
+    {"bool", BOOL}
 };

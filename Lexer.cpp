@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 #include <regex>
-#include "Keywords.h"
-#include <SFML/Audio.hpp>
 
 // Define a Token struct to hold token informationnumber
 struct Token {
@@ -79,7 +77,6 @@ public:
             }
         }
         addToken(EOF_TOKEN, line, "END");
-        
         return tokens;
     }
 
