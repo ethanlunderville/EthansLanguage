@@ -4,7 +4,7 @@
 
 int main (int argc, char * argv []) {
 
-    std::ifstream file("./test");
+    std::ifstream file("./test.py");
 
     Lexer* lexer = new Lexer(file);
     Parser* parser = new Parser(lexer); 

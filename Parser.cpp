@@ -13,13 +13,19 @@ class Parser {
         }
 
         ~Parser() {
-            for (int i = 0 ; i < this->tokens.size() ;i++) {
-                delete this->tokens[i];
-                this->tokens[i] = nullptr;
+            for (int i = 0 ; i < this->flatTreeHolder.size() ;i++) {
+                delete this->flatTreeHolder[i];
+                this->flatTreeHolder[i] = nullptr;
             } 
         }
 
         AST* sExpression() {
+            AST* t =  new AST();
+            
+            return t;
+        }
+
+        AST* sDeclaration() {
             AST* t =  new AST();
             
             return t;
@@ -37,7 +43,7 @@ class Parser {
             if (isCurrentToken(IF)) {
                 scan();
                 t->addChild(sExpression());
-                T->addChild(sBlock());
+                t->addChild(sBlock());
             } else if (isCurrentToken(WHILE)) {
                 scan();
             } else if (isCurrentToken(RETURN)) {
@@ -52,15 +58,13 @@ class Parser {
             scan();
             ProgramTree* pTree = new ProgramTree();
             registerNode(pTree);
-            bool onState;
-            bool onDecl;
-            while (onState = onStatement() || onDecl = onDeclaration()) {
-                if (onState) {
+            while (1) {
+                if (onStatement()) {
                     pTree->addChild(sStatement());
-                }
-                if (onDecl) {
-                    pTree->addChild(sStatement());
-                    //pTree->addChild(sDeclaration());
+                } else if (onDeclaration()) {
+                    pTree->addChild(sDeclaration());
+                } else {
+                    break;
                 }
             }
             return pTree;
@@ -82,7 +86,7 @@ class Parser {
         }
 
         bool onDeclaration() {
-            if (isCurrentToken(INT) || isCurrentToken(BOOLEAN) ) {
+            if (isCurrentToken(INT) || isCurrentToken(BOOL) || isCurrentToken(STRINGTYPE)) {
                 return true;
             }
             return false;

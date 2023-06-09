@@ -8,11 +8,12 @@ enum TokenType {
     BANG, BANG_EQUAL,
     EQUAL, EQUAL_EQUAL,
     GREATER, GREATER_EQUAL,
-    LESS, LESS_EQUAL,
+    LESS, LESS_EQUAL, 
     IDENTIFIER, STRING, NUMBER,
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NONE, OR,
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, INT,
-    BOOL, EOF_TOKEN
+    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, 
+    INT,BOOL, STRINGTYPE, RESERVED,
+    EOF_TOKEN
 };
 
 static std::map<TokenType, std::string> tokenToStringMap = {
@@ -56,7 +57,9 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {WHILE, "WHILE"},
     {EOF_TOKEN, "EOF_TOKEN"},
     {INT, "INT"},
-    {BOOL, "BOOL"}
+    {BOOL, "BOOL"},
+    {STRING, "STRING"},
+    {RESERVED, "RESERVED"}
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {
@@ -76,5 +79,6 @@ static std::map<std::string, TokenType> stringToTokenMap = {
     {"EOF", EOF_TOKEN},
     //TYPES
     {"int", INT},
-    {"bool", BOOL}
+    {"bool", BOOL},
+    {"string", STRINGTYPE}
 };

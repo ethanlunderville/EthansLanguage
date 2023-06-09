@@ -18,41 +18,68 @@ class ProgramTree : public AST {
 
 class DeclarationTree : public AST {
     public:
-        ProgramTree();
+        DeclarationTree();
         void accept(ASTVisitor v);
 };
 
 class IfTree : public AST {
     public:
-        ProgramTree();
+        IfTree();
         void accept(ASTVisitor v);
 };
 class WhileTree : public AST {
     public:
-        ProgramTree();
+        WhileTree();
         void accept(ASTVisitor v);
 };
 class ReturnTree : public AST {
     public:
-        ProgramTree();
+        ReturnTree();
         void accept(ASTVisitor v);
 };
-class IdentifierTree : public AST {
-    public:
-        ProgramTree();
-        void accept(ASTVisitor v);
-};
-
 class ExpressionTree : public AST {
     public:
-        ProgramTree();
+        ExpressionTree();
         void accept(ASTVisitor v);
 };
 
 class BlockTree : public AST {
     public:
-        ProgramTree();
+        BlockTree();
         void accept(ASTVisitor v);
 };
+
+class FunctionTree : public AST {
+    public:
+        FunctionTree();
+        void accept(ASTVisitor v);
+};
+
+//OPERATORS
+
+class AddTree : public AST {
+    public:
+        AddTree();
+        void accept(ASTVisitor v);
+};
+
+class SubtractTree : public AST {
+    public:
+        SubtractTree();
+        void accept(ASTVisitor v);
+};
+
+class MultiplyTree : public AST {
+    public:
+        MultiplyTree();
+        void accept(ASTVisitor v);
+};
+
+class DivideTree : public AST {
+    public:
+        DivideTree();
+        void accept(ASTVisitor v);
+};
+
 
 
