@@ -4,4 +4,4 @@ class MultiplyTree : public AST {
     public:
         MultiplyTree() {}
         void accept(ASTVisitor v) {}
-} {}
+};

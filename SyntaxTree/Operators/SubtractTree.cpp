@@ -4,4 +4,4 @@ class SubtractTree : public AST {
     public:
         SubtractTree() {}
         void accept(ASTVisitor v) {}
-} {}
+};

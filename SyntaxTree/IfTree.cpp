@@ -4,4 +4,4 @@ class IfTree : public AST {
     public:
         IfTree() {}
         void accept(ASTVisitor v) {}
-} {}
+};

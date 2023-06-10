@@ -4,4 +4,4 @@ class DivideTree : public AST {
     public:
         DivideTree() {}
         void accept(ASTVisitor v) {}
-} {}
+};

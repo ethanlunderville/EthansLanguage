@@ -12,10 +12,8 @@ int main (int argc, char * argv []) {
 
     delete parser;
     parser = nullptr;
-
     delete lexer;
     lexer = nullptr;
-    
     return 0;
 
 }

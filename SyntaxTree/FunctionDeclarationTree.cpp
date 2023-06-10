@@ -1,8 +1,8 @@
 #include "AST.h"
 
-class DeclarationTree : public AST {
+class FunctionDeclarationTree : public AST {
     public:
-        DeclarationTree(std::string* name) {
+        FunctionDeclarationTree(std::string* name) {
             this->name = name;
         }
         void accept(ASTVisitor v) {}

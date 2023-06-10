@@ -1,7 +1,7 @@
 #include "AST.h"
 
-class ExpressionTree : public AST {
+class ElseTree : public AST {
     public:
-        ExpressionTree() {}
+        ElseTree() {}
         void accept(ASTVisitor v) {}
 };

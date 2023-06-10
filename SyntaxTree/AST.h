@@ -27,6 +27,13 @@ class IfTree : public AST {
         IfTree();
         void accept(ASTVisitor v);
 };
+
+class ElseTree : public AST {
+    public:
+        ElseTree();
+        void accept(ASTVisitor v);
+};
+
 class WhileTree : public AST {
     public:
         WhileTree();
@@ -52,6 +59,18 @@ class BlockTree : public AST {
 class FunctionTree : public AST {
     public:
         FunctionTree();
+        void accept(ASTVisitor v);
+};
+
+class FunctionDeclarationTree : public AST {
+    public:
+        FunctionDeclarationTree();
+        void accept(ASTVisitor v);
+};
+
+class AssignTree : public AST {
+    public:
+        AssignTree();
         void accept(ASTVisitor v);
 };
 
