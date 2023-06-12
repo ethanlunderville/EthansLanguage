@@ -2,6 +2,9 @@
 #include <map>
 #include <string>
 
+#ifndef KEYWORDS_H
+#define KEYWORDS_H
+
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
     COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
@@ -82,3 +85,5 @@ static std::map<std::string, TokenType> stringToTokenMap = {
     {"bool", BOOL},
     {"string", STRINGTYPE}
 };
+
+#endif

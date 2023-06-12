@@ -1,7 +1,5 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 
-class FunctionTree : public AST {
-    public:
-        FunctionTree() {}
-        void accept(ASTVisitor v) {}
-};
+FunctionTree::FunctionTree() {}
+void FunctionTree::accept(ASTVisitor* v) { v->visitFunctionTree(this); }

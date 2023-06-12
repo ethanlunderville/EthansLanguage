@@ -1,0 +1,22 @@
+SyntaxTree/AST.cpp: In member function ‘void* AST::accept(ASTVisitor)’:
+SyntaxTree/AST.cpp:15:1: warning: no return statement in function returning non-void [-Wreturn-type]
+   15 | }
+      | ^
+SyntaxTree/ProgramTree.cpp: In member function ‘void ProgramTree::accept(ASTVisitor)’:
+SyntaxTree/ProgramTree.cpp:12:24: error: cannot convert ‘ProgramTree*’ to ‘AST’
+   12 |     v.visitProgramTree(this);
+      |                        ^~~~
+      |                        |
+      |                        ProgramTree*
+In file included from SyntaxTree/ProgramTree.cpp:2:
+/home/ethan/Desktop/myprogramminglang/Visitors/ASTVisitor.h:17:35: note:   initializing argument 1 of ‘void ASTVisitor::visitProgramTree(AST)’
+   17 |         void visitProgramTree(AST astree);
+      |                               ~~~~^~~~~~
+Visitors/ASTPrintVistitor.cpp:3:7: error: redefinition of ‘class ASTPrintVisitor’
+    3 | class ASTPrintVisitor: public ASTVisitor {
+      |       ^~~~~~~~~~~~~~~
+In file included from Visitors/ASTPrintVistitor.cpp:2:
+/home/ethan/Desktop/myprogramminglang/Visitors/ASTVisitor.h:25:7: note: previous definition of ‘class ASTPrintVisitor’
+   25 | class ASTPrintVisitor: public ASTVisitor {
+      |       ^~~~~~~~~~~~~~~
+make: *** [Makefile:21: program] Error 1

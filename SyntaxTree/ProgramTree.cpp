@@ -1,17 +1,8 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 /*
 * First Node of the Syntax Tree 
 */
 
-class ProgramTree : public AST {
-
-    public:
-        ProgramTree() {
-
-        }
-
-        void accept(ASTVisitor v) {
-            v.visitProgramTree(this);
-        }
-        
-};
+ProgramTree::ProgramTree(){}
+void ProgramTree::accept(ASTVisitor* v) { v->visitProgramTree(this); }

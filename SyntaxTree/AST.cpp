@@ -1,25 +1,17 @@
-#include <vector>
-#include "AST.h"
-class AST {
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
+AST::AST() {}
 
-    public:
+void AST::addChild(AST* tree) {
+    children.push_back(tree);
+}
 
-        AST() {
+std::vector<AST*> AST::getChildren() {
+    return children;
+}
 
-        }
 
-        void addChild(AST* tree) {
-            children.push_back(tree);
-        }
 
-        std::vector<AST*> getChildren() {
-            return children;
-        }
 
-        void* accept(ASTVisitor v);
 
-    private:
-
-        std::vector<AST*> children;
-
-};
+void AST::accept(ASTVisitor* v) { v->visitAST(this); }

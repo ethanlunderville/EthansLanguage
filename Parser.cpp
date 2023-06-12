@@ -1,19 +1,15 @@
 // RECURSIVE DECENT PARSER
-
-#include "SyntaxTree/AST.h"
-#include "Visitors/ASTVisitor.cpp"
 #include "Parser.h"
 
-class Parser {
-
-    public:
+//class Parser {
+    //public:
     
-        Parser(Lexer* lexer) {
+        Parser::Parser(Lexer* lexer) {
             this->lexer = lexer;
             this->tokens = this->lexer->scanTokens();
         }
 
-        ~Parser() {
+        Parser::~Parser() {
             // Treenodes are all deallocated
             for (int i = 0 ; i < this->flatTreeHolder.size() ;i++) {
                 delete this->flatTreeHolder[i];
@@ -21,7 +17,7 @@ class Parser {
             } 
         }
   
-        AST* sProgram() {
+        AST* Parser::sProgram() {
             scan();
             ProgramTree* pTree = new ProgramTree();
             registerNode(pTree);
@@ -29,9 +25,9 @@ class Parser {
                 if (onStatement()) {
                     pTree->addChild(sStatement());
                 } else if (onDeclaration()) {
-                    scan()
-                    std::string* name = getCurrentLexeme();
-                    scan()
+                    scan();
+                    std::string name = getCurrentLexeme();
+                    scan();
                     if (isCurrentToken(EQUAL)) {
                         //Option 1 since this is a regular Dec.
                         pTree->addChild(sDeclaration(name, 1));
@@ -46,7 +42,7 @@ class Parser {
             return pTree;
         }
 
-        AST* sStatement() {
+        AST* Parser::sStatement() {
             AST* t;
             registerNode(t);
             if (isCurrentToken(IF)) {
@@ -65,14 +61,21 @@ class Parser {
                 t->addChild(sBlock());
             } else if (isCurrentToken(RETURN)) {
                 scan();
-                t = new ReturnTree(getCurrentLexeme());
+                if (isData()) {
+                    t = new ReturnTree(getCurrentLexeme());
+                } else {
+                    t = new ReturnTree();
+                }
+                scan();
                 expect(SEMICOLON);
+                return t;
             } else if (isCurrentToken(IDENTIFIER)) {
-                std::string* name = getCurrentLexeme();
+                std::string name = getCurrentLexeme();
                 expect(EQUAL);
-                std::string* value = getCurrentLexeme();
+                AST* value = sExpression();
                 expect(SEMICOLON);
-                t = new AssignTree(name, value);
+                t = new AssignTree(name);
+                t->addChild(value);
             } 
             return t;
         }
@@ -81,9 +84,9 @@ class Parser {
         * IF THE OPTION IS 0 THE DECLARATIONS ARE FUNCTION PARAMETERS
         * IN ALL OTHER CASES IT IS A REGULAR DECLARATION
         */
-        AST* sDeclaration(std::string* name, short option) {
+        AST* Parser::sDeclaration(std::string name, short option) {
             expect(EQUAL);
-            std::string* value = getCurrentLexeme();
+            std::string value = getCurrentLexeme();
             if (option) {
                 expect(SEMICOLON);
             } else {
@@ -99,12 +102,12 @@ class Parser {
             return t;
         }
 
-        AST* sFunctionDeclaration(std::string* functionName) {
+        AST* Parser::sFunctionDeclaration(std::string functionName) {
             AST* t = new FunctionDeclarationTree(functionName);
             registerNode(t);
             expect(LEFT_PAREN);
             while (onDeclaration()) {
-                std::string* name = getCurrentLexeme();
+                std::string name = getCurrentLexeme();
                 t->addChild(sDeclaration(name, 0));
                 scan();
             }
@@ -114,46 +117,45 @@ class Parser {
             return t;
         }
 
-        AST* sExpression() {
+        AST* Parser::sExpression() {
             AST* t =  new AST();
             
             return t;
         }
 
-        AST* sBlock() {
+        AST* Parser::sBlock() {
             expect(LEFT_BRACE);
             AST* bTree =  new BlockTree();
             while (1) {
                 if (onStatement()) {
-                    pTree->addChild(sStatement());
+                    bTree->addChild(sStatement());
                 } else if (onDeclaration()) {
-                    scan()
-                    std::string* name = getCurrentLexeme();
-                    scan()
+                    scan();
+                    std::string name = getCurrentLexeme();
+                    scan();
                     if (isCurrentToken(EQUAL)) {
                         //Option 1 since this is a regular Dec.
-                        pTree->addChild(sDeclaration(name, 1));
+                        bTree->addChild(sDeclaration(name, 1));
                     }
                     if (isCurrentToken(LEFT_PAREN)) {
-                        pTree->addChild(sFunctionDeclaration(name));
+                        bTree->addChild(sFunctionDeclaration(name));
                     }
                 } else {
                     break;
                 }
             }
-            return bTree
             expect(RIGHT_BRACE);
-            return t;
+            return bTree;
         }
         
-    private:
+    //private:
 
         int currentTokenIndex;
         Lexer* lexer;
         std::vector<Token> tokens;
         std::vector<AST*> flatTreeHolder; // References to AST nodes are held to easily free the nodes
 
-        bool onStatement() {
+        bool Parser::onStatement() {
             if (isCurrentToken(IF) || isCurrentToken(WHILE) || 
                 isCurrentToken(RETURN) || isCurrentToken(IDENTIFIER)) {
                 return true;
@@ -161,37 +163,48 @@ class Parser {
             return false;
         }
 
-        bool onDeclaration() {
+        bool Parser::onDeclaration() {
             if (isCurrentToken(INT) || isCurrentToken(BOOL) || isCurrentToken(STRINGTYPE)) {
                 return true;
             }
             return false;
         }
 
-        std::string* getCurrentLexeme() {
-            return &(tokens[currentTokenIndex].lexeme);
+        bool Parser::isData() {
+            if (isCurrentToken(IDENTIFIER) 
+            || isCurrentToken(TRUE) 
+            || isCurrentToken(NUMBER) 
+            || isCurrentToken(FALSE) 
+            || isCurrentToken(STRING)) {
+                return true;
+            }
+            return false;
         }
 
-        int getCurrentLine() {
+        std::string Parser::getCurrentLexeme() {
+            return (tokens[currentTokenIndex].lexeme);
+        }
+
+        int Parser::getCurrentLine() {
             return tokens[currentTokenIndex].line;
         }
 
-        bool isCurrentToken(int tokenType) {
+        bool Parser::isCurrentToken(int tokenType) {
             if (tokens[currentTokenIndex].type != tokenType) {
                 return false;
             }
             return true;
         }
 
-        void registerNode(AST* node) {
+        void Parser::registerNode(AST* node) {
             flatTreeHolder.push_back(node);
         }
 
-        void scan() {
+        void Parser::scan() {
             this->currentTokenIndex++;
         }
 
-        void expect(TokenType tokenType) {
+        void Parser::expect(TokenType tokenType) {
             if (isCurrentToken(tokenType)) {
                 scan();
                 return;
@@ -201,4 +214,4 @@ class Parser {
             exit(1);
         }
 
-};
+//};

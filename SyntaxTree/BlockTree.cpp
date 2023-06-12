@@ -1,7 +1,5 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 
-class BlockTree : public AST {
-    public:
-        BlockTree() {}
-        void accept(ASTVisitor v) {}
-};
+BlockTree::BlockTree() {}
+void BlockTree::accept(ASTVisitor* v) { v->visitBlockTree(this); }

@@ -1,3 +1,7 @@
+#include "SyntaxTree/AST.h"
+#ifndef PARSER_H
+#define PARSER_H
+
 class Parser {
 
     public:
@@ -15,8 +19,8 @@ class Parser {
         AST* sExpression();
         AST* sBlock();
 
-        AST* sDeclaration();
-        AST* sFunctionDeclaration();
+        AST* sDeclaration(std::string name, short option);
+        AST* sFunctionDeclaration(std::string name);
         AST* sFunction();
         AST* sAssign();
 
@@ -33,10 +37,15 @@ class Parser {
         std::vector<AST*> flatTreeHolder; // References to AST nodes are held to easily free the nodes
 
         bool onStatement();
+        std::string getCurrentLexeme();
+        int getCurrentLine();
         bool onDeclaration();
         bool isCurrentToken(int tokenType);
+        bool isData();
         void registerNode(AST* node);
         void scan();
         void expect(TokenType tokenType);
 
 };
+
+#endif

@@ -1,13 +1,10 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 
-class AssignTree : public AST {
-    public:
-        AssignTree(std::string* name, std::string* value) {
-            this->name = name;
-            this->value = value;
-        }
-        void accept(ASTVisitor v) {}
-    private:
-        std::string* name;
-        std::string* value;
-};
+AssignTree::AssignTree(std::string name, std::string value) {
+    this->name = name;
+}
+AssignTree::AssignTree(std::string name) {
+    this->name = name;
+}
+void AssignTree::accept(ASTVisitor* v) { v->visitAssignTree(this); }

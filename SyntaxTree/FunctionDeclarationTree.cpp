@@ -1,11 +1,8 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 
-class FunctionDeclarationTree : public AST {
-    public:
-        FunctionDeclarationTree(std::string* name) {
-            this->name = name;
-        }
-        void accept(ASTVisitor v) {}
-    public:
-        std::string* name;
-};
+
+FunctionDeclarationTree::FunctionDeclarationTree(std::string name) {
+    this->name = name;
+}
+void FunctionDeclarationTree::accept(ASTVisitor* v) { v->visitFunctionDeclarationTree(this); }

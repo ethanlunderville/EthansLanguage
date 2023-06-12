@@ -1,7 +1,6 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 
-class ElseTree : public AST {
-    public:
-        ElseTree() {}
-        void accept(ASTVisitor v) {}
-};
+
+ElseTree::ElseTree() {}
+void ElseTree::accept(ASTVisitor* v) { v->visitElseTree(this); }

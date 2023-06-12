@@ -1,7 +1,7 @@
-#include "AST.h"
+#include "SyntaxTree/AST.h"
+#include "Visitors/ASTVisitor.h"
 
-class ReturnTree : public AST {
-    public:
-        ReturnTree() {}
-        void accept(ASTVisitor v) {}
-};
+
+ReturnTree::ReturnTree(std::string retval) {}
+ReturnTree::ReturnTree() {}
+void ReturnTree::accept(ASTVisitor* v) { v->visitReturnTree(this); }
