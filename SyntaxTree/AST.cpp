@@ -10,8 +10,6 @@ std::vector<AST*> AST::getChildren() {
     return children;
 }
 
-
-
-
-
-void AST::accept(ASTVisitor* v) { v->visitAST(this); }
+void AST::accept(ASTVisitor* v) { 
+    //v->visitAST(this); 
+}

@@ -8,6 +8,7 @@ class Parser {
     
         Parser(Lexer* lexer);
         ~Parser();
+        AST* parse();
 
         AST* sProgram();
         
@@ -41,6 +42,7 @@ class Parser {
         int getCurrentLine();
         bool onDeclaration();
         bool isCurrentToken(int tokenType);
+        bool onExpressionToken();
         bool isData();
         void registerNode(AST* node);
         void scan();

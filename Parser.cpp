@@ -11,14 +11,18 @@
 
         Parser::~Parser() {
             // Treenodes are all deallocated
-            for (int i = 0 ; i < this->flatTreeHolder.size() ;i++) {
+            for (int i = 0 ; i < flatTreeHolder.size(); i++) {
+                std::cout << this->flatTreeHolder[i] << std::endl;
                 delete this->flatTreeHolder[i];
                 this->flatTreeHolder[i] = nullptr;
             } 
         }
+
+        AST* Parser::parse() {
+            return sProgram();
+        }
   
         AST* Parser::sProgram() {
-            scan();
             ProgramTree* pTree = new ProgramTree();
             registerNode(pTree);
             while (1) {
@@ -44,9 +48,9 @@
 
         AST* Parser::sStatement() {
             AST* t;
-            registerNode(t);
             if (isCurrentToken(IF)) {
                 t = new IfTree();
+                registerNode(t);
                 scan();
                 expect(LEFT_PAREN);
                 t->addChild(sExpression());
@@ -54,6 +58,7 @@
                 t->addChild(sBlock());
             } else if (isCurrentToken(WHILE)) {
                 t = new WhileTree();
+                registerNode(t);
                 scan();                
                 expect(LEFT_PAREN);
                 t->addChild(sExpression());
@@ -63,18 +68,21 @@
                 scan();
                 if (isData()) {
                     t = new ReturnTree(getCurrentLexeme());
+                    scan();
                 } else {
                     t = new ReturnTree();
                 }
-                scan();
                 expect(SEMICOLON);
+                registerNode(t);
                 return t;
             } else if (isCurrentToken(IDENTIFIER)) {
                 std::string name = getCurrentLexeme();
+                scan();
                 expect(EQUAL);
                 AST* value = sExpression();
                 expect(SEMICOLON);
                 t = new AssignTree(name);
+                registerNode(t);
                 t->addChild(value);
             } 
             return t;
@@ -85,19 +93,22 @@
         * IN ALL OTHER CASES IT IS A REGULAR DECLARATION
         */
         AST* Parser::sDeclaration(std::string name, short option) {
-            expect(EQUAL);
-            std::string value = getCurrentLexeme();
+            std::string value;
             if (option) {
+                expect(EQUAL);
+                value = getCurrentLexeme();
+                scan();
                 expect(SEMICOLON);
             } else {
-                if(isCurrentToken(COMMA), isCurrentToken(RIGHT_PAREN)) {
-                    scan();
-                } else {
-                    std::cerr << "Incorrect Syntax for Declaration on line: " << getCurrentLine() << std::endl;
-                    exit(1);
+                scan();
+                if(!isCurrentToken(RIGHT_PAREN)) {
+                    std::cout << "BEFORE" << std::endl;
+                    
+                    expect(COMMA);
+                    std::cout << "AFTER"<< std::endl;
                 }
             }
-            AST* t = new DeclarationTree(name, value);
+            DeclarationTree* t = new DeclarationTree(name, value);
             registerNode(t);
             return t;
         }
@@ -107,10 +118,11 @@
             registerNode(t);
             expect(LEFT_PAREN);
             while (onDeclaration()) {
+                scan();
                 std::string name = getCurrentLexeme();
                 t->addChild(sDeclaration(name, 0));
-                scan();
             }
+            expect(RIGHT_PAREN);
             if (isCurrentToken(LEFT_BRACE)) {
                 t->addChild(sBlock());
             }
@@ -118,14 +130,18 @@
         }
 
         AST* Parser::sExpression() {
-            AST* t =  new AST();
-            
+            ExpressionTree* t = new ExpressionTree();
+            registerNode(t);
+            while (onExpressionToken()) {
+                scan();
+            }
             return t;
         }
 
         AST* Parser::sBlock() {
             expect(LEFT_BRACE);
             AST* bTree =  new BlockTree();
+            registerNode(bTree);
             while (1) {
                 if (onStatement()) {
                     bTree->addChild(sStatement());
@@ -170,6 +186,28 @@
             return false;
         }
 
+        bool Parser::onExpressionToken() {
+            if ( isCurrentToken(PLUS) 
+            || isCurrentToken(MINUS) 
+            || isCurrentToken(STAR)
+            || isCurrentToken(SLASH)
+            || isCurrentToken(IDENTIFIER)
+            || isCurrentToken(NUMBER)
+            || isCurrentToken(EQUAL_EQUAL)
+            || isCurrentToken(LESS_EQUAL)
+            || isCurrentToken(BANG_EQUAL)
+            || isCurrentToken(GREATER_EQUAL)
+            || isCurrentToken(LESS)
+            || isCurrentToken(GREATER)
+            // FIX THIS
+            //|| isCurrentToken(LEFT_PAREN) //REMOVED DUE TO PARSING ISSUES
+            //|| isCurrentToken(RIGHT_PAREN)
+            ) {
+                return true;
+            }
+            return false;
+        }
+
         bool Parser::isData() {
             if (isCurrentToken(IDENTIFIER) 
             || isCurrentToken(TRUE) 
@@ -209,8 +247,10 @@
                 scan();
                 return;
             }
-            std::cerr << "COMPILATION TERMINATED" << std::endl;
-            std::cerr << "There was a syntax error on line : " << getCurrentLine() << std::endl;
+            std::cerr << "COMPILATION TERMINATED \n\n";
+            std::cerr << "There was a syntax error on line : " << getCurrentLine();
+            std::cerr << " Unexpected Token : " << getCurrentLexeme() << std::endl;
+            std::cerr << "Compiler expected: " << tokenToStringMap[tokenType] << std::endl;
             exit(1);
         }
 

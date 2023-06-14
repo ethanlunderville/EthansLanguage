@@ -7,7 +7,7 @@ class AST {
         AST();
         void addChild(AST* tree);
         std::vector<AST*> getChildren();
-        void accept(ASTVisitor* v);
+        virtual void accept(ASTVisitor* v) = 0;
     private:
         std::vector<AST*> children;
 };

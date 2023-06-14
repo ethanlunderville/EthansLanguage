@@ -62,6 +62,7 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {INT, "INT"},
     {BOOL, "BOOL"},
     {STRING, "STRING"},
+    {STRINGTYPE, "STRINGTYPE"},
     {RESERVED, "RESERVED"}
 };
 

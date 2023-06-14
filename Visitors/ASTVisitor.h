@@ -1,9 +1,10 @@
+#include <iostream>
 #ifndef ASTVISITOR_H
 #define ASTVISITOR_H
 class AST;
 class ASTVisitor {
     public:
-        ASTVisitor();
+        //ASTVisitor();
         virtual void visitAssignTree(AST* astree)=0;
         virtual void visitIfTree(AST* astree)=0;
         virtual void visitExpressionTree(AST* astree)=0;
@@ -11,7 +12,7 @@ class ASTVisitor {
         virtual void visitMultiplyTree(AST* astree)=0;
         virtual void visitAddTree(AST* astree)=0;
         virtual void visitSubtractTree(AST* astree)=0;
-        virtual void visitAST(AST* astree)=0;
+        //virtual void visitAST(AST* astree)=0;
         virtual void visitDeclarationTree(AST* astree)=0;
         virtual void visitBlockTree(AST* astree)=0;
         virtual void visitReturnTree(AST* astree)=0;
@@ -26,7 +27,6 @@ class ASTPrintVisitor: public ASTVisitor {
     public:
         ASTPrintVisitor();
         void visitChildren(AST* astree);
-
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
@@ -34,7 +34,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitMultiplyTree (AST* astree) override;
         void visitAddTree (AST* astree) override;
         void visitSubtractTree (AST* astree) override;
-        void visitAST (AST* astree) override;
+        //void visitAST (AST* astree) override;
         void visitDeclarationTree (AST* astree) override;
         void visitBlockTree (AST* astree) override;
         void visitReturnTree (AST* astree) override;
@@ -43,7 +43,13 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitFunctionDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
-        //DEFINE PRINT FUNCTION FOR EACH TYPE HERE
+
+        void printIndent();
+        void printer(std::string type, AST* node);
+
+    private:
+        int indent;
+        int lineNum;
 };
 
 #endif

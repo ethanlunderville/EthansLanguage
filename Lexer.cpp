@@ -81,7 +81,7 @@ public:
     void printLexemes(std::vector<Token> tokens) {
         for (int i = 0 ; i < tokens.size() ; i++) {
             if (tokens[i].type == IDENTIFIER || tokens[i].type == NUMBER 
-            || tokens[i].type == STRING || tokens[i].type == RESERVED ) {
+            || tokens[i].type == STRINGTYPE || tokens[i].type == RESERVED ) {
                 std::cout << tokenToStringMap[tokens[i].type] << ": " << tokens[i].lexeme << std::endl;
             }
             else {
@@ -134,11 +134,6 @@ private:
             *c = inStream.get();
         }
 
-        if (stringToTokenMap.count(ident) > 0) {
-            addToken(RESERVED, line, ident);
-            return;    
-        }
-
         if (ident.compare("int") == 0) {
             addToken(INT, line, ident);
             return;
@@ -149,7 +144,12 @@ private:
             addToken(STRINGTYPE, line, ident);
             return;
         } 
-        //std::cout << ident << std::endl;
+
+        if (stringToTokenMap.count(ident) > 0) {
+            addToken(stringToTokenMap[ident], line, ident);
+            return;    
+        }
+
         addToken(IDENTIFIER, line, ident);
 
     }
