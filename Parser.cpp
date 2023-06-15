@@ -162,7 +162,7 @@
                         NumberTree* nTree = new NumberTree(getCurrentLexeme);
                         registerNode(nTree);
                         operandStack.push(nTree);
-                    } else if (isCurrentToken(LEFT_PAREN)) {
+                    } else if (isCurrentToken(RIGHT_PAREN)) {
                         break;
                     }
                     scan();
