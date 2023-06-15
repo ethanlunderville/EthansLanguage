@@ -1,18 +1,3 @@
-int i = 5;
+if ( (1+(2*2+3)*5) < 55 ) {
 
-int name(int x, string b) {
-
-    return x;
-
-}
-
-while () {
-
-    if () {
-
-    }
-    if () {
-        return;
-    }
-    return;
 }

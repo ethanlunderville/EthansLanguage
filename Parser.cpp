@@ -1,5 +1,6 @@
 // RECURSIVE DECENT PARSER
 #include "Parser.h"
+#define TREENODEDEBUG 0x0
 
 //class Parser {
     //public:
@@ -12,12 +13,15 @@
         Parser::~Parser() {
             // Treenodes are all deallocated
             for (int i = 0 ; i < flatTreeHolder.size(); i++) {
-                std::cout << this->flatTreeHolder[i] << std::endl;
+                #ifdef TREENODEDEBUG
+                    std::cout << this->flatTreeHolder[i] << std::endl; 
+                #endif
                 delete this->flatTreeHolder[i];
                 this->flatTreeHolder[i] = nullptr;
             } 
         }
 
+        //WRAPPER FOR ABSTRACTION
         AST* Parser::parse() {
             return sProgram();
         }
@@ -50,15 +54,20 @@
             AST* t;
             if (isCurrentToken(IF)) {
                 t = new IfTree();
-                registerNode(t);
                 scan();
                 expect(LEFT_PAREN);
                 t->addChild(sExpression());
                 expect(RIGHT_PAREN);
                 t->addChild(sBlock());
+                if (isCurrentToken(ELSE)) {
+                    scan();
+                    ElseTree* eTree = new ElseTree();
+                    eTree->addChild(sBlock());
+                    registerNode(eTree);
+                    t->addChild(eTree);
+                }
             } else if (isCurrentToken(WHILE)) {
                 t = new WhileTree();
-                registerNode(t);
                 scan();                
                 expect(LEFT_PAREN);
                 t->addChild(sExpression());
@@ -73,18 +82,17 @@
                     t = new ReturnTree();
                 }
                 expect(SEMICOLON);
-                registerNode(t);
                 return t;
             } else if (isCurrentToken(IDENTIFIER)) {
                 std::string name = getCurrentLexeme();
+                t = new AssignTree(name);
                 scan();
                 expect(EQUAL);
                 AST* value = sExpression();
-                expect(SEMICOLON);
-                t = new AssignTree(name);
-                registerNode(t);
                 t->addChild(value);
+                expect(SEMICOLON);
             } 
+            registerNode(t);
             return t;
         }
 
@@ -102,10 +110,7 @@
             } else {
                 scan();
                 if(!isCurrentToken(RIGHT_PAREN)) {
-                    std::cout << "BEFORE" << std::endl;
-                    
                     expect(COMMA);
-                    std::cout << "AFTER"<< std::endl;
                 }
             }
             DeclarationTree* t = new DeclarationTree(name, value);
@@ -130,10 +135,43 @@
         }
 
         AST* Parser::sExpression() {
+
+            std::map<TokenType, int> precendenceMap = {
+                {DOUBLESTAR, 3},
+                {SLASH, 2},
+                {STAR, 2},
+                {PLUS, 1},
+                {MINUS, 1}
+            }
+
             ExpressionTree* t = new ExpressionTree();
             registerNode(t);
-            while (onExpressionToken()) {
-                scan();
+            std::stack<AST*> operatorStack;
+            std::stack<AST*> operandStack;
+            while (1) {
+                if(onOperand()) {
+                    if (isCurrentToken(LEFT_PAREN)){
+                        scan();
+                        operandStack.push(sExpression());
+                        expect(RIGHT_PAREN);
+                    } else if (isCurrentToken(STRING)){
+                        StringTree* sTree = new StringTree(getCurrentLexeme);
+                        registerNode(sTree);
+                        operandStack.push(sTree);
+                    } else if (isCurrentToken(INT)) {
+                        NumberTree* nTree = new NumberTree(getCurrentLexeme);
+                        registerNode(nTree);
+                        operandStack.push(nTree);
+                    } else if (isCurrentToken(LEFT_PAREN)) {
+                        break;
+                    }
+                    scan();
+                } else if (onOperator()) {
+                    if () {
+                        
+                    }
+                    scan();
+                }
             }
             return t;
         }
@@ -171,6 +209,28 @@
         std::vector<Token> tokens;
         std::vector<AST*> flatTreeHolder; // References to AST nodes are held to easily free the nodes
 
+        AST* OperatorFactory(TokenType type) {
+            AST* t;
+            switch (type) {
+                case DOUBLESTAR:
+                    t = new ExponentTree();
+                break;
+                case STAR:
+                    t = new MultiplyTree();
+                break;
+                case SLASH:
+                    t = new DivideTree();
+                break;
+                case PLUS:
+                    t = new AddTree();
+                break;
+                case MINUS:
+                    t = new SubtractTree();
+                break;
+            }
+            return t;
+        }
+
         bool Parser::onStatement() {
             if (isCurrentToken(IF) || isCurrentToken(WHILE) || 
                 isCurrentToken(RETURN) || isCurrentToken(IDENTIFIER)) {
@@ -186,22 +246,30 @@
             return false;
         }
 
-        bool Parser::onExpressionToken() {
+        bool Parser::onOperator() {
             if ( isCurrentToken(PLUS) 
             || isCurrentToken(MINUS) 
             || isCurrentToken(STAR)
             || isCurrentToken(SLASH)
-            || isCurrentToken(IDENTIFIER)
-            || isCurrentToken(NUMBER)
             || isCurrentToken(EQUAL_EQUAL)
             || isCurrentToken(LESS_EQUAL)
             || isCurrentToken(BANG_EQUAL)
             || isCurrentToken(GREATER_EQUAL)
             || isCurrentToken(LESS)
             || isCurrentToken(GREATER)
+            ) {
+                return true;
+            }
+            return false;
+        }
+
+        bool Parser::onOperand() {
+            if ( isCurrentToken(IDENTIFIER)
+            || isCurrentToken(NUMBER)
+            || isCurrentToken(STRING)
             // FIX THIS
-            //|| isCurrentToken(LEFT_PAREN) //REMOVED DUE TO PARSING ISSUES
-            //|| isCurrentToken(RIGHT_PAREN)
+            || isCurrentToken(LEFT_PAREN) //REMOVED DUE TO PARSING ISSUES
+            || isCurrentToken(RIGHT_PAREN)
             ) {
                 return true;
             }

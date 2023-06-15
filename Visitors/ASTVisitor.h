@@ -12,6 +12,7 @@ class ASTVisitor {
         virtual void visitMultiplyTree(AST* astree)=0;
         virtual void visitAddTree(AST* astree)=0;
         virtual void visitSubtractTree(AST* astree)=0;
+        virtual void visitExponentTree(AST* astree)=0;
         //virtual void visitAST(AST* astree)=0;
         virtual void visitDeclarationTree(AST* astree)=0;
         virtual void visitBlockTree(AST* astree)=0;
@@ -21,6 +22,8 @@ class ASTVisitor {
         virtual void visitFunctionDeclarationTree(AST* astree)=0;
         virtual void visitWhileTree(AST* astree)=0;
         virtual void visitElseTree(AST* astree)=0;
+        virtual void visitStringTree(AST* astree)=0;
+        virtual void visitNumberTree(AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -43,6 +46,9 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitFunctionDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
+        void visitStringTree(AST* astree) override;
+        void visitNumberTree(AST* astree) override;
+        void visitExponentTree(AST* astree) override;
 
         void printIndent();
         void printer(std::string type, AST* node);

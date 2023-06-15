@@ -7,7 +7,7 @@
 
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR, DOUBLESTAR,
     BANG, BANG_EQUAL,
     EQUAL, EQUAL_EQUAL,
     GREATER, GREATER_EQUAL,
@@ -63,7 +63,8 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {BOOL, "BOOL"},
     {STRING, "STRING"},
     {STRINGTYPE, "STRINGTYPE"},
-    {RESERVED, "RESERVED"}
+    {RESERVED, "RESERVED"},
+    {DOUBLESTAR, "DOUBLESTAR"}
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {

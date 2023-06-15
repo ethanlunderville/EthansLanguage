@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <string>
 class ASTVisitor;
@@ -88,6 +89,24 @@ class AssignTree : public AST {
         std::string val;
 };
 
+//OPERANDS
+
+class NumberTree : public AST {
+    public:
+        NumberTree(std::string number);
+        void accept(ASTVisitor* v);
+    private:
+        double number;
+};
+
+class StringTree : public AST {
+    public:
+        StringTree(std::string sString);
+        void accept(ASTVisitor* v);
+    private:
+        std::string sString;
+};
+
 //OPERATORS
 
 class AddTree : public AST {
@@ -111,5 +130,11 @@ class MultiplyTree : public AST {
 class DivideTree : public AST {
     public:
         DivideTree();
+        void accept(ASTVisitor* v);
+};
+
+class ExponentTree : public AST {
+    public:
+        ExponentTree();
         void accept(ASTVisitor* v);
 };

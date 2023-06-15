@@ -45,3 +45,5 @@ void ASTPrintVisitor::visitFunctionTree (AST* astree) {printer("FunctionTree", a
 void ASTPrintVisitor::visitFunctionDeclarationTree (AST* astree) {printer("FunctionDeclTree", astree);}
 void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree);}
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
+void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("StringTree", astree);}
+void ASTPrintVisitor::visitStringTree (AST* astree) {printer("NumberTree", astree);}

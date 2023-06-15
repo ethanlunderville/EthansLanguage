@@ -42,7 +42,8 @@ class Parser {
         int getCurrentLine();
         bool onDeclaration();
         bool isCurrentToken(int tokenType);
-        bool onExpressionToken();
+        bool onOperand();
+        bool onOperator();
         bool isData();
         void registerNode(AST* node);
         void scan();
