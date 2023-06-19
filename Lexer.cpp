@@ -35,8 +35,10 @@ public:
                 case '-': addToken(MINUS, line, "-"); break;
                 case '+': addToken(PLUS, line, "+"); break;
                 case ';': addToken(SEMICOLON, line, ";"); break;
+                case '*': addToken(STAR, line, "*"); break;
+                case '^': addToken(KARAT, line, "^"); break;
                 //case '*': addToken(STAR, line, "*"); break;
-                case '*': addToken(inStream.peek() == '*' ? DOUBLESTAR : STAR, line, "*"); break;
+                //case '*': addToken(inStream.peek() == '*' ? DOUBLESTAR : STAR, line, "*"); break;
                 // Two-character tokens
                 case '!': addToken(inStream.peek() == '=' ? BANG_EQUAL : BANG, line, "!"); break;
                 case '=': addToken(inStream.peek() == '=' ? EQUAL_EQUAL : EQUAL, line, "="); break;

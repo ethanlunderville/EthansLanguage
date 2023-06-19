@@ -1,6 +1,6 @@
 // RECURSIVE DECENT PARSER
 #include "Parser.h"
-#define TREENODEDEBUG 0x0
+//#define TREENODEDEBUG 0x0
 
 //class Parser {
     //public:
@@ -14,7 +14,7 @@
             // Treenodes are all deallocated
             for (int i = 0 ; i < flatTreeHolder.size(); i++) {
                 #ifdef TREENODEDEBUG
-                    std::cout << this->flatTreeHolder[i] << std::endl; 
+                   std::cout << this->flatTreeHolder[i] << std::endl; 
                 #endif
                 delete this->flatTreeHolder[i];
                 this->flatTreeHolder[i] = nullptr;
@@ -136,43 +136,84 @@
 
         AST* Parser::sExpression() {
 
-            std::map<TokenType, int> precendenceMap = {
-                {DOUBLESTAR, 3},
-                {SLASH, 2},
-                {STAR, 2},
-                {PLUS, 1},
-                {MINUS, 1}
-            }
-
             ExpressionTree* t = new ExpressionTree();
             registerNode(t);
-            std::stack<AST*> operatorStack;
+            std::stack<Operator*> operatorStack;
             std::stack<AST*> operandStack;
+
+            Operator* bottom = new Operator();
+            operatorStack.push(bottom);
+
             while (1) {
+                //std::cout << getCurrentLexeme() << " BEFORE" << std::endl;
                 if(onOperand()) {
                     if (isCurrentToken(LEFT_PAREN)){
                         scan();
                         operandStack.push(sExpression());
                         expect(RIGHT_PAREN);
-                    } else if (isCurrentToken(STRING)){
-                        StringTree* sTree = new StringTree(getCurrentLexeme);
+                    } //else
+                    if (isCurrentToken(STRING)){
+                        StringTree* sTree = new StringTree(getCurrentLexeme());
                         registerNode(sTree);
                         operandStack.push(sTree);
-                    } else if (isCurrentToken(INT)) {
-                        NumberTree* nTree = new NumberTree(getCurrentLexeme);
+                    } else if (isCurrentToken(NUMBER)) {
+                        NumberTree* nTree = new NumberTree(getCurrentLexeme());
                         registerNode(nTree);
                         operandStack.push(nTree);
                     } else if (isCurrentToken(RIGHT_PAREN)) {
                         break;
                     }
                     scan();
-                } else if (onOperator()) {
-                    if () {
-                        
+                } else { 
+                    std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+                    exit(1);
+                }
+                //std::cout << getCurrentLexeme() << " AFTER " << std::endl;
+                if (onOperator()) {
+                    std::cout << getCurrentLexeme() << " LATSER" << std::endl;
+                    Operator* opTree = OperatorFactory(getCurrentToken());
+                    registerNode(operatorToASTCaster(opTree));
+                    if (operatorStack.top()->getPrecendence() > opTree->getPrecendence()) {
+                        int target = opTree->getPrecendence();
+                        while (operatorStack.top()->getPrecendence() > target) {
+                            AST* operand2 = operandStack.top();
+                            operandStack.pop();
+                            AST* operand1 = operandStack.top();
+                            operandStack.pop();
+                            AST* operatorHold = operatorToASTCaster(operatorStack.top());
+                            operatorStack.pop();
+                            operatorHold->addChild(operand1);
+                            operatorHold->addChild(operand2); 
+                            operandStack.push(operatorHold);
+                        }
                     }
+                    operatorStack.push(opTree);
                     scan();
+                } else if (isCurrentToken(RIGHT_PAREN)){
+                    break;
+                } else { 
+                    std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+                    exit(1);
                 }
             }
+            while (operandStack.size() != 1) {
+                AST* operand2 = operandStack.top(); 
+                operandStack.pop();
+                AST* operand1 = operandStack.top();
+                operandStack.pop();
+                AST* operatorHold = operatorToASTCaster(operatorStack.top());
+                operatorStack.pop();
+                operatorHold->addChild(operand1);
+                operatorHold->addChild(operand2);
+                operandStack.push(operatorHold);
+            }
+            
+            t->addChild(operandStack.top());
+            operatorStack.pop();
+            operatorStack.pop();
+            delete bottom;
+            bottom = nullptr;
+            //std::cout << "end test" << std::endl;
             return t;
         }
 
@@ -209,10 +250,16 @@
         std::vector<Token> tokens;
         std::vector<AST*> flatTreeHolder; // References to AST nodes are held to easily free the nodes
 
-        AST* OperatorFactory(TokenType type) {
-            AST* t;
+        TokenType Parser::getCurrentToken() {
+            return tokens[currentTokenIndex].type;
+        }
+
+        // WAS UNABLE TO TO MAKE THIS WORK WITH POLYMORPHISM 
+        // AND WAS FORCED TO VIOLATE OPEN CLOSED PRINCIPLE
+        Operator* Parser::OperatorFactory(TokenType type) {
+            Operator* t;
             switch (type) {
-                case DOUBLESTAR:
+                case KARAT:
                     t = new ExponentTree();
                 break;
                 case STAR:
@@ -227,7 +274,31 @@
                 case MINUS:
                     t = new SubtractTree();
                 break;
+                default:
+                std::cerr << "Unexpected type: " << type << ", expected an operator"<< std::endl;
+                exit(1);
             }
+            return t;
+        }
+
+        // WAS UNABLE TO TO MAKE THIS WORK WITH POLYMORPHISM 
+        // AND WAS FORCED TO VIOLATE OPEN CLOSED PRINCIPLE
+        AST* Parser::operatorToASTCaster(Operator *op) {
+            AST* t;
+                if (typeid(*op) == typeid(ExponentTree)){
+                    t = (AST*)((ExponentTree*) op);
+                } else if (typeid(*op) == typeid(MultiplyTree)){
+                    t = (AST*)((MultiplyTree*) op);
+                } else if (typeid(*op) == typeid(DivideTree)){
+                    t = (AST*)((DivideTree*) op);
+                } else if (typeid(*op) == typeid(AddTree)){
+                    t = (AST*)((AddTree*) op);
+                } else if ( typeid(*op) == typeid(SubtractTree)){
+                    t = (AST*)((SubtractTree*) op);
+                } else {
+                std::cerr << "Unexpected type" << std::endl;
+                exit(1);
+                }
             return t;
         }
 
@@ -251,6 +322,7 @@
             || isCurrentToken(MINUS) 
             || isCurrentToken(STAR)
             || isCurrentToken(SLASH)
+            || isCurrentToken(KARAT)
             || isCurrentToken(EQUAL_EQUAL)
             || isCurrentToken(LESS_EQUAL)
             || isCurrentToken(BANG_EQUAL)

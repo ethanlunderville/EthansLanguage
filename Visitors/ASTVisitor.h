@@ -13,7 +13,6 @@ class ASTVisitor {
         virtual void visitAddTree(AST* astree)=0;
         virtual void visitSubtractTree(AST* astree)=0;
         virtual void visitExponentTree(AST* astree)=0;
-        //virtual void visitAST(AST* astree)=0;
         virtual void visitDeclarationTree(AST* astree)=0;
         virtual void visitBlockTree(AST* astree)=0;
         virtual void visitReturnTree(AST* astree)=0;
@@ -51,6 +50,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitExponentTree(AST* astree) override;
 
         void printIndent();
+        void printer(std::string type, AST* node, std::string symbol);
         void printer(std::string type, AST* node);
 
     private:

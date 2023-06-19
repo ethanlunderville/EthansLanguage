@@ -1,22 +1,339 @@
-SyntaxTree/AST.cpp: In member function ‘void* AST::accept(ASTVisitor)’:
-SyntaxTree/AST.cpp:15:1: warning: no return statement in function returning non-void [-Wreturn-type]
-   15 | }
-      | ^
-SyntaxTree/ProgramTree.cpp: In member function ‘void ProgramTree::accept(ASTVisitor)’:
-SyntaxTree/ProgramTree.cpp:12:24: error: cannot convert ‘ProgramTree*’ to ‘AST’
-   12 |     v.visitProgramTree(this);
-      |                        ^~~~
-      |                        |
-      |                        ProgramTree*
-In file included from SyntaxTree/ProgramTree.cpp:2:
-/home/ethan/Desktop/myprogramminglang/Visitors/ASTVisitor.h:17:35: note:   initializing argument 1 of ‘void ASTVisitor::visitProgramTree(AST)’
-   17 |         void visitProgramTree(AST astree);
-      |                               ~~~~^~~~~~
-Visitors/ASTPrintVistitor.cpp:3:7: error: redefinition of ‘class ASTPrintVisitor’
-    3 | class ASTPrintVisitor: public ASTVisitor {
-      |       ^~~~~~~~~~~~~~~
-In file included from Visitors/ASTPrintVistitor.cpp:2:
-/home/ethan/Desktop/myprogramminglang/Visitors/ASTVisitor.h:25:7: note: previous definition of ‘class ASTPrintVisitor’
-   25 | class ASTPrintVisitor: public ASTVisitor {
-      |       ^~~~~~~~~~~~~~~
+In file included from Compiler.cpp:4:
+Parser.cpp: In member function ‘AST* Parser::operatorToASTCaster(Operator*)’:
+Parser.cpp:307:50: error: no match for ‘operator<<’ (operand types are ‘std::basic_ostream<char>’ and ‘const std::type_info’)
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~ ~~~~~~~~~~~
+      |                           |                         |
+      |                           std::basic_ostream<char>  const std::type_info
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:108:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__ostream_type& (*)(std::basic_ostream<_CharT, _Traits>::__ostream_type&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  108 |       operator<<(__ostream_type& (*__pf)(__ostream_type&))
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:108:36: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘std::basic_ostream<char>::__ostream_type& (*)(std::basic_ostream<char>::__ostream_type&)’ {aka ‘std::basic_ostream<char>& (*)(std::basic_ostream<char>&)’}
+  108 |       operator<<(__ostream_type& (*__pf)(__ostream_type&))
+      |                  ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/ostream:117:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__ios_type& (*)(std::basic_ostream<_CharT, _Traits>::__ios_type&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>; std::basic_ostream<_CharT, _Traits>::__ios_type = std::basic_ios<char>]’
+  117 |       operator<<(__ios_type& (*__pf)(__ios_type&))
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:117:32: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘std::basic_ostream<char>::__ios_type& (*)(std::basic_ostream<char>::__ios_type&)’ {aka ‘std::basic_ios<char>& (*)(std::basic_ios<char>&)’}
+  117 |       operator<<(__ios_type& (*__pf)(__ios_type&))
+      |                  ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/ostream:127:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::ios_base& (*)(std::ios_base&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  127 |       operator<<(ios_base& (*__pf) (ios_base&))
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:127:30: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘std::ios_base& (*)(std::ios_base&)’
+  127 |       operator<<(ios_base& (*__pf) (ios_base&))
+      |                  ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/usr/include/c++/11/ostream:166:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  166 |       operator<<(long __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:166:23: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘long int’
+  166 |       operator<<(long __n)
+      |                  ~~~~~^~~
+/usr/include/c++/11/ostream:170:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  170 |       operator<<(unsigned long __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:170:32: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘long unsigned int’
+  170 |       operator<<(unsigned long __n)
+      |                  ~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/ostream:174:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(bool) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  174 |       operator<<(bool __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:174:23: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘bool’
+  174 |       operator<<(bool __n)
+      |                  ~~~~~^~~
+In file included from /usr/include/c++/11/ostream:829,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/bits/ostream.tcc:91:5: note: candidate: ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(short int) [with _CharT = char; _Traits = std::char_traits<char>]’
+   91 |     basic_ostream<_CharT, _Traits>::
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/bits/ostream.tcc:92:22: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘short int’
+   92 |     operator<<(short __n)
+      |                ~~~~~~^~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:181:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(short unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  181 |       operator<<(unsigned short __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:181:33: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘short unsigned int’
+  181 |       operator<<(unsigned short __n)
+      |                  ~~~~~~~~~~~~~~~^~~
+In file included from /usr/include/c++/11/ostream:829,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/bits/ostream.tcc:105:5: note: candidate: ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char; _Traits = std::char_traits<char>]’
+  105 |     basic_ostream<_CharT, _Traits>::
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/bits/ostream.tcc:106:20: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘int’
+  106 |     operator<<(int __n)
+      |                ~~~~^~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:192:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  192 |       operator<<(unsigned int __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:192:31: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘unsigned int’
+  192 |       operator<<(unsigned int __n)
+      |                  ~~~~~~~~~~~~~^~~
+/usr/include/c++/11/ostream:201:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long long int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  201 |       operator<<(long long __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:201:28: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘long long int’
+  201 |       operator<<(long long __n)
+      |                  ~~~~~~~~~~^~~
+/usr/include/c++/11/ostream:205:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long long unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  205 |       operator<<(unsigned long long __n)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:205:37: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘long long unsigned int’
+  205 |       operator<<(unsigned long long __n)
+      |                  ~~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/ostream:220:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(double) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  220 |       operator<<(double __f)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:220:25: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘double’
+  220 |       operator<<(double __f)
+      |                  ~~~~~~~^~~
+/usr/include/c++/11/ostream:224:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(float) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  224 |       operator<<(float __f)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:224:24: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘float’
+  224 |       operator<<(float __f)
+      |                  ~~~~~~^~~
+/usr/include/c++/11/ostream:232:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long double) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  232 |       operator<<(long double __f)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:232:30: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘long double’
+  232 |       operator<<(long double __f)
+      |                  ~~~~~~~~~~~~^~~
+/usr/include/c++/11/ostream:245:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(const void*) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  245 |       operator<<(const void* __p)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:245:30: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘const void*’
+  245 |       operator<<(const void* __p)
+      |                  ~~~~~~~~~~~~^~~
+/usr/include/c++/11/ostream:250:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::nullptr_t) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>; std::nullptr_t = std::nullptr_t]’
+  250 |       operator<<(nullptr_t)
+      |       ^~~~~~~~
+/usr/include/c++/11/ostream:250:18: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘std::nullptr_t’
+  250 |       operator<<(nullptr_t)
+      |                  ^~~~~~~~~
+In file included from /usr/include/c++/11/ostream:829,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/bits/ostream.tcc:119:5: note: candidate: ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__streambuf_type*) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__streambuf_type = std::basic_streambuf<char>]’
+  119 |     basic_ostream<_CharT, _Traits>::
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/bits/ostream.tcc:120:34: note:   no known conversion for argument 1 from ‘const std::type_info’ to ‘std::basic_ostream<char>::__streambuf_type*’ {aka ‘std::basic_streambuf<char>*’}
+  120 |     operator<<(__streambuf_type* __sbin)
+      |                ~~~~~~~~~~~~~~~~~~^~~~~~
+In file included from /usr/include/c++/11/regex:63,
+                 from Lexer.cpp:6,
+                 from Compiler.cpp:3:
+/usr/include/c++/11/bits/regex.h:1649:5: note: candidate: ‘template<class _Ch_type, class _Ch_traits, class _Bi_iter> std::basic_ostream<_CharT, _Traits>& std::__cxx11::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__cxx11::sub_match<_Bi_iter>&)’
+ 1649 |     operator<<(basic_ostream<_Ch_type, _Ch_traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/11/bits/regex.h:1649:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   ‘const std::type_info’ is not derived from ‘const std::__cxx11::sub_match<_Bi_iter>’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
+In file included from /usr/include/c++/11/bits/basic_string.h:48,
+                 from /usr/include/c++/11/string:55,
+                 from /usr/include/c++/11/bits/locale_classes.h:40,
+                 from /usr/include/c++/11/bits/ios_base.h:41,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/string_view:667:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::basic_string_view<_CharT, _Traits>)’
+  667 |     operator<<(basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/11/string_view:667:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   ‘std::type_info’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
+In file included from /usr/include/c++/11/string:55,
+                 from /usr/include/c++/11/bits/locale_classes.h:40,
+                 from /usr/include/c++/11/bits/ios_base.h:41,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/bits/basic_string.h:6531:5: note: candidate: ‘template<class _CharT, class _Traits, class _Alloc> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__cxx11::basic_string<_CharT, _Traits, _Allocator>&)’
+ 6531 |     operator<<(basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/11/bits/basic_string.h:6531:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   ‘const std::type_info’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Allocator>’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
+In file included from /usr/include/c++/11/bits/ios_base.h:46,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/system_error:279:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::error_code&)’
+  279 |     operator<<(basic_ostream<_CharT, _Traits>& __os, const error_code& __e)
+      |     ^~~~~~~~
+/usr/include/c++/11/system_error:279:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘const std::error_code&’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:513:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, _CharT)’
+  513 |     operator<<(basic_ostream<_CharT, _Traits>& __out, _CharT __c)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:513:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   deduced conflicting types for parameter ‘_CharT’ (‘char’ and ‘std::type_info’)
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:518:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, char)’
+  518 |     operator<<(basic_ostream<_CharT, _Traits>& __out, char __c)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:518:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘char’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:524:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, char)’
+  524 |     operator<<(basic_ostream<char, _Traits>& __out, char __c)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:524:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘char’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:530:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, signed char)’
+  530 |     operator<<(basic_ostream<char, _Traits>& __out, signed char __c)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:530:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘signed char’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:535:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, unsigned char)’
+  535 |     operator<<(basic_ostream<char, _Traits>& __out, unsigned char __c)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:535:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘unsigned char’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:594:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const _CharT*)’
+  594 |     operator<<(basic_ostream<_CharT, _Traits>& __out, const _CharT* __s)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:594:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   mismatched types ‘const _CharT*’ and ‘std::type_info’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
+In file included from /usr/include/c++/11/ostream:829,
+                 from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/bits/ostream.tcc:321:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const char*)’
+  321 |     operator<<(basic_ostream<_CharT, _Traits>& __out, const char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/11/bits/ostream.tcc:321:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘const char*’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:611:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const char*)’
+  611 |     operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:611:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘const char*’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:624:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const signed char*)’
+  624 |     operator<<(basic_ostream<char, _Traits>& __out, const signed char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:624:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘const signed char*’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:629:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const unsigned char*)’
+  629 |     operator<<(basic_ostream<char, _Traits>& __out, const unsigned char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:629:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:53: note:   cannot convert ‘((op != 0) ? (*(const std::type_info*)(*(op->Operator::_vptr.Operator + -8))) : __cxa_bad_typeid())’ (type ‘const std::type_info’) to type ‘const unsigned char*’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/iostream:39,
+                 from Keywords.h:1,
+                 from Compiler.cpp:2:
+/usr/include/c++/11/ostream:750:5: note: candidate: ‘template<class _Ostream, class _Tp> _Ostream&& std::operator<<(_Ostream&&, const _Tp&)’
+  750 |     operator<<(_Ostream&& __os, const _Tp& __x)
+      |     ^~~~~~~~
+/usr/include/c++/11/ostream:750:5: note:   template argument deduction/substitution failed:
+/usr/include/c++/11/ostream: In substitution of ‘template<class _Ostream, class _Tp> _Ostream&& std::operator<<(_Ostream&&, const _Tp&) [with _Ostream = std::basic_ostream<char>&; _Tp = std::type_info]’:
+Parser.cpp:307:63:   required from here
+/usr/include/c++/11/ostream:750:5: error: no type named ‘type’ in ‘struct std::enable_if<false, void>’
+In file included from /usr/include/c++/11/regex:39,
+                 from Lexer.cpp:6,
+                 from Compiler.cpp:3:
+/usr/include/c++/11/bitset:1540:5: note: candidate: ‘template<class _CharT, class _Traits, long unsigned int _Nb> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::bitset<_Nb>&)’
+ 1540 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/11/bitset:1540:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   ‘const std::type_info’ is not derived from ‘const std::bitset<_Nb>’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
+In file included from /usr/include/c++/11/memory:77,
+                 from /usr/include/c++/11/regex:45,
+                 from Lexer.cpp:6,
+                 from Compiler.cpp:3:
+/usr/include/c++/11/bits/shared_ptr.h:70:5: note: candidate: ‘template<class _Ch, class _Tr, class _Tp, __gnu_cxx::_Lock_policy _Lp> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__shared_ptr<_Tp, _Lp>&)’
+   70 |     operator<<(std::basic_ostream<_Ch, _Tr>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/11/bits/shared_ptr.h:70:5: note:   template argument deduction/substitution failed:
+In file included from Compiler.cpp:4:
+Parser.cpp:307:63: note:   ‘const std::type_info’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
+  307 |                 std::cerr << "Unexpected type: " << typeid(*op) << std::endl;
+      |                                                               ^
 make: *** [Makefile:21: program] Error 1

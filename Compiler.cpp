@@ -5,17 +5,13 @@
 #include "Visitors/ASTVisitor.h"
 
 int main (int argc, char * argv []) {
-
     std::ifstream file("./test.c");
-
     Lexer* lexer = new Lexer(file);
     Parser* parser = new Parser(lexer); 
     lexer->printLexemes(lexer->scanTokens());
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
-
-    std::cout << "***PRINTING AST*** \n\n";
+    std::cout << "***PRINTING AST***" << std::endl;
     parser->parse()->accept(pVisit);
-
     delete pVisit;
     pVisit = nullptr;
     delete parser;
@@ -23,5 +19,4 @@ int main (int argc, char * argv []) {
     delete lexer;
     lexer = nullptr;
     return 0;
-
 }

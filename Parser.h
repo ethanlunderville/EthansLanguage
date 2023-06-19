@@ -37,6 +37,9 @@ class Parser {
         std::vector<Token> tokens;
         std::vector<AST*> flatTreeHolder; // References to AST nodes are held to easily free the nodes
 
+        TokenType getCurrentToken();
+        Operator* OperatorFactory(TokenType type);
+        AST* operatorToASTCaster(Operator* op);
         bool onStatement();
         std::string getCurrentLexeme();
         int getCurrentLine();

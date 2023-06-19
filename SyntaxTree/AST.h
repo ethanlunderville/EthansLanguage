@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "AST.h"
 class ASTVisitor;
 
 class AST {
@@ -9,6 +10,7 @@ class AST {
         void addChild(AST* tree);
         std::vector<AST*> getChildren();
         virtual void accept(ASTVisitor* v) = 0;
+        virtual ~AST();
     private:
         std::vector<AST*> children;
 };
@@ -16,7 +18,7 @@ class AST {
 class ProgramTree : public AST {
     public:
         ProgramTree();
-        void accept(ASTVisitor* v);
+        void accept(ASTVisitor* v) override;
 };
 
 class DeclarationTree : public AST {
@@ -95,6 +97,7 @@ class NumberTree : public AST {
     public:
         NumberTree(std::string number);
         void accept(ASTVisitor* v);
+        double getNumber();
     private:
         double number;
 };
@@ -103,38 +106,47 @@ class StringTree : public AST {
     public:
         StringTree(std::string sString);
         void accept(ASTVisitor* v);
+        std::string getString();
     private:
         std::string sString;
 };
 
 //OPERATORS
 
-class AddTree : public AST {
+class Operator {
+    public:
+        Operator();
+        virtual ~Operator();
+        short getPrecendence();
+        short precedence; 
+};
+
+class AddTree : public AST, public Operator {
     public:
         AddTree();
-        void accept(ASTVisitor* v);
+        void accept(ASTVisitor* v) override;
 };
 
-class SubtractTree : public AST {
+class SubtractTree : public AST, public Operator {
     public:
         SubtractTree();
-        void accept(ASTVisitor* v);
+        void accept(ASTVisitor* v) override;
 };
 
-class MultiplyTree : public AST {
+class MultiplyTree : public AST, public Operator {
     public:
         MultiplyTree();
-        void accept(ASTVisitor* v);
+        void accept(ASTVisitor* v) override;
 };
 
-class DivideTree : public AST {
+class DivideTree : public AST, public Operator {
     public:
         DivideTree();
-        void accept(ASTVisitor* v);
+        void accept(ASTVisitor* v) override;
 };
 
-class ExponentTree : public AST {
+class ExponentTree : public AST, public Operator {
     public:
         ExponentTree();
-        void accept(ASTVisitor* v);
+        void accept(ASTVisitor* v) override;
 };
