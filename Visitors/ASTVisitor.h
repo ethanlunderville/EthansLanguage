@@ -36,7 +36,6 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitMultiplyTree (AST* astree) override;
         void visitAddTree (AST* astree) override;
         void visitSubtractTree (AST* astree) override;
-        //void visitAST (AST* astree) override;
         void visitDeclarationTree (AST* astree) override;
         void visitBlockTree (AST* astree) override;
         void visitReturnTree (AST* astree) override;

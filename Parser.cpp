@@ -145,32 +145,34 @@
             operatorStack.push(bottom);
 
             while (1) {
-                //std::cout << getCurrentLexeme() << " BEFORE" << std::endl;
+                std::cout << getCurrentLexeme() << " BEFORE" << std::endl;
                 if(onOperand()) {
                     if (isCurrentToken(LEFT_PAREN)){
                         scan();
                         operandStack.push(sExpression());
                         expect(RIGHT_PAREN);
+                        //break;
                     } //else
                     if (isCurrentToken(STRING)){
                         StringTree* sTree = new StringTree(getCurrentLexeme());
                         registerNode(sTree);
                         operandStack.push(sTree);
+                        scan();
                     } else if (isCurrentToken(NUMBER)) {
                         NumberTree* nTree = new NumberTree(getCurrentLexeme());
                         registerNode(nTree);
                         operandStack.push(nTree);
+                        std::cout << "11111" << std::endl;
+                        scan();
                     } else if (isCurrentToken(RIGHT_PAREN)) {
                         break;
                     }
-                    scan();
                 } else { 
                     std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
                     exit(1);
                 }
-                //std::cout << getCurrentLexeme() << " AFTER " << std::endl;
+                std::cout << getCurrentLexeme() << " AFTER" << std::endl;
                 if (onOperator()) {
-                    std::cout << getCurrentLexeme() << " LATSER" << std::endl;
                     Operator* opTree = OperatorFactory(getCurrentToken());
                     registerNode(operatorToASTCaster(opTree));
                     if (operatorStack.top()->getPrecendence() > opTree->getPrecendence()) {
@@ -190,6 +192,7 @@
                     operatorStack.push(opTree);
                     scan();
                 } else if (isCurrentToken(RIGHT_PAREN)){
+                    std::cout << "THIS RAN" << std::endl;
                     break;
                 } else { 
                     std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
@@ -213,7 +216,7 @@
             operatorStack.pop();
             delete bottom;
             bottom = nullptr;
-            //std::cout << "end test" << std::endl;
+            std::cout << "end test:::" << getCurrentLexeme() << std::endl;
             return t;
         }
 
