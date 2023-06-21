@@ -10,17 +10,6 @@
             this->tokens = this->lexer->scanTokens();
         }
 
-        Parser::~Parser() {
-            // Treenodes are all deallocated
-            for (int i = 0 ; i < flatTreeHolder.size(); i++) {
-                #ifdef TREENODEDEBUG
-                   std::cout << this->flatTreeHolder[i] << std::endl; 
-                #endif
-                delete this->flatTreeHolder[i];
-                this->flatTreeHolder[i] = nullptr;
-            } 
-        }
-
         //WRAPPER FOR ABSTRACTION
         AST* Parser::parse() {
             return sProgram();
@@ -28,7 +17,6 @@
   
         AST* Parser::sProgram() {
             ProgramTree* pTree = new ProgramTree();
-            registerNode(pTree);
             while (1) {
                 if (onStatement()) {
                     pTree->addChild(sStatement());
@@ -63,7 +51,6 @@
                     scan();
                     ElseTree* eTree = new ElseTree();
                     eTree->addChild(sBlock());
-                    registerNode(eTree);
                     t->addChild(eTree);
                 }
             } else if (isCurrentToken(WHILE)) {
@@ -92,7 +79,6 @@
                 t->addChild(value);
                 expect(SEMICOLON);
             } 
-            registerNode(t);
             return t;
         }
 
@@ -114,13 +100,11 @@
                 }
             }
             DeclarationTree* t = new DeclarationTree(name, value);
-            registerNode(t);
             return t;
         }
 
         AST* Parser::sFunctionDeclaration(std::string functionName) {
             AST* t = new FunctionDeclarationTree(functionName);
-            registerNode(t);
             expect(LEFT_PAREN);
             while (onDeclaration()) {
                 scan();
@@ -137,7 +121,6 @@
         AST* Parser::sExpression() {
 
             ExpressionTree* t = new ExpressionTree();
-            registerNode(t);
             std::stack<Operator*> operatorStack;
             std::stack<AST*> operandStack;
 
@@ -145,24 +128,19 @@
             operatorStack.push(bottom);
 
             while (1) {
-                std::cout << getCurrentLexeme() << " BEFORE" << std::endl;
                 if(onOperand()) {
                     if (isCurrentToken(LEFT_PAREN)){
                         scan();
                         operandStack.push(sExpression());
                         expect(RIGHT_PAREN);
-                        //break;
-                    } //else
+                    } 
                     if (isCurrentToken(STRING)){
                         StringTree* sTree = new StringTree(getCurrentLexeme());
-                        registerNode(sTree);
                         operandStack.push(sTree);
                         scan();
                     } else if (isCurrentToken(NUMBER)) {
                         NumberTree* nTree = new NumberTree(getCurrentLexeme());
-                        registerNode(nTree);
                         operandStack.push(nTree);
-                        std::cout << "11111" << std::endl;
                         scan();
                     } else if (isCurrentToken(RIGHT_PAREN)) {
                         break;
@@ -171,10 +149,8 @@
                     std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
                     exit(1);
                 }
-                std::cout << getCurrentLexeme() << " AFTER" << std::endl;
                 if (onOperator()) {
                     Operator* opTree = OperatorFactory(getCurrentToken());
-                    registerNode(operatorToASTCaster(opTree));
                     if (operatorStack.top()->getPrecendence() > opTree->getPrecendence()) {
                         int target = opTree->getPrecendence();
                         while (operatorStack.top()->getPrecendence() > target) {
@@ -182,8 +158,30 @@
                             operandStack.pop();
                             AST* operand1 = operandStack.top();
                             operandStack.pop();
+
+                            int savePrecedence = operatorStack.top()->getPrecendence();
                             AST* operatorHold = operatorToASTCaster(operatorStack.top());
                             operatorStack.pop();
+
+                            /* EDGE CASE */
+                            if (typeid(*(operatorStack.top())) == typeid(DivideTree) && savePrecedence == 2){
+                                if (typeid(*operatorHold) == typeid(DivideTree)) {
+                                    delete operatorHold;
+                                    operatorHold = new MultiplyTree();
+                                } else if (typeid(*operatorHold) == typeid(MultiplyTree)) {
+                                    delete operatorHold;
+                                    operatorHold = new DivideTree();
+                                }
+                            } else if (typeid(*(operatorStack.top())) == typeid(SubtractTree) && savePrecedence == 1) {
+                                if (typeid(*operatorHold) == typeid(SubtractTree)) {
+                                    delete operatorHold;
+                                    operatorHold = new AddTree();
+                                } else if (typeid(*operatorHold) == typeid(AddTree)) {
+                                    delete operatorHold;
+                                    operatorHold = new SubtractTree();
+                                }
+
+                            }
                             operatorHold->addChild(operand1);
                             operatorHold->addChild(operand2); 
                             operandStack.push(operatorHold);
@@ -192,38 +190,64 @@
                     operatorStack.push(opTree);
                     scan();
                 } else if (isCurrentToken(RIGHT_PAREN)){
-                    std::cout << "THIS RAN" << std::endl;
                     break;
                 } else { 
                     std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
                     exit(1);
                 }
+            } 
+
+            if (operandStack.size() < 1) {
+                std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+                exit(1);
             }
+
             while (operandStack.size() != 1) {
                 AST* operand2 = operandStack.top(); 
                 operandStack.pop();
                 AST* operand1 = operandStack.top();
                 operandStack.pop();
+                int savePrecedence = operatorStack.top()->getPrecendence();
                 AST* operatorHold = operatorToASTCaster(operatorStack.top());
                 operatorStack.pop();
+
+                /* EDGE CASE */
+                if (typeid(*(operatorStack.top())) == typeid(DivideTree) && savePrecedence == 2){
+                    if (typeid(*operatorHold) == typeid(DivideTree)) {
+                        delete operatorHold;
+                        operatorHold = new MultiplyTree();
+                    } else if (typeid(*operatorHold) == typeid(MultiplyTree)) {
+                        delete operatorHold;
+                        operatorHold = new DivideTree();
+                    }
+                } else if (typeid(*(operatorStack.top())) == typeid(SubtractTree) && savePrecedence == 1) {
+                    if (typeid(*operatorHold) == typeid(SubtractTree)) {
+                        delete operatorHold;
+                        operatorHold = new AddTree();
+                    } else if (typeid(*operatorHold) == typeid(AddTree)) {
+                        delete operatorHold;
+                        operatorHold = new SubtractTree();
+                    }
+                    
+                }
+                
                 operatorHold->addChild(operand1);
                 operatorHold->addChild(operand2);
                 operandStack.push(operatorHold);
             }
+            
             
             t->addChild(operandStack.top());
             operatorStack.pop();
             operatorStack.pop();
             delete bottom;
             bottom = nullptr;
-            std::cout << "end test:::" << getCurrentLexeme() << std::endl;
             return t;
         }
 
         AST* Parser::sBlock() {
             expect(LEFT_BRACE);
             AST* bTree =  new BlockTree();
-            registerNode(bTree);
             while (1) {
                 if (onStatement()) {
                     bTree->addChild(sStatement());
@@ -375,10 +399,6 @@
                 return false;
             }
             return true;
-        }
-
-        void Parser::registerNode(AST* node) {
-            flatTreeHolder.push_back(node);
         }
 
         void Parser::scan() {

@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 DivideTree::DivideTree() {
-    precedence = 3;
+    precedence = 2;
 }
 void DivideTree::accept(ASTVisitor* v) { v->visitDivideTree(this); }

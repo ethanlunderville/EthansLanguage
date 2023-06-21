@@ -32,19 +32,30 @@ public:
                 case '}': addToken(RIGHT_BRACE, line, "}"); break;
                 case ',': addToken(COMMA, line, ","); break;
                 case '.': addToken(DOT, line, "."); break;
-                case '-': addToken(MINUS, line, "-"); break;
                 case '+': addToken(PLUS, line, "+"); break;
                 case ';': addToken(SEMICOLON, line, ";"); break;
                 case '*': addToken(STAR, line, "*"); break;
                 case '^': addToken(KARAT, line, "^"); break;
-                //case '*': addToken(STAR, line, "*"); break;
-                //case '*': addToken(inStream.peek() == '*' ? DOUBLESTAR : STAR, line, "*"); break;
                 // Two-character tokens
                 case '!': addToken(inStream.peek() == '=' ? BANG_EQUAL : BANG, line, "!"); break;
                 case '=': addToken(inStream.peek() == '=' ? EQUAL_EQUAL : EQUAL, line, "="); break;
                 case '<': addToken(inStream.peek() == '=' ? LESS_EQUAL : LESS, line, "<"); break;
                 case '>': addToken(inStream.peek() == '=' ? GREATER_EQUAL : GREATER, line, ">"); break;
-                // Comments and slashes
+                // Negatives numbers, Comments and Slashes
+                case '-': 
+                    if (previousTokenWasOperator()) {
+                        if (isdigit(inStream.peek())) {
+                            c = inStream.get();
+                            number(&c,tokens, line, true);
+                            goto SKIP;
+                        } else {
+                            std::cerr << "Error at line " << line << ": unexpected character '" << c << "'\n";
+                            exit(1);
+                        }
+                    } else {
+                        addToken(MINUS, line, "-");
+                    } 
+                break;
                 case '/':
                     if (inStream.peek() == '/') {
                         // A comment goes until the end of the line.
@@ -54,6 +65,7 @@ public:
                         addToken(SLASH, line, "/");
                     }
                     break;
+                //White space
                 case ' ':
                 case '\r':
                 case '\t':
@@ -66,13 +78,11 @@ public:
                 // Numbers
                 default:
                     if (isdigit(c)) {
-                        number(&c,tokens, line);
+                        number(&c,tokens, line, false);
                         goto SKIP;
                     } else if (isalpha(c)) {
                         alphaProcessor(&c, tokens, line);
                         goto SKIP;
-                    } else {
-                        std::cerr << "Error at line " << line << ": unexpected character '" << c << "'\n";
                     }
                     break;
             }
@@ -119,12 +129,17 @@ private:
         exit(1);
     }
 
-    void number (char *c, std::vector<Token> tokens , int line) {
+    void number (char *c, std::vector<Token> tokens , int line, bool isNegative) {
         std::string number; 
         while (isdigit(*c)) {
             number.push_back(*c);
             *c = inStream.get();
         }
+
+        if(isNegative) {
+            number.insert(0, "-");
+        }
+
         addToken(NUMBER, line, number);
         return;
     }
@@ -157,6 +172,29 @@ private:
 
     }
 
+    bool previousTokenTypeWas(TokenType t) {
+        if (this->tokens[this->tokens.size()-1].type == t) {
+            return true;
+        }
+        return false;
+    }
+
+    bool previousTokenWasOperator() {
+        if ( previousTokenTypeWas(LESS)
+           ||previousTokenTypeWas(GREATER)
+           ||previousTokenTypeWas(LESS_EQUAL)
+           ||previousTokenTypeWas(GREATER_EQUAL)
+           ||previousTokenTypeWas(EQUAL_EQUAL)
+           ||previousTokenTypeWas(KARAT)
+           ||previousTokenTypeWas(PLUS)
+           ||previousTokenTypeWas(STAR)
+           ||previousTokenTypeWas(MINUS)
+           ||previousTokenTypeWas(SLASH)
+           ) {
+            return true;
+        }
+        return false;
+    }
     
 };
 

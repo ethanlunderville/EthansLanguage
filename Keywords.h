@@ -19,6 +19,19 @@ enum TokenType {
     EOF_TOKEN
 };
 
+TokenType Operators[] = 
+{   LESS,
+    GREATER,
+    LESS_EQUAL,
+    GREATER_EQUAL,
+    EQUAL_EQUAL,
+    KARAT,
+    PLUS,
+    STAR,
+    MINUS,
+    SLASH 
+};
+
 static std::map<TokenType, std::string> tokenToStringMap = {
     {LEFT_PAREN, "LEFT_PAREN"},
     {RIGHT_PAREN, "RIGHT_PAREN"},

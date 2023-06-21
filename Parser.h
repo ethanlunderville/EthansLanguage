@@ -7,7 +7,6 @@ class Parser {
     public:
     
         Parser(Lexer* lexer);
-        ~Parser();
         AST* parse();
 
         AST* sProgram();
@@ -35,7 +34,6 @@ class Parser {
         int currentTokenIndex;
         Lexer* lexer;
         std::vector<Token> tokens;
-        std::vector<AST*> flatTreeHolder; // References to AST nodes are held to easily free the nodes
 
         TokenType getCurrentToken();
         Operator* OperatorFactory(TokenType type);

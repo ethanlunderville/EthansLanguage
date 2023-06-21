@@ -11,7 +11,6 @@ ASTPrintVisitor::ASTPrintVisitor(){
 void ASTPrintVisitor::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {
         (child)->accept(this);
-        
     }
 }
 
@@ -29,7 +28,7 @@ void ASTPrintVisitor::printIndent() {
 void ASTPrintVisitor::printer(std::string type, AST* node, std::string symbol) {
     std::cout << this->lineNum << ".";
     printIndent();
-    std::cout << type <<": " << symbol << std::endl;
+    std::cout << type <<": " << symbol << ": " << node << std::endl;
     this->indent+=2;
     this->lineNum++;
     this->visitChildren(node);
@@ -39,7 +38,7 @@ void ASTPrintVisitor::printer(std::string type, AST* node, std::string symbol) {
 void ASTPrintVisitor::printer(std::string type, AST* node) {
     std::cout << this->lineNum << ".";
     printIndent();
-    std::cout << type << std::endl;
+    std::cout << type << ": " << node << std::endl;
     this->indent+=2;
     this->lineNum++;
     this->visitChildren(node);

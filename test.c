@@ -1,7 +1,12 @@
-int knife() {
+string ethan = "ethan";
+int ethan = 11;
 
-}
+if (1+-2--6) {
 
-if (1-2-3-4-5-6-7-8-9) {
+    if (9){
+        while(1) {
+
+        }
+    }
 
 }

@@ -5,18 +5,27 @@
 #include "Visitors/ASTVisitor.h"
 
 int main (int argc, char * argv []) {
+
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file);
-    Parser* parser = new Parser(lexer); 
+    Parser* parser = new Parser(lexer);
+
+    std::cout << "***PRINTING LEXEMES***" << std::endl; 
     lexer->printLexemes(lexer->scanTokens());
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     std::cout << "***PRINTING AST***" << std::endl;
-    parser->parse()->accept(pVisit);
+    AST* abstractSyntaxTree = parser->parse();
+    abstractSyntaxTree->accept(pVisit);
+    std::cout << "***DEALLOCATING AST***" << std::endl;
+    ASTDeallocationVisitor* dVisit = new ASTDeallocationVisitor();
+    abstractSyntaxTree->accept(dVisit);
     delete pVisit;
     pVisit = nullptr;
     delete parser;
     parser = nullptr;
     delete lexer;
     lexer = nullptr;
+    delete dVisit;
+    dVisit = nullptr;
     return 0;
 }

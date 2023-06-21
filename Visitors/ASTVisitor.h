@@ -4,7 +4,7 @@
 class AST;
 class ASTVisitor {
     public:
-        //ASTVisitor();
+        virtual void visitChildren(AST* astree)=0;
         virtual void visitAssignTree(AST* astree)=0;
         virtual void visitIfTree(AST* astree)=0;
         virtual void visitExpressionTree(AST* astree)=0;
@@ -28,7 +28,7 @@ class ASTVisitor {
 class ASTPrintVisitor: public ASTVisitor {
     public:
         ASTPrintVisitor();
-        void visitChildren(AST* astree);
+        void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
@@ -55,6 +55,36 @@ class ASTPrintVisitor: public ASTVisitor {
     private:
         int indent;
         int lineNum;
+};
+
+class ASTDeallocationVisitor: public ASTVisitor {
+    public:
+        ASTDeallocationVisitor();
+        void visitChildren(AST* astree) override;
+        void visitAssignTree (AST* astree) override;
+        void visitIfTree (AST* astree) override;
+        void visitExpressionTree (AST* astree) override;
+        void visitDivideTree (AST* astree) override;
+        void visitMultiplyTree (AST* astree) override;
+        void visitAddTree (AST* astree) override;
+        void visitSubtractTree (AST* astree) override;
+        void visitDeclarationTree (AST* astree) override;
+        void visitBlockTree (AST* astree) override;
+        void visitReturnTree (AST* astree) override;
+        void visitProgramTree (AST* astree) override;
+        void visitFunctionTree (AST* astree) override;
+        void visitFunctionDeclarationTree (AST* astree) override;
+        void visitWhileTree (AST* astree) override;
+        void visitElseTree (AST* astree) override;
+        void visitStringTree(AST* astree) override;
+        void visitNumberTree(AST* astree) override;
+        void visitExponentTree(AST* astree) override;
+
+        void deAllocateChildren();
+        void deallocate(AST* node);
+
+        private:
+            int nodenum;
 };
 
 #endif
