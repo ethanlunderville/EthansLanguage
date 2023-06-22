@@ -23,6 +23,12 @@ class ASTVisitor {
         virtual void visitElseTree(AST* astree)=0;
         virtual void visitStringTree(AST* astree)=0;
         virtual void visitNumberTree(AST* astree)=0;
+        virtual void visitGreaterTree (AST* astree)=0;
+        virtual void visitGreaterEqualTree (AST* astree)=0;
+        virtual void visitLessTree (AST* astree)=0;
+        virtual void visitLessEqualTree (AST* astree)=0;
+        virtual void visitEqualTree (AST* astree)=0;
+        virtual void visitNotEqualTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -47,6 +53,12 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitStringTree(AST* astree) override;
         void visitNumberTree(AST* astree) override;
         void visitExponentTree(AST* astree) override;
+        void visitGreaterTree (AST* astree) override;
+        void visitGreaterEqualTree (AST* astree) override;
+        void visitLessTree (AST* astree) override;
+        void visitLessEqualTree (AST* astree) override;
+        void visitEqualTree (AST* astree) override;
+        void visitNotEqualTree (AST* astree) override;
 
         void printIndent();
         void printer(std::string type, AST* node, std::string symbol);
@@ -79,6 +91,12 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitStringTree(AST* astree) override;
         void visitNumberTree(AST* astree) override;
         void visitExponentTree(AST* astree) override;
+        void visitGreaterTree (AST* astree) override;
+        void visitGreaterEqualTree (AST* astree) override;
+        void visitLessTree (AST* astree) override;
+        void visitLessEqualTree (AST* astree) override;
+        void visitEqualTree (AST* astree) override;
+        void visitNotEqualTree (AST* astree) override;
 
         void deAllocateChildren();
         void deallocate(AST* node);

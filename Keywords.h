@@ -19,12 +19,13 @@ enum TokenType {
     EOF_TOKEN
 };
 
-TokenType Operators[] = 
-{   LESS,
+TokenType Operators[] = {   
+    LESS,
     GREATER,
     LESS_EQUAL,
     GREATER_EQUAL,
     EQUAL_EQUAL,
+    BANG_EQUAL,
     KARAT,
     PLUS,
     STAR,

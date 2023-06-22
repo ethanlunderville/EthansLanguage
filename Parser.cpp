@@ -301,6 +301,24 @@
                 case MINUS:
                     t = new SubtractTree();
                 break;
+                case GREATER:
+                    t = new GreaterTree();
+                break;
+                case GREATER_EQUAL:
+                    t = new GreaterEqualTree();
+                break;
+                case LESS:
+                    t = new LessTree();
+                break;
+                case LESS_EQUAL:
+                    t = new LessEqualTree();
+                break;
+                case EQUAL_EQUAL:
+                    t = new EqualTree();
+                break;
+                case BANG_EQUAL:
+                    t = new NotEqualTree();
+                break;
                 default:
                 std::cerr << "Unexpected type: " << type << ", expected an operator"<< std::endl;
                 exit(1);
@@ -322,6 +340,18 @@
                     t = (AST*)((AddTree*) op);
                 } else if ( typeid(*op) == typeid(SubtractTree)){
                     t = (AST*)((SubtractTree*) op);
+                } else if ( typeid(*op) == typeid(GreaterTree)){
+                    t = (AST*)((GreaterTree*) op);
+                } else if ( typeid(*op) == typeid(LessTree)){
+                    t = (AST*)((LessTree*) op);
+                } else if ( typeid(*op) == typeid(GreaterEqualTree)){
+                    t = (AST*)((GreaterEqualTree*) op);
+                } else if ( typeid(*op) == typeid(LessEqualTree)){
+                    t = (AST*)((LessEqualTree*) op);
+                } else if ( typeid(*op) == typeid(EqualTree)){
+                    t = (AST*)((EqualTree*) op);
+                } else if ( typeid(*op) == typeid(NotEqualTree)){
+                    t = (AST*)((NotEqualTree*) op);
                 } else {
                 std::cerr << "Unexpected type" << std::endl;
                 exit(1);

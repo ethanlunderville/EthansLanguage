@@ -37,10 +37,30 @@ public:
                 case '*': addToken(STAR, line, "*"); break;
                 case '^': addToken(KARAT, line, "^"); break;
                 // Two-character tokens
-                case '!': addToken(inStream.peek() == '=' ? BANG_EQUAL : BANG, line, "!"); break;
-                case '=': addToken(inStream.peek() == '=' ? EQUAL_EQUAL : EQUAL, line, "="); break;
-                case '<': addToken(inStream.peek() == '=' ? LESS_EQUAL : LESS, line, "<"); break;
-                case '>': addToken(inStream.peek() == '=' ? GREATER_EQUAL : GREATER, line, ">"); break;
+                case '!': 
+                    addToken(inStream.peek() == '=' ? BANG_EQUAL : BANG, line, "!"); 
+                    c = inStream.get();
+                    c = inStream.get();
+                    goto SKIP; 
+                break;
+                case '=': 
+                    addToken(inStream.peek() == '=' ? EQUAL_EQUAL : EQUAL, line, "="); 
+                    c = inStream.get();
+                    c = inStream.get();
+                    goto SKIP;
+                break;
+                case '<': 
+                    addToken(inStream.peek() == '=' ? LESS_EQUAL : LESS, line, "<"); 
+                    c = inStream.get();
+                    c = inStream.get();
+                    goto SKIP;
+                break;
+                case '>': 
+                    addToken(inStream.peek() == '=' ? GREATER_EQUAL : GREATER, line, ">"); 
+                    c = inStream.get();
+                    c = inStream.get();
+                    goto SKIP;
+                break;
                 // Negatives numbers, Comments and Slashes
                 case '-': 
                     if (previousTokenWasOperator()) {
@@ -180,18 +200,10 @@ private:
     }
 
     bool previousTokenWasOperator() {
-        if ( previousTokenTypeWas(LESS)
-           ||previousTokenTypeWas(GREATER)
-           ||previousTokenTypeWas(LESS_EQUAL)
-           ||previousTokenTypeWas(GREATER_EQUAL)
-           ||previousTokenTypeWas(EQUAL_EQUAL)
-           ||previousTokenTypeWas(KARAT)
-           ||previousTokenTypeWas(PLUS)
-           ||previousTokenTypeWas(STAR)
-           ||previousTokenTypeWas(MINUS)
-           ||previousTokenTypeWas(SLASH)
-           ) {
-            return true;
+        for (int i = 0 ; i < (sizeof(Operators)/sizeof(Operators[0])) ; i++) {
+            if (previousTokenTypeWas(Operators[i])) {
+                return true;
+            }
         }
         return false;
     }

@@ -63,3 +63,9 @@ void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree)
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
 void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string((int)((NumberTree*)astree)->getNumber()));}
 void ASTPrintVisitor::visitStringTree (AST* astree) {printer("StringTree", astree, ((StringTree*)astree)->getString());}
+void ASTPrintVisitor::visitGreaterTree (AST* astree) {printer("GreaterTree", astree, ">");}
+void ASTPrintVisitor::visitGreaterEqualTree (AST* astree) {printer("GreaterEqualTree", astree, ">=");}
+void ASTPrintVisitor::visitLessTree (AST* astree) {printer("LessTree", astree, "<");}
+void ASTPrintVisitor::visitLessEqualTree (AST* astree) {printer("LessEqualTree", astree, "<");}
+void ASTPrintVisitor::visitEqualTree (AST* astree) {printer("EqualTree", astree, "==");}
+void ASTPrintVisitor::visitNotEqualTree (AST* astree) {printer("NotEqualTree", astree, "!=");}

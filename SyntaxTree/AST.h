@@ -150,3 +150,39 @@ class ExponentTree : public AST, public Operator {
         ExponentTree();
         void accept(ASTVisitor* v) override;
 };
+
+class GreaterTree : public AST, public Operator {
+    public:
+        GreaterTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class LessTree : public AST, public Operator {
+    public:
+        LessTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class GreaterEqualTree : public AST, public Operator {
+    public:
+        GreaterEqualTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class LessEqualTree : public AST, public Operator {
+    public:
+        LessEqualTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class EqualTree : public AST, public Operator {
+    public:
+        EqualTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class NotEqualTree : public AST, public Operator {
+    public:
+        NotEqualTree();
+        void accept(ASTVisitor* v) override;
+};
