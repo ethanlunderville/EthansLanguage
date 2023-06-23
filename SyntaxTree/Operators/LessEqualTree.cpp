@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 LessEqualTree::LessEqualTree() {
-    precedence = 0;
+    precedence = 1;
 }
 void LessEqualTree::accept(ASTVisitor* v) { v->visitLessEqualTree(this); }

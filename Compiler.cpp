@@ -1,15 +1,30 @@
+/*
+
+    File: Compiler.cpp
+
+    Description:
+    
+    The main driver code of the compiler. Strings 
+    together all of the main Compiler components.
+
+    COMPONENTS: 
+
+    *** input -> component -> output ***
+
+    Sourcefile.EL -> LEXER -> ProgramTokens 
+    ProgramTokens -> PARSER -> AbstractSyntaxTree
+    
+*/
 
 #include "Keywords.h"
 #include "Lexer.cpp" // NO NEED TO OVERCOMPLICATE
 #include "Parser.cpp"
 #include "Visitors/ASTVisitor.h"
 
-int main (int argc, char * argv []) {
-
+int main () {
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file);
     Parser* parser = new Parser(lexer);
-
     std::cout << "***PRINTING LEXEMES***" << std::endl; 
     lexer->printLexemes(lexer->scanTokens());
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();

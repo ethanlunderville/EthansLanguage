@@ -1,48 +1,55 @@
-#include "SyntaxTree/AST.h"
+/*
+
+    File: Parser.h
+
+    Description:
+
+    A recursive decent parser that takes the tokens from
+    the Lexer and uses them to output an abstract syntax
+    tree representing the source program based on the CFG
+    defined in [].
+
+    Notes:
+
+    The Parser holds a reference to the Lexer.
+    
+*/
 #ifndef PARSER_H
 #define PARSER_H
-
+#include "SyntaxTree/AST.h"
 class Parser {
-
     public:
         Parser(Lexer* lexer);
-        AST* parse();
+        AST* parse(); // ONLY PUBLIC FUNCTION IS PARSE (ENCAPSULATION, ABSTRACTION)
     private:
         int currentTokenIndex;
-        Lexer* lexer;
+        Lexer* lexer; // PARSER HOLDS REFERENCE TO THE LEXER
         std::vector<Token> tokens;
-
+        //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
-        AST* sIf();
-        AST* sElse();
-        AST* sWhile();
-        AST* sReturn();
-        AST* sExpression();
-        AST* sBlock();
         AST* sDeclaration(std::string name, short option);
         AST* sFunctionDeclaration(std::string name);
-        AST* sFunction();
-        AST* sAssign();
-        AST* sAdd();
-        AST* sDivide();
-        AST* sMultiply();
-        AST* sSubtract();
-
+        AST* sExpression();
+        AST* sBlock();
+        //HELPER FUNCTIONS
         TokenType getCurrentToken();
-        Operator* OperatorFactory(TokenType type);
-        AST* operatorToASTCaster(Operator* op);
-        bool onStatement();
         std::string getCurrentLexeme();
         int getCurrentLine();
+        //RETURNS POINTER TO AST OR OPERATOR
+        //NOTE: OPERATOR IS A SUBCLASS OF AST
+        Operator* OperatorFactory(TokenType type);
+        AST* operatorToASTCaster(Operator* op);
+        //RETURNS BOOL
+        bool onStatement();
         bool onDeclaration();
-        bool isCurrentToken(int tokenType);
         bool onOperand();
         bool onOperator();
         bool isData();
-        void registerNode(AST* node);
+        bool isCurrentToken(int tokenType);
+        //NO RETURN
+        void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
         void scan();
         void expect(TokenType tokenType);
 };
-
 #endif

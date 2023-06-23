@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 AddTree::AddTree() {
-    precedence = 1;
+    precedence = 2;
 }
 void AddTree::accept(ASTVisitor* v) { v->visitAddTree(this); }

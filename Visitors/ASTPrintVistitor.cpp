@@ -2,7 +2,6 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
-
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;
     this->lineNum = 1;
@@ -15,6 +14,11 @@ void ASTPrintVisitor::visitChildren(AST* astree){
 }
 
 void ASTPrintVisitor::printIndent() {
+    /*
+    * This is so the tree stays consisted despite
+    * the size of the number printed before each 
+    * node.
+    */
     if (std::log10(this->lineNum) == std::floor(std::log10(this->lineNum))) {
         if ( (this->indent - 1) > 0) {
             this->indent--;
@@ -69,3 +73,5 @@ void ASTPrintVisitor::visitLessTree (AST* astree) {printer("LessTree", astree, "
 void ASTPrintVisitor::visitLessEqualTree (AST* astree) {printer("LessEqualTree", astree, "<");}
 void ASTPrintVisitor::visitEqualTree (AST* astree) {printer("EqualTree", astree, "==");}
 void ASTPrintVisitor::visitNotEqualTree (AST* astree) {printer("NotEqualTree", astree, "!=");}
+void ASTPrintVisitor::visitAndTree (AST* astree) {printer("AndTree", astree, "&&");}
+void ASTPrintVisitor::visitOrTree (AST* astree) {printer("OrTree", astree, "||");}

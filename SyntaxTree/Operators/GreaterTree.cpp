@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 GreaterTree::GreaterTree() {
-    precedence = 0;
+    precedence = 1;
 }
 void GreaterTree::accept(ASTVisitor* v) { v->visitGreaterTree(this); }

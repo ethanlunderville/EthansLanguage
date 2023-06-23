@@ -1,31 +1,15 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <regex>
+#include "Lexer.h"
 
-// Define a Token struct to hold token informationnumber
-struct Token {
-    TokenType type;
-    int line;
-    std::string lexeme;
-};
+    Lexer::Lexer(std::istream& inStream) : inStream(inStream) {}
 
-// Define a Lexer class
-class Lexer {
-
-public:
-    Lexer(std::istream& inStream) : inStream(inStream) {}
-    // Tokenize the input stream and return a vector of Tokens
-    std::vector<Token> scanTokens() {
-        //std::vector<Token> tokens;
+    std::vector<Token> Lexer::scanTokens() {
         int line = 1;
         while (inStream) {
             char c = inStream.get();
+            //PLEASE TAKE NOTE OF THE SKIP LABEL
             SKIP:
             switch (c) {
-                // Single-character tokens
+                // Single-character lexemes
                 case '(': addToken(LEFT_PAREN, line, "("); break;
                 case ')': addToken(RIGHT_PAREN, line, ")"); break;
                 case '{': addToken(LEFT_BRACE, line, "{"); break;
@@ -36,30 +20,48 @@ public:
                 case ';': addToken(SEMICOLON, line, ";"); break;
                 case '*': addToken(STAR, line, "*"); break;
                 case '^': addToken(KARAT, line, "^"); break;
-                // Two-character tokens
+                case '|': addToken(OR, line, "|"); break;
+                case '&': addToken(AND, line, "&"); break;
+                // Two-character lexemes
+                /*
+                * All two character tokens skip the next token 
+                * by calling inStream.get() since the token is
+                * renewed with every iteration. When the loop
+                * comes back and calls inStream.get() again it
+                * will move to the character after the second
+                * character of the two character lexemes.
+                */
                 case '!': 
-                    addToken(inStream.peek() == '=' ? BANG_EQUAL : BANG, line, "!"); 
-                    c = inStream.get();
-                    c = inStream.get();
-                    goto SKIP; 
+                    if (inStream.peek() == '=') { 
+                        addToken(BANG_EQUAL , line, "!=");
+                        c = inStream.get(); 
+                    } else {
+                        addToken(BANG, line, "!");
+                    }
                 break;
                 case '=': 
-                    addToken(inStream.peek() == '=' ? EQUAL_EQUAL : EQUAL, line, "="); 
-                    c = inStream.get();
-                    c = inStream.get();
-                    goto SKIP;
+                    if (inStream.peek() == '=') { 
+                        addToken(EQUAL_EQUAL  , line, "==");
+                        c = inStream.get(); 
+                    } else {
+                        addToken(EQUAL, line, "=");
+                    }
                 break;
                 case '<': 
-                    addToken(inStream.peek() == '=' ? LESS_EQUAL : LESS, line, "<"); 
-                    c = inStream.get();
-                    c = inStream.get();
-                    goto SKIP;
+                    if (inStream.peek() == '=') { 
+                        addToken(LESS_EQUAL , line, "<=");
+                        c = inStream.get(); 
+                    } else {
+                        addToken(LESS, line, "<");
+                    }
                 break;
                 case '>': 
-                    addToken(inStream.peek() == '=' ? GREATER_EQUAL : GREATER, line, ">"); 
-                    c = inStream.get();
-                    c = inStream.get();
-                    goto SKIP;
+                    if (inStream.peek() == '=') { 
+                        addToken(GREATER_EQUAL, line, ">=");
+                        c = inStream.get(); 
+                    } else {
+                        addToken(GREATER, line, ">");
+                    }
                 break;
                 // Negatives numbers, Comments and Slashes
                 case '-': 
@@ -111,7 +113,7 @@ public:
         return tokens;
     }
 
-    void printLexemes(std::vector<Token> tokens) {
+    void Lexer::printLexemes(std::vector<Token> tokens) {
         for (int i = 0 ; i < tokens.size() ; i++) {
             if (tokens[i].type == IDENTIFIER || tokens[i].type == NUMBER 
             || tokens[i].type == STRINGTYPE || tokens[i].type == RESERVED ) {
@@ -123,18 +125,12 @@ public:
         }
     }
 
-private:
-
-    std::istream& inStream;
-    std::stringstream currentLexeme;
-    std::vector<Token> tokens;
-    // Add a token to the vector
-    void addToken(TokenType type, int line, std::string lexeme) {
+    void Lexer::addToken(TokenType type, int line, std::string lexeme) {
         struct Token token = {type, line, lexeme};
         tokens.push_back(token);
     }
     
-    void string(std::vector<Token> tokens , int line) {
+    void Lexer::string(std::vector<Token> tokens , int line) {
         std::string literal;
         literal.push_back('\"');
         while (!inStream.eof()) {
@@ -149,7 +145,7 @@ private:
         exit(1);
     }
 
-    void number (char *c, std::vector<Token> tokens , int line, bool isNegative) {
+    void Lexer::number (char *c, std::vector<Token> tokens , int line, bool isNegative) {
         std::string number; 
         while (isdigit(*c)) {
             number.push_back(*c);
@@ -164,7 +160,7 @@ private:
         return;
     }
 
-    void alphaProcessor (char *c, std::vector<Token> tokens , int line) {
+    void Lexer::alphaProcessor (char *c, std::vector<Token> tokens , int line) {
         std::string ident; 
 
         while (isalpha(*c)) {
@@ -192,14 +188,14 @@ private:
 
     }
 
-    bool previousTokenTypeWas(TokenType t) {
+    bool Lexer::previousTokenTypeWas(TokenType t) {
         if (this->tokens[this->tokens.size()-1].type == t) {
             return true;
         }
         return false;
     }
 
-    bool previousTokenWasOperator() {
+    bool Lexer::previousTokenWasOperator() {
         for (int i = 0 ; i < (sizeof(Operators)/sizeof(Operators[0])) ; i++) {
             if (previousTokenTypeWas(Operators[i])) {
                 return true;
@@ -208,6 +204,6 @@ private:
         return false;
     }
     
-};
+
 
 

@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 LessTree::LessTree() {
-    precedence = 0;
+    precedence = 1;
 }
 void LessTree::accept(ASTVisitor* v) { v->visitLessTree(this); }

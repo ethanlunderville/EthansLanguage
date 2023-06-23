@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 MultiplyTree::MultiplyTree() {
-    precedence = 2;
+    precedence = 3;
 }
 void MultiplyTree::accept(ASTVisitor* v) { v->visitMultiplyTree(this); }

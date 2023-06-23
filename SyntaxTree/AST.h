@@ -1,3 +1,14 @@
+/*
+
+    File: [file]
+
+    Description:
+    [Brief description of the file's purpose and main functionality]
+
+    Notes:
+    [Additional notes, caveats, or important information]
+    
+*/
 #pragma once
 #include <vector>
 #include <string>
@@ -9,7 +20,7 @@ class AST {
         AST();
         void addChild(AST* tree);
         std::vector<AST*> getChildren();
-        virtual void accept(ASTVisitor* v) = 0;
+        virtual void accept(ASTVisitor* v) = 0; 
         virtual ~AST();
     private:
         std::vector<AST*> children;
@@ -19,14 +30,6 @@ class ProgramTree : public AST {
     public:
         ProgramTree();
         void accept(ASTVisitor* v) override;
-};
-
-class DeclarationTree : public AST {
-    public:
-        DeclarationTree(std::string name, std::string val);
-        void accept(ASTVisitor* v);
-    private:
-        std::string name;
 };
 
 class IfTree : public AST {
@@ -46,14 +49,7 @@ class WhileTree : public AST {
         WhileTree();
         void accept(ASTVisitor* v);
 };
-class ReturnTree : public AST {
-    public:
-        ReturnTree(std::string retval);
-        ReturnTree();
-        void accept(ASTVisitor* v);
-    private:
-        std::string name;
-};
+
 class ExpressionTree : public AST {
     public:
         ExpressionTree();
@@ -72,14 +68,6 @@ class FunctionTree : public AST {
         void accept(ASTVisitor* v);
 };
 
-class FunctionDeclarationTree : public AST {
-    public:
-        FunctionDeclarationTree(std::string name);
-        void accept(ASTVisitor* v);
-    private:
-        std::string name;
-};
-
 class AssignTree : public AST {
     public:
         AssignTree();
@@ -91,7 +79,32 @@ class AssignTree : public AST {
         std::string val;
 };
 
+class ReturnTree : public AST {
+    public:
+        ReturnTree(std::string retval);
+        ReturnTree();
+        void accept(ASTVisitor* v);
+    private:
+        std::string name;
+};
+
+class FunctionDeclarationTree : public AST {
+    public:
+        FunctionDeclarationTree(std::string name);
+        void accept(ASTVisitor* v);
+    private:
+        std::string name;
+};
+
 //OPERANDS
+
+class DeclarationTree : public AST {
+    public:
+        DeclarationTree(std::string name, std::string val);
+        void accept(ASTVisitor* v);
+    private:
+        std::string name;
+};
 
 class NumberTree : public AST {
     public:
@@ -184,5 +197,17 @@ class EqualTree : public AST, public Operator {
 class NotEqualTree : public AST, public Operator {
     public:
         NotEqualTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class AndTree : public AST, public Operator {
+    public:
+        AndTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class OrTree : public AST, public Operator {
+    public:
+        OrTree();
         void accept(ASTVisitor* v) override;
 };

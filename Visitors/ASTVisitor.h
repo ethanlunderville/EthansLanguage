@@ -1,8 +1,56 @@
-#include <iostream>
+/*
+
+    File: ASTVisitor.h
+
+    Description:
+
+    This is the header file for the ASTVisitor and all of
+    its subclasses. 
+
+    Notes:
+
+    I decided to use the Visitor design pattern because 
+    I felt that it would be beneficial to have the 
+    functions grouped by functionality instead of types.
+    What I mean by this is that, I could have created a
+    virtual function in the AST class
+    so that all of the AST subclasses would have to 
+    implement the function in their own way (polymorphism)
+    and then used dynamic binding to determine which 
+    function would actually be executed during runtime.
+    The issue with this would be that I would have to 
+    open the file for every subclass and implement that 
+    function every time I wanted to implement a new piece
+    of functionality that all AST nodes should have. 
+    
+    From the outset of the project I knew there would be
+    a huge ammount of AST classes so the above approach
+    seemed to be too cumbersome.
+
+    The Visitor pattern allows the programmer to store
+    all of the functionality (of one kind of function) 
+    for many different types in one place instead of 
+    storing each implementation of that function in
+    the functions class as is the default approach
+    in Object Oriented Programming.
+
+    For example: Instead of defining a specialized 
+    print() function in every AST subclass. I can 
+    define all of the print() functions in one file.
+
+    The downside to this approach is that everytime
+    a new type is added, all of the visitors have to
+    be updated to acccomodate that type. 
+
+    Nonetheless, the positives of the Visitor pattern
+    outweigh the negatives for this project.
+    
+*/
 #ifndef ASTVISITOR_H
 #define ASTVISITOR_H
+#include <iostream>
 class AST;
-class ASTVisitor {
+/*Abstract*/ class ASTVisitor {
     public:
         virtual void visitChildren(AST* astree)=0;
         virtual void visitAssignTree(AST* astree)=0;
@@ -29,11 +77,14 @@ class ASTVisitor {
         virtual void visitLessEqualTree (AST* astree)=0;
         virtual void visitEqualTree (AST* astree)=0;
         virtual void visitNotEqualTree (AST* astree)=0;
+        virtual void visitAndTree (AST* astree)=0;
+        virtual void visitOrTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
     public:
         ASTPrintVisitor();
+        //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
@@ -59,11 +110,12 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitLessEqualTree (AST* astree) override;
         void visitEqualTree (AST* astree) override;
         void visitNotEqualTree (AST* astree) override;
-
+        void visitAndTree (AST* astree) override;
+        void visitOrTree (AST* astree) override;
+        //Visitor specific functions
         void printIndent();
         void printer(std::string type, AST* node, std::string symbol);
         void printer(std::string type, AST* node);
-
     private:
         int indent;
         int lineNum;
@@ -72,6 +124,7 @@ class ASTPrintVisitor: public ASTVisitor {
 class ASTDeallocationVisitor: public ASTVisitor {
     public:
         ASTDeallocationVisitor();
+        //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
@@ -97,12 +150,13 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitLessEqualTree (AST* astree) override;
         void visitEqualTree (AST* astree) override;
         void visitNotEqualTree (AST* astree) override;
-
+        void visitAndTree (AST* astree) override;
+        void visitOrTree (AST* astree) override;
+        //Deallocator specific functions
         void deAllocateChildren();
         void deallocate(AST* node);
-
-        private:
-            int nodenum;
+    private:
+        int currentNodeNum;
 };
 
 #endif

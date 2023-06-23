@@ -1,9 +1,18 @@
+/*
+
+    File: Keywords.h
+
+    Description:
+    
+    This file contains several data structures pertaining 
+    to the tokens of the langauge.
+    
+*/
+#ifndef KEYWORDS_H
+#define KEYWORDS_H
 #include <iostream>
 #include <map>
 #include <string>
-
-#ifndef KEYWORDS_H
-#define KEYWORDS_H
 
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -30,7 +39,17 @@ TokenType Operators[] = {
     PLUS,
     STAR,
     MINUS,
+    AND,
+    OR,
     SLASH 
+};
+
+TokenType Operands[] = {
+    STRING,
+    NUMBER,
+    IDENTIFIER,
+    LEFT_PAREN,
+    RIGHT_PAREN
 };
 
 static std::map<TokenType, std::string> tokenToStringMap = {
@@ -100,6 +119,12 @@ static std::map<std::string, TokenType> stringToTokenMap = {
     {"int", INT},
     {"bool", BOOL},
     {"string", STRINGTYPE}
+};
+
+struct Token {
+    TokenType type;
+    int line;
+    std::string lexeme;
 };
 
 #endif

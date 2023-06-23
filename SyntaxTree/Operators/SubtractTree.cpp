@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 SubtractTree::SubtractTree() {
-    precedence = 1;
+    precedence = 2;
 }
 void SubtractTree::accept(ASTVisitor* v) { v->visitSubtractTree(this); }

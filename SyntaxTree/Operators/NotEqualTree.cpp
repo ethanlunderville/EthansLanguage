@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 NotEqualTree::NotEqualTree() {
-    precedence = 0;
+    precedence = 1;
 }
 void NotEqualTree::accept(ASTVisitor* v) { v->visitNotEqualTree(this); }

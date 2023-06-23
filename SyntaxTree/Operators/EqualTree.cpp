@@ -2,6 +2,6 @@
 #include "Visitors/ASTVisitor.h"
 
 EqualTree::EqualTree() {
-    precedence = 0;
+    precedence = 1;
 }
 void EqualTree::accept(ASTVisitor* v) { v->visitEqualTree(this); }
