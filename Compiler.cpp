@@ -19,6 +19,7 @@
 #include "Keywords.h"
 #include "Lexer.cpp" // NO NEED TO OVERCOMPLICATE
 #include "Parser.cpp"
+#include "Table.cpp"
 #include "Visitors/ASTVisitor.h"
 
 int main () {
