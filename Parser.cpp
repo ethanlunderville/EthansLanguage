@@ -377,7 +377,6 @@ void Parser::nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int
         }
     } else if (typeid(*nextTree) == typeid(SubtractTree) && currentTreePrecedence == 2) {
         if (typeid(*currentTree) == typeid(SubtractTree)) {
-            std::cout << "THIS RAN" << std::endl;
             delete currentTree;
             currentTree = new AddTree();
         } else if (typeid(*currentTree) == typeid(AddTree)) {

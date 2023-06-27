@@ -1,65 +1,101 @@
-#include <map>
-#include <any>
+#include "Table.h"
 
-typedef struct SymbolInfo {
-    int line;
-    std::any value;
-    std::string type;
-} SymbolInfo;
+SymbolTable::SymbolTable(SymbolTable* tableReference) : globalTable(tableReference) {
+    pushScope();
+}
 
+void SymbolTable::pushScope() {
+    scopeStack.push(this->getCurrentSize());
+}
 
-class SymbolTable {
-    public:
-        SymbolTable(SymbolTable* tableReference) : current(0), table(tableReference) {}
+void SymbolTable::popScope(){
+    if (scopeStack.size() == 0) {
+        std::cerr << "EMPTY SCOPE" << std::endl;
+    }
+    int popCounter = this->getCurrentSize() - scopeStack.top();
+    scopeStack.pop();
+    for (int i = 0 ; i < popCounter ; i++) {
+        stringToSymbolMap.erase(intToStringVector[this->getCurrentSize() - 1]);
+        intToStringVector.erase(intToStringVector.begin() + (this->getCurrentSize() - 1));
+    }
+}
 
-        void pushScope() {
-            scopeCurr.push(this->currentSize-1);
+void SymbolTable::declareSymbol(int line, std::string identifier , std::any value, std::string type) {
+    int potentialLineNum = this->contains(identifier);
+    int potentialGlobalLineNum = -1;
+    if (this->globalTable != nullptr) {
+        potentialGlobalLineNum = this->globalTable->contains(identifier);
+    }
+    if (potentialLineNum != -1 || potentialGlobalLineNum != -1) {
+        std::cerr << "Multiple declarations of " << identifier << " on line " << 
+        ((potentialLineNum == -1) ? potentialGlobalLineNum : potentialLineNum) << std::endl;
+        exit(1);
+    } else {
+        this->intToStringVector.push_back(identifier);
+        this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, value, type};
+    }
+}
+
+void SymbolTable::reassignSymbol(std::string identifier , std::any value) {
+    if(stringToSymbolMap.count(identifier) > 0) { 
+        this->stringToSymbolMap[identifier].value = value;
+    } else {
+        if (globalTable != nullptr) {
+            globalTable->reassignSymbol(identifier, value);
+            return;
         }
-        void popScope(){
-            if (scopeCurr.size() == 0) {
-                std::cerr << "EMPTY SCOPE" << std::endl;
-            }
-            int popCounter = (this->currentSize - 1) - scopeCurr.top();
-            scopeCurr.pop();
-            for (int i = 0 ; i < popCounter ; i++) {
-                stringToSymbolMap.erase(intToStringMap[this->currentSize - 1]);
-                intToStringMap.erase(this->currentSize - 1);
-                this->currentSize--;
-            }
-        }
-        void declareSymbol(int line, std::string identifier , std::any value, std::string type) {
-            if (!(this->contains(identifier) || this->table->contains(identifier))) {
-                this->intToStringMap[this->currentSize - 1] = identifier;
-                this->stringToSymbolMap[this->intToStringMap[this->currentSize - 1]] = {line, value, type};
-            }
-            this->currentSize++;
-        }
-        void reassignSymbol(std::string identifier , std::string value) {
+        std::cerr << "Incorrect assignment of undeclared variable: " << identifier << std::endl;
+        exit(1);
+    }
+}
 
+std::string SymbolTable::getTypeOfSymbol(std::string identifier) {
+    return this->stringToSymbolMap[identifier].type;
+}
+
+auto SymbolTable::getValueStoredInSymbol(std::string identifier) {
+    return this->stringToSymbolMap[identifier].value;
+}
+
+int SymbolTable::getCurrentSize() {
+    return this->intToStringVector.size();
+}
+
+int SymbolTable::contains(std::string identifier) {
+    for (int i = 0; i < this->getCurrentSize(); i++) {
+        if (identifier.compare(intToStringVector[i]) == 0) {
+            return i;
         }
+    }
+    return -1;
+}
 
-        std::string getTypeOfSymbol(std::string identifier) {
-            return "";
-        }
+void SymbolTable::printSymbolTable() {
+    std::cout << "---- ***Table*** ---" << std::endl;
+    int line = 1;
+    for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
+        std::cout << line << ".\tIdentifier: " << intToStringVector[i] 
+        << "\tValue: " << std::any_cast<int>(stringToSymbolMap[intToStringVector[i]].value) 
+        << std::endl;
+        line++;
+    }
+    if (globalTable != nullptr) {
+        globalTable->printSymbolTable(line);
+    }
+}
 
-        auto getValueStoredInSymbol(std::string identifier) {
-            return 1;
-        }
+void SymbolTable::printSymbolTable(int continuationIndex) {
+    std::cout << "---- ***Table*** ---" << std::endl;
+    int line = continuationIndex;
+    for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
+        std::cout << line << ".\tIdentifier: " << intToStringVector[i] 
+        << "\tValue: " << std::any_cast<int>(stringToSymbolMap[intToStringVector[i]].value) 
+        << std::endl;
+        line++;
+    }
+    if (globalTable != nullptr) {
+        globalTable->printSymbolTable();
+    }
+}
 
-        int contains(std::string identifier) {
-            for (int i = 0; i < this->currentSize; i++) {
-                if (identifier.compare(intToStringMap[i])) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-
-    private:
-        SymbolTable* globalTable;
-        int currentSize;
-        std::stack<int> scopeCurr;
-        std::map<int, std::string> intToStringMap;
-        std::map<std::string, SymbolInfo> stringToSymbolMap; 
-};
+ 
