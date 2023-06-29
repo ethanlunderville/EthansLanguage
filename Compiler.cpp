@@ -41,23 +41,24 @@ int main () {
     SymbolTable* baseTable = new SymbolTable(nullptr);
     SymbolTable* otherTable = new SymbolTable(baseTable);
     //void declareSymbol(int line, std::string identifier , std::any value, std::string type)
-    baseTable->declareSymbol(1 , "x", 1, "int");
-    baseTable->declareSymbol(2 , "y", 1, "int");
-
-    otherTable->declareSymbol(4, "goober", 1, "int");
-    otherTable->declareSymbol(4, "tee", 1, "int");
-    otherTable->pushScope();
-    otherTable->declareSymbol(4, "teener", 1, "int");
-    otherTable->declareSymbol(4, "t", 1, "int");
-
-    otherTable->printSymbolTable();
-    otherTable->popScope();
-
-    otherTable->reassignSymbol("x", 55);
-
-    //std::cout << getValueStoredInSymbol() <<" \n\n";
-    otherTable->printSymbolTable();
-
+    std::any name = std::string("1");
+    baseTable->declareSymbol(1 , "x", name, "string");
+    baseTable->declareSymbol(1 , "y", 1, "int");
+    //baseTable->declareSymbol(2 , "y", 1, "int");
+    //otherTable->declareSymbol(4, "goober", 1, "int");
+    //otherTable->declareSymbol(4, "tee", 1, "int");
+    //otherTable->pushScope();
+    //otherTable->declareSymbol(4, "teener", 1, "int");
+    //otherTable->declareSymbol(4, "t", 1, "int");
+    baseTable->printSymbolTable();
+    std::any x = std::string("string literal");
+    baseTable->reassignSymbol("x", x);
+    baseTable->reassignSymbol("y", 33);
+    int a = std::any_cast<int>(baseTable->getValueStoredInSymbol("y"));
+    std::string y = std::any_cast<std::string>(baseTable->getValueStoredInSymbol("x"));
+    baseTable->printSymbolTable();
+    std::cout << y << std::endl;
+    std::cout << a << std::endl;
     /*
     delete pVisit;
     pVisit = nullptr;
