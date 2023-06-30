@@ -49,6 +49,7 @@
 #ifndef ASTVISITOR_H
 #define ASTVISITOR_H
 #include <iostream>
+
 class AST;
 /*Abstract*/ class ASTVisitor {
     public:
@@ -157,6 +158,42 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void deallocate(AST* node);
     private:
         int currentNodeNum;
+};
+
+class ASTInterpreter: public ASTVisitor {
+    public:
+        ASTInterpreter();
+        //ASTInterpreter(ContextManager* cm);
+        //INHERITED FUNCTIONS
+        void visitChildren(AST* astree) override;
+        void visitAssignTree (AST* astree) override;
+        void visitIfTree (AST* astree) override;
+        void visitExpressionTree (AST* astree) override;
+        void visitDivideTree (AST* astree) override;
+        void visitMultiplyTree (AST* astree) override;
+        void visitAddTree (AST* astree) override;
+        void visitSubtractTree (AST* astree) override;
+        void visitDeclarationTree (AST* astree) override;
+        void visitBlockTree (AST* astree) override;
+        void visitReturnTree (AST* astree) override;
+        void visitProgramTree (AST* astree) override;
+        void visitFunctionTree (AST* astree) override;
+        void visitFunctionDeclarationTree (AST* astree) override;
+        void visitWhileTree (AST* astree) override;
+        void visitElseTree (AST* astree) override;
+        void visitStringTree(AST* astree) override;
+        void visitNumberTree(AST* astree) override;
+        void visitExponentTree(AST* astree) override;
+        void visitGreaterTree (AST* astree) override;
+        void visitGreaterEqualTree (AST* astree) override;
+        void visitLessTree (AST* astree) override;
+        void visitLessEqualTree (AST* astree) override;
+        void visitEqualTree (AST* astree) override;
+        void visitNotEqualTree (AST* astree) override;
+        void visitAndTree (AST* astree) override;
+        void visitOrTree (AST* astree) override;
+    //private:
+        //ContextManager* contextManager;
 };
 
 #endif

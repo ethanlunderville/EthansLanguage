@@ -10,7 +10,7 @@ void SymbolTable::pushScope() {
 
 void SymbolTable::popScope(){
     if (scopeStack.size() == 0) {
-        std::cerr << "EMPTY SCOPE" << std::endl;
+        std::cerr << "Cannot pop an empty scope" << std::endl;
     }
     int popCounter = this->getCurrentSize() - scopeStack.top();
     scopeStack.pop();
@@ -21,27 +21,13 @@ void SymbolTable::popScope(){
 }
 
 void SymbolTable::declareSymbol(int line, std::string identifier , std::any value, std::string type) {
-    if (
-        value.type() == typeid(std::string) && type.compare("string") == 0 ||
-        value.type() == typeid(int) && type.compare("int") == 0
-       ) {
-            this->intToStringVector.push_back(identifier);
-            this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, value, type};
-            return;
-    }
-    std::cerr << "Incorrect type assignment for variable: " << identifier << std::endl;
-    exit(1);
+    this->intToStringVector.push_back(identifier);
+    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, value, type};
+    return;
 }
 
 void SymbolTable::reassignSymbol(std::string identifier , std::any value) {  
-    if (
-        ((value.type() == typeid(std::string) && this->stringToSymbolMap[identifier].type.compare("string") == 0)||
-        (value.type() == typeid(int) && this->stringToSymbolMap[identifier].type.compare("int") == 0))
-       ) {
-        this->stringToSymbolMap[identifier].value = value;
-    }
-    std::cerr << "Incorrect type assignment for variable: " << identifier << std::endl;
-    exit(1);
+    this->stringToSymbolMap[identifier].value = value;
 }
 
 std::string SymbolTable::getTypeOfSymbol(std::string identifier) {
@@ -65,9 +51,19 @@ int SymbolTable::contains(std::string identifier) {
     return -1;
 }
 
+bool SymbolTable::variableTypeCheck(std::string type , std::any value) {
+    if (
+          value.type() == typeid(std::string) && type.compare("string") == 0
+        ||
+          value.type() == typeid(int) && type.compare("int") == 0
+    ) {
+        return true;
+    }
+    return false;
+}
+
 void SymbolTable::printSymbolTable() {
     std::cout << "---- ***Table*** ---" << std::endl;
-    int line = 1;
     for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
         if (stringToSymbolMap[intToStringVector[i]].type.compare("int") == 0) {
             std::cout << "Identifier: " << intToStringVector[i] 
@@ -78,10 +74,6 @@ void SymbolTable::printSymbolTable() {
             << "\tValue: " << std::any_cast<std::string>(stringToSymbolMap[intToStringVector[i]].value) 
             << std::endl;
         }
-        line++;
-    }
-    if (globalTable != nullptr) {
-        globalTable->printSymbolTable();
     }
 }
 

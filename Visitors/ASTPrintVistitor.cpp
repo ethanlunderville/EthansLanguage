@@ -2,6 +2,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
+
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;
     this->lineNum = 1;

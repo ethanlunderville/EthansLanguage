@@ -14,6 +14,9 @@ typedef struct SymbolInfo {
     std::string type;
 } SymbolInfo;
 
+/*
+* Unopinionated SymbolTable
+*/
 class SymbolTable {
 public:
     SymbolTable(SymbolTable* tableReference);
@@ -27,6 +30,7 @@ public:
     int getCurrentSize();
     int contains(std::string identifier);
     void printSymbolTable();
+    bool variableTypeCheck(std::string type , std::any value);
 
 private:
     SymbolTable* globalTable;
@@ -35,4 +39,4 @@ private:
     std::map<std::string, SymbolInfo> stringToSymbolMap;
 };
 
-#endif  //TABLE_H
+#endif

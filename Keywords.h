@@ -101,18 +101,13 @@ static std::map<TokenType, std::string> tokenToStringMap = {
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {
-    {"and", AND},
     {"else", ELSE},
     {"false", FALSE},
-    {"fun", FUN},
     {"for", FOR},
     {"if", IF},
-    {"none", NONE},
-    {"or", OR},
-    {"print", PRINT},
+    {"NULL", NONE},
     {"return", RETURN},
     {"true", TRUE},
-    {"var", VAR},
     {"while", WHILE},
     {"EOF", EOF_TOKEN},
     //TYPES

@@ -1,6 +1,6 @@
 # Compiler and linker flags
 CC = g++ -g
-CFLAGS = -00 -std=c11 -Wall -Wextra -pedantic -lsfml-audio
+CFLAGS = -00 -std=c11 # -Wall -Wextra -pedantic
 LDFLAGS = -I$(shell pwd) 
 
 # Object files directory
@@ -10,7 +10,7 @@ OBJDIR = obj
 TARGET = program
 
 # Source files and object files
-SRCS = ./Table.cpp Compiler.cpp #SyntaxTree/*.cpp SyntaxTree/Operators/*.cpp Visitors/*.cpp
+SRCS = Compiler.cpp ./SymbolTable/*.cpp SyntaxTree/*.cpp SyntaxTree/Operators/*.cpp Visitors/*.cpp
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
 # Default target

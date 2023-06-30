@@ -151,23 +151,19 @@
             number.push_back(*c);
             *c = inStream.get();
         }
-
         if(isNegative) {
             number.insert(0, "-");
         }
-
         addToken(NUMBER, line, number);
         return;
     }
 
     void Lexer::alphaProcessor (char *c, std::vector<Token> tokens , int line) {
         std::string ident; 
-
         while (isalpha(*c)) {
             ident.push_back(*c);
             *c = inStream.get();
         }
-
         if (ident.compare("int") == 0) {
             addToken(INT, line, ident);
             return;
@@ -178,14 +174,11 @@
             addToken(STRINGTYPE, line, ident);
             return;
         } 
-
         if (stringToTokenMap.count(ident) > 0) {
             addToken(stringToTokenMap[ident], line, ident);
             return;    
         }
-
         addToken(IDENTIFIER, line, ident);
-
     }
 
     bool Lexer::previousTokenTypeWas(TokenType t) {
