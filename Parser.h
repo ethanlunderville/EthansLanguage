@@ -16,7 +16,9 @@
 */
 #ifndef PARSER_H
 #define PARSER_H
+//#define PRINTEXPRESSION (0x1)
 #include "SyntaxTree/AST.h"
+
 class Parser {
     public:
         Parser(Lexer* lexer);
@@ -32,6 +34,7 @@ class Parser {
         AST* sFunctionDeclaration(std::string name);
         AST* sExpression();
         AST* sBlock();
+        AssignTree* sAssignment(std::string identifier);
         //HELPER FUNCTIONS
         TokenType getCurrentToken();
         std::string getCurrentLexeme();

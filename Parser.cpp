@@ -18,11 +18,10 @@ AST* Parser::sProgram() {
             scan();
             std::string name = getCurrentLexeme();
             scan();
-            if (isCurrentToken(EQUAL)) {
+            if (isCurrentToken(EQUAL) || isCurrentToken(SEMICOLON)) {
                 //Option 1 since this is a regular Dec.
                 pTree->addChild(sDeclaration(name, 1));
-            }
-            if (isCurrentToken(LEFT_PAREN)) {
+            } else if (isCurrentToken(LEFT_PAREN)) {
                 pTree->addChild(sFunctionDeclaration(name));
             }
         } else {
@@ -65,13 +64,9 @@ AST* Parser::sStatement() {
         expect(SEMICOLON);
         return t;
     } else if (isCurrentToken(IDENTIFIER)) {
-        std::string name = getCurrentLexeme();
-        t = new AssignTree(name);
+        std::string identifier = getCurrentLexeme();
         scan();
-        expect(EQUAL);
-        AST* value = sExpression();
-        t->addChild(value);
-        expect(SEMICOLON);
+        t = sAssignment(identifier);
     } 
     return t;
 }
@@ -80,20 +75,26 @@ AST* Parser::sStatement() {
 * IF THE OPTION IS 0 THE DECLARATIONS ARE FUNCTION PARAMETERS
 * IN ALL OTHER CASES IT IS A REGULAR DECLARATION
 */
-AST* Parser::sDeclaration(std::string name, short option) {
+AST* Parser::sDeclaration(std::string identifier, short option) {
     std::string value;
+    DeclarationTree* t;
+    AssignTree* at = nullptr;
     if (option) {
-        expect(EQUAL);
-        value = getCurrentLexeme();
-        scan();
-        expect(SEMICOLON);
+        if (isCurrentToken(SEMICOLON)) {
+            t = new DeclarationTree(identifier);
+            return t;
+        }
+        at = sAssignment(identifier);
     } else {
         scan();
         if(!isCurrentToken(RIGHT_PAREN)) {
             expect(COMMA);
         }
     }
-    DeclarationTree* t = new DeclarationTree(name, value);
+    t = new DeclarationTree(identifier);
+    if (at != nullptr) {
+        t->addChild(at);
+    }
     return t;
 }
 
@@ -102,8 +103,8 @@ AST* Parser::sFunctionDeclaration(std::string functionName) {
     expect(LEFT_PAREN);
     while (onDeclaration()) {
         scan();
-        std::string name = getCurrentLexeme();
-        t->addChild(sDeclaration(name, 0));
+        std::string identifier = getCurrentLexeme();
+        t->addChild(sDeclaration(identifier, 0));
     }
     expect(RIGHT_PAREN);
     if (isCurrentToken(LEFT_BRACE)) {
@@ -118,7 +119,13 @@ AST* Parser::sExpression() {
     std::stack<AST*> operandStack;
     Operator* bottom = new Operator();
     operatorStack.push(bottom);
+    #ifdef PRINTEXPRESSION
+        std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
+    #endif
     while (1) {
+        #ifdef PRINTEXPRESSION
+            std::cout << getCurrentLexeme() << " ";
+        #endif
         if(onOperand()) {
             if (isCurrentToken(LEFT_PAREN)){
                 scan();
@@ -161,13 +168,16 @@ AST* Parser::sExpression() {
             }
             operatorStack.push(opTree);
             scan();
-        } else if (isCurrentToken(RIGHT_PAREN)){
+        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
             break;
         } else { 
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
         }
-    } 
+    }
+    #ifdef PRINTEXPRESSION
+        std::cout << "\n";
+    #endif 
     if (operandStack.size() < 1) {
         std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
         exit(1);
@@ -217,6 +227,15 @@ AST* Parser::sBlock() {
     }
     expect(RIGHT_BRACE);
     return bTree;
+}
+
+AssignTree* Parser::sAssignment(std::string identifier) {
+    AssignTree* t = new AssignTree(identifier);
+    expect(EQUAL);
+    AST* value = sExpression();
+    t->addChild(value);
+    expect(SEMICOLON);
+    return t;
 }
 
 TokenType Parser::getCurrentToken() {

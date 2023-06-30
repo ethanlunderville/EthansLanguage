@@ -73,9 +73,10 @@ class AssignTree : public AST {
         AssignTree();
         AssignTree(std::string name);
         AssignTree(std::string name, std::string val);
+        std::string getIdentifier();
         void accept(ASTVisitor* v);
     private:
-        std::string name;
+        std::string identifier;
         std::string val;
 };
 
@@ -100,10 +101,11 @@ class FunctionDeclarationTree : public AST {
 
 class DeclarationTree : public AST {
     public:
-        DeclarationTree(std::string name, std::string val);
+        DeclarationTree(std::string name);
         void accept(ASTVisitor* v);
+        std::string getIdentifier();
     private:
-        std::string name;
+        std::string identifier;
 };
 
 class NumberTree : public AST {

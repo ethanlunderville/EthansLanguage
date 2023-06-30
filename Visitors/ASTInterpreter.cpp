@@ -2,11 +2,7 @@
 #include "Visitors/ASTVisitor.h"
 //#include "SymbolTable/ContextManager.h"
 
-
-ASTInterpreter::ASTInterpreter() {
-    //using 
-    //this->contextManager = new ContextManager();
-}
+ASTInterpreter::ASTInterpreter() {}
 
 void ASTInterpreter::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {

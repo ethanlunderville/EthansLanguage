@@ -38,11 +38,11 @@ int main () {
     abstractSyntaxTree->accept(pVisit);
     //ContextManager* cm = new ContextManager();
     //ASTInterpreter* interpreter = new ASTInterpreter();
-    std::cout << "***INTERPRETING AST***" << std::endl;
+    //std::cout << "***INTERPRETING AST***" << std::endl;
 
-    std::cout << "***DEALLOCATING AST***" << std::endl;
+    //std::cout << "***DEALLOCATING AST***" << std::endl;
     ASTDeallocationVisitor* dVisit = new ASTDeallocationVisitor();
-    abstractSyntaxTree->accept(dVisit);
+    //abstractSyntaxTree->accept(dVisit);
     //delete cm;
     //cm = nullptr;
     delete pVisit;

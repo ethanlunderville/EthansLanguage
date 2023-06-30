@@ -2,6 +2,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
+//#define PRINTNODES (0x0)
 
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;
@@ -33,7 +34,11 @@ void ASTPrintVisitor::printIndent() {
 void ASTPrintVisitor::printer(std::string type, AST* node, std::string symbol) {
     std::cout << this->lineNum << ".";
     printIndent();
-    std::cout << type <<": " << symbol << ": " << node << std::endl;
+    std::cout << type << ": " << symbol; 
+    #ifdef PRINTNODES
+        std::cout << ": " << node;
+    #endif
+    std::cout << std::endl;
     this->indent+=2;
     this->lineNum++;
     this->visitChildren(node);
@@ -43,14 +48,18 @@ void ASTPrintVisitor::printer(std::string type, AST* node, std::string symbol) {
 void ASTPrintVisitor::printer(std::string type, AST* node) {
     std::cout << this->lineNum << ".";
     printIndent();
-    std::cout << type << ": " << node << std::endl;
+    std::cout << type;
+    #ifdef PRINTNODES 
+        std::cout << ": " << node; 
+    #endif
+    std::cout << std::endl;
     this->indent+=2;
     this->lineNum++;
     this->visitChildren(node);
     this->indent-=2;
 }
 
-void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree);}
+void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree, ((AssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitIfTree (AST* astree) {printer("IfTree", astree);}
 void ASTPrintVisitor::visitExpressionTree (AST* astree) {printer("ExpressionTree", astree);}
 void ASTPrintVisitor::visitDivideTree (AST* astree) {printer("DivideTree", astree, "/");}
@@ -58,7 +67,7 @@ void ASTPrintVisitor::visitMultiplyTree (AST* astree) {printer("MultiplyTree", a
 void ASTPrintVisitor::visitAddTree (AST* astree) {printer("AddTree", astree, "+");}
 void ASTPrintVisitor::visitSubtractTree (AST* astree) {printer("SubtractTree", astree, "-");}
 void ASTPrintVisitor::visitExponentTree (AST* astree) {printer("ExponentTree", astree, "^");}
-void ASTPrintVisitor::visitDeclarationTree (AST* astree) {printer("DeclarationTree", astree);}
+void ASTPrintVisitor::visitDeclarationTree (AST* astree) {printer("DeclarationTree", astree, ((DeclarationTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitBlockTree (AST* astree) {printer("BlockTree", astree);}
 void ASTPrintVisitor::visitReturnTree (AST* astree) {printer("ReturnTree", astree);}
 void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree);}
