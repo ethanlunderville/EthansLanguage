@@ -51,6 +51,7 @@
 #include <iostream>
 
 class AST;
+class ContextManager;
 /*Abstract*/ class ASTVisitor {
     public:
         virtual void visitChildren(AST* astree)=0;
@@ -163,7 +164,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
 class ASTInterpreter: public ASTVisitor {
     public:
         ASTInterpreter();
-        //ASTInterpreter(ContextManager* cm);
+        ASTInterpreter(ContextManager* cm);
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
@@ -192,8 +193,8 @@ class ASTInterpreter: public ASTVisitor {
         void visitNotEqualTree (AST* astree) override;
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
-    //private:
-        //ContextManager* contextManager;
+    private:
+        ContextManager* contextManager;
 };
 
 #endif

@@ -15,12 +15,13 @@ AST* Parser::sProgram() {
         if (onStatement()) {
             pTree->addChild(sStatement());
         } else if (onDeclaration()) {
+            std::string type  = getCurrentLexeme();
             scan();
             std::string name = getCurrentLexeme();
             scan();
             if (isCurrentToken(EQUAL) || isCurrentToken(SEMICOLON)) {
                 //Option 1 since this is a regular Dec.
-                pTree->addChild(sDeclaration(name, 1));
+                pTree->addChild(sDeclaration(type,name,1));
             } else if (isCurrentToken(LEFT_PAREN)) {
                 pTree->addChild(sFunctionDeclaration(name));
             }
@@ -75,13 +76,13 @@ AST* Parser::sStatement() {
 * IF THE OPTION IS 0 THE DECLARATIONS ARE FUNCTION PARAMETERS
 * IN ALL OTHER CASES IT IS A REGULAR DECLARATION
 */
-AST* Parser::sDeclaration(std::string identifier, short option) {
+AST* Parser::sDeclaration( std::string type , std::string identifier, short option) {
     std::string value;
     DeclarationTree* t;
     AssignTree* at = nullptr;
     if (option) {
         if (isCurrentToken(SEMICOLON)) {
-            t = new DeclarationTree(identifier);
+            t = new DeclarationTree(type, identifier, getCurrentLine());
             return t;
         }
         at = sAssignment(identifier);
@@ -91,7 +92,7 @@ AST* Parser::sDeclaration(std::string identifier, short option) {
             expect(COMMA);
         }
     }
-    t = new DeclarationTree(identifier);
+    t = new DeclarationTree(type, identifier, getCurrentLine());
     if (at != nullptr) {
         t->addChild(at);
     }
@@ -102,9 +103,10 @@ AST* Parser::sFunctionDeclaration(std::string functionName) {
     AST* t = new FunctionDeclarationTree(functionName);
     expect(LEFT_PAREN);
     while (onDeclaration()) {
+        std::string type = getCurrentLexeme();
         scan();
         std::string identifier = getCurrentLexeme();
-        t->addChild(sDeclaration(identifier, 0));
+        t->addChild(sDeclaration(type, identifier , 0));
     }
     expect(RIGHT_PAREN);
     if (isCurrentToken(LEFT_BRACE)) {
@@ -211,12 +213,13 @@ AST* Parser::sBlock() {
         if (onStatement()) {
             bTree->addChild(sStatement());
         } else if (onDeclaration()) {
+            std::string type = getCurrentLexeme();
             scan();
             std::string name = getCurrentLexeme();
             scan();
             if (isCurrentToken(EQUAL)) {
                 //Option 1 since this is a regular Dec.
-                bTree->addChild(sDeclaration(name, 1));
+                bTree->addChild(sDeclaration(type, name, 1));
             }
             if (isCurrentToken(LEFT_PAREN)) {
                 bTree->addChild(sFunctionDeclaration(name));
@@ -230,7 +233,7 @@ AST* Parser::sBlock() {
 }
 
 AssignTree* Parser::sAssignment(std::string identifier) {
-    AssignTree* t = new AssignTree(identifier);
+    AssignTree* t = new AssignTree(identifier, getCurrentLine());
     expect(EQUAL);
     AST* value = sExpression();
     t->addChild(value);

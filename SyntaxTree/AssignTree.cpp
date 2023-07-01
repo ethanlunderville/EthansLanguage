@@ -1,11 +1,9 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
-AssignTree::AssignTree(std::string identifier, std::string value) {
+AssignTree::AssignTree(std::string identifier, int line) {
     this->identifier = identifier;
-}
-AssignTree::AssignTree(std::string identifier) {
-    this->identifier = identifier;
+    this->line = line;
 }
 std::string AssignTree::getIdentifier() {
     return this->identifier;

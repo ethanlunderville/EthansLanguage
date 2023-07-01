@@ -15,7 +15,7 @@ public:
     void popContext();
     void pushScope();
     void popScope();
-    void declareSymbol(int line, std::string identifier, std::any value, std::string type);
+    void declareSymbol(int line, std::string identifier, std::string type);
     void reassignSymbol(std::string identifier, std::any value, int line);
     void printSymbolTable();
     std::any getValueStoredInSymbol(std::string identifier);

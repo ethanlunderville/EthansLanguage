@@ -39,18 +39,10 @@ void ContextManager::popScope(){
     std::cerr << "Unable to pop empty scope stack" << std::endl; 
     exit(1);
 }
-void ContextManager::declareSymbol(int line, std::string identifier , std::any value, std::string type) {  
+void ContextManager::declareSymbol(int line, std::string identifier, std::string type) {  
     if (this->contextStack.size() != 0) {
         if (this->contextStack.top()->contains(identifier) == -1 && this->globalContext->contains(identifier) == -1) {
-            if (this->contextStack.top()->variableTypeCheck(type, value)) {
-                this->contextStack.top()->declareSymbol(line, identifier, value, type);
-            } else {
-                std::cerr << 
-                "Incorrect type assignment for variable: " 
-                << identifier << " on line: " << line
-                << std::endl;
-                exit(1);
-            }
+            this->contextStack.top()->declareSymbol(line, identifier, type);
         } else {
             std::cerr << 
             "Incorrect declaration of already declared variable: " 
@@ -60,15 +52,7 @@ void ContextManager::declareSymbol(int line, std::string identifier , std::any v
         } 
     } else { // IF WE ARE IN GLOBAL SCOPE
         if (this->globalContext->contains(identifier) == -1) {
-            if (this->globalContext->variableTypeCheck(type, value)) {
-                this->globalContext->declareSymbol(line, identifier, value, type);
-            } else {
-                std::cerr << 
-                "Incorrect type assignment for variable: " 
-                << identifier << " on line: " << line
-                << std::endl;
-                exit(1);
-            }
+            this->globalContext->declareSymbol(line, identifier, type);
         } else {
             std::cerr << 
             "Incorrect declaration of already declared variable: " 

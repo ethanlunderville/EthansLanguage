@@ -30,7 +30,7 @@ class Parser {
         //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
-        AST* sDeclaration(std::string name, short option);
+        AST* sDeclaration(std::string name, std::string type, short option);
         AST* sFunctionDeclaration(std::string name);
         AST* sExpression();
         AST* sBlock();

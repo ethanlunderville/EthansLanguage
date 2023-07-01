@@ -71,13 +71,12 @@ class FunctionTree : public AST {
 class AssignTree : public AST {
     public:
         AssignTree();
-        AssignTree(std::string name);
-        AssignTree(std::string name, std::string val);
+        AssignTree(std::string identifier, int line);
         std::string getIdentifier();
         void accept(ASTVisitor* v);
     private:
         std::string identifier;
-        std::string val;
+        int line;
 };
 
 class ReturnTree : public AST {
@@ -101,11 +100,15 @@ class FunctionDeclarationTree : public AST {
 
 class DeclarationTree : public AST {
     public:
-        DeclarationTree(std::string name);
+        DeclarationTree(std::string type, std::string name, int line);
         void accept(ASTVisitor* v);
         std::string getIdentifier();
+        std::string getType();
+        int getLine();
     private:
         std::string identifier;
+        std::string type;
+        int line;
 };
 
 class NumberTree : public AST {

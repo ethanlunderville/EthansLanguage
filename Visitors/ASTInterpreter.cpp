@@ -1,8 +1,11 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
-//#include "SymbolTable/ContextManager.h"
+#include "SymbolTable/ContextManager.h"
+#include <cassert>
 
-ASTInterpreter::ASTInterpreter() {}
+ASTInterpreter::ASTInterpreter() {
+    this->contextManager = new ContextManager();
+}
 
 void ASTInterpreter::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {
@@ -11,7 +14,11 @@ void ASTInterpreter::visitChildren(AST* astree){
 }
 
 void ASTInterpreter::visitAssignTree (AST* astree) {
-
+    AssignTree* t = ((AssignTree*)astree);
+    assert(t->getChildren().size() > 0);
+    this->visitChildren(t);
+    this->contextManager->reassignSymbol(t->);
+    //this->contextManager->reassignSymbol();
 }
 void ASTInterpreter::visitIfTree (AST* astree) {
 
@@ -35,7 +42,11 @@ void ASTInterpreter::visitExponentTree (AST* astree) {
 
 }
 void ASTInterpreter::visitDeclarationTree (AST* astree) {
-
+    DeclarationTree* t = ((DeclarationTree*)astree);
+    this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), t->getType());
+    contextManager->printSymbolTable();
+    this->visitChildren(astree);
+    return;
 }
 void ASTInterpreter::visitBlockTree (AST* astree) {
 
@@ -44,7 +55,8 @@ void ASTInterpreter::visitReturnTree (AST* astree) {
 
 }
 void ASTInterpreter::visitProgramTree (AST* astree) {
-
+    this->visitChildren(astree);
+    return;
 }
 void ASTInterpreter::visitFunctionTree (AST* astree) {
 

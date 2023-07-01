@@ -22,7 +22,7 @@
 #include "Keywords.h"
 #include "Lexer.cpp" // NO NEED TO OVERCOMPLICATE
 #include "Parser.cpp"
-//#include "SymbolTable/ContextManager.h"
+#include "SymbolTable/ContextManager.h"
 #include "Visitors/ASTVisitor.h"
 
 int main () {
@@ -36,15 +36,16 @@ int main () {
     std::cout << "***PRINTING AST***" << std::endl;
     AST* abstractSyntaxTree = parser->parse();
     abstractSyntaxTree->accept(pVisit);
-    //ContextManager* cm = new ContextManager();
-    //ASTInterpreter* interpreter = new ASTInterpreter();
-    //std::cout << "***INTERPRETING AST***" << std::endl;
-
-    //std::cout << "***DEALLOCATING AST***" << std::endl;
+    ContextManager* cm = new ContextManager();
+    ASTInterpreter* interpreter = new ASTInterpreter();
+    std::cout << "***INTERPRETING AST***" << std::endl;
+    //LET THE FUN BEGIN
+    abstractSyntaxTree->accept(interpreter);
+    std::cout << "***DEALLOCATING AST***" << std::endl;
     ASTDeallocationVisitor* dVisit = new ASTDeallocationVisitor();
-    //abstractSyntaxTree->accept(dVisit);
-    //delete cm;
-    //cm = nullptr;
+    abstractSyntaxTree->accept(dVisit);
+    delete cm;
+    cm = nullptr;
     delete pVisit;
     pVisit = nullptr;
     delete parser;

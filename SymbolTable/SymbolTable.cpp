@@ -20,9 +20,9 @@ void SymbolTable::popScope(){
     }
 }
 
-void SymbolTable::declareSymbol(int line, std::string identifier , std::any value, std::string type) {
+void SymbolTable::declareSymbol(int line, std::string identifier, std::string type) {
     this->intToStringVector.push_back(identifier);
-    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, value, type};
+    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, type.compare("string") == 0 ? std::string("") : std::any(0), type};
     return;
 }
 
