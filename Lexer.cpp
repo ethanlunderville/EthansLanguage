@@ -147,7 +147,7 @@
 
     void Lexer::number (char *c, std::vector<Token> tokens , int line, bool isNegative) {
         std::string number; 
-        while (isdigit(*c)) {
+        while (isdigit(*c) || *c == '.') {
             number.push_back(*c);
             *c = inStream.get();
         }

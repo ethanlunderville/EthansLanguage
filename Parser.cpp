@@ -192,8 +192,102 @@ AST* Parser::sExpression() {
         int savePrecedence = operatorStack.top()->getPrecendence();
         AST* operatorHold = operatorToASTCaster(operatorStack.top());
         operatorStack.pop();
-
+        
         nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
+        operatorHold->addChild(operand1);
+        operatorHold->addChild(operand2);
+        operandStack.push(operatorHold);
+    }
+    t->addChild(operandStack.top());
+    operatorStack.pop();
+    operatorStack.pop();
+    delete bottom;
+    bottom = nullptr;
+    return t;
+}
+
+AST* Parser::sStringExpression() {
+    ExpressionTree* t = new StringExpressionTree();
+    std::stack<Operator*> operatorStack;
+    std::stack<AST*> operandStack;
+    Operator* bottom = new Operator();
+    operatorStack.push(bottom);
+    #ifdef PRINTEXPRESSION
+        std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
+    #endif
+    while (1) {
+        #ifdef PRINTEXPRESSION
+            std::cout << getCurrentLexeme() << " ";
+        #endif
+        if(onOperand()) {
+            if (isCurrentToken(LEFT_PAREN)){
+                scan();
+                operandStack.push(sExpression());
+                expect(RIGHT_PAREN);
+            } 
+            if (isCurrentToken(STRING)){
+                StringTree* sTree = new StringTree(getCurrentLexeme());
+                operandStack.push(sTree);
+                scan();
+            } else if (isCurrentToken(NUMBER)) {
+                NumberTree* nTree = new NumberTree(getCurrentLexeme());
+                operandStack.push(nTree);
+                scan();
+            } else if (isCurrentToken(RIGHT_PAREN)) {
+                break;
+            }
+        } else { 
+            std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+            exit(1);
+        }
+        if (onOperator()) {
+            Operator* opTree = OperatorFactory(getCurrentToken());
+            if () {
+
+            }
+            if (operatorStack.top()->getPrecendence() > opTree->getPrecendence()) {
+                int target = opTree->getPrecendence();
+                while (operatorStack.top()->getPrecendence() > target) {
+                    AST* operand2 = operandStack.top();
+                    operandStack.pop();
+                    AST* operand1 = operandStack.top();
+                    operandStack.pop();
+                    int savePrecedence = operatorStack.top()->getPrecendence();
+                    AST* operatorHold = operatorToASTCaster(operatorStack.top());
+                    operatorStack.pop();
+                    /* EDGE CASE */
+                    //nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
+                    operatorHold->addChild(operand1);
+                    operatorHold->addChild(operand2); 
+                    operandStack.push(operatorHold);
+                }
+            }
+            operatorStack.push(opTree);
+            scan();
+        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
+            break;
+        } else { 
+            std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+            exit(1);
+        }
+    }
+    #ifdef PRINTEXPRESSION
+        std::cout << "\n";
+    #endif 
+    if (operandStack.size() < 1) {
+        std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+        exit(1);
+    }
+    while (operandStack.size() != 1) {
+        AST* operand2 = operandStack.top(); 
+        operandStack.pop();
+        AST* operand1 = operandStack.top();
+        operandStack.pop();
+        int savePrecedence = operatorStack.top()->getPrecendence();
+        AST* operatorHold = operatorToASTCaster(operatorStack.top());
+        operatorStack.pop();
+        
+        //nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
         operatorHold->addChild(operand1);
         operatorHold->addChild(operand2);
         operandStack.push(operatorHold);

@@ -62,6 +62,7 @@ void ASTPrintVisitor::printer(std::string type, AST* node) {
 void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree, ((AssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitIfTree (AST* astree) {printer("IfTree", astree);}
 void ASTPrintVisitor::visitExpressionTree (AST* astree) {printer("ExpressionTree", astree);}
+void ASTPrintVisitor::visitStringExpressionTree (AST* astree) {printer("StringExpressionTree", astree);}
 void ASTPrintVisitor::visitDivideTree (AST* astree) {printer("DivideTree", astree, "/");}
 void ASTPrintVisitor::visitMultiplyTree (AST* astree) {printer("MultiplyTree", astree,"x");}
 void ASTPrintVisitor::visitAddTree (AST* astree) {printer("AddTree", astree, "+");}
@@ -75,8 +76,8 @@ void ASTPrintVisitor::visitFunctionTree (AST* astree) {printer("FunctionTree", a
 void ASTPrintVisitor::visitFunctionDeclarationTree (AST* astree) {printer("FunctionDeclTree", astree);}
 void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree);}
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
-void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string((int)((NumberTree*)astree)->getNumber()));}
-void ASTPrintVisitor::visitStringTree (AST* astree) {printer("StringTree", astree, ((StringTree*)astree)->getString());}
+void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string(std::any_cast<double>(((NumberTree*)astree)->getVal())));}
+void ASTPrintVisitor::visitStringTree (AST* astree) {printer("StringTree", astree, std::any_cast<std::string>(((StringTree*)astree)->getVal()));}
 void ASTPrintVisitor::visitGreaterTree (AST* astree) {printer("GreaterTree", astree, ">");}
 void ASTPrintVisitor::visitGreaterEqualTree (AST* astree) {printer("GreaterEqualTree", astree, ">=");}
 void ASTPrintVisitor::visitLessTree (AST* astree) {printer("LessTree", astree, "<");}

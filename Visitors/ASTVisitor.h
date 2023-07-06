@@ -58,6 +58,7 @@ class ContextManager;
         virtual void visitAssignTree(AST* astree)=0;
         virtual void visitIfTree(AST* astree)=0;
         virtual void visitExpressionTree(AST* astree)=0;
+        virtual void visitStringExpressionTree (AST* astree)=0;
         virtual void visitDivideTree(AST* astree)=0;
         virtual void visitMultiplyTree(AST* astree)=0;
         virtual void visitAddTree(AST* astree)=0;
@@ -91,6 +92,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
         void visitAddTree (AST* astree) override;
@@ -131,6 +133,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
         void visitAddTree (AST* astree) override;
@@ -170,6 +173,7 @@ class ASTInterpreter: public ASTVisitor {
         void visitAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
         void visitAddTree (AST* astree) override;

@@ -22,7 +22,7 @@ void SymbolTable::popScope(){
 
 void SymbolTable::declareSymbol(int line, std::string identifier, std::string type) {
     this->intToStringVector.push_back(identifier);
-    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, type.compare("string") == 0 ? std::string("") : std::any(0), type};
+    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, type.compare("string") == 0 ? std::string("") : std::any(0.00), type};
     return;
 }
 
@@ -55,7 +55,8 @@ bool SymbolTable::variableTypeCheck(std::string type , std::any value) {
     if (
           value.type() == typeid(std::string) && type.compare("string") == 0
         ||
-          value.type() == typeid(int) && type.compare("int") == 0
+          // IMPORTANT::EVERY NUMBER IS A DOUBLE IN THIS LANGUAGE
+          value.type() == typeid(double) && type.compare("int") == 0
     ) {
         return true;
     }
@@ -67,7 +68,7 @@ void SymbolTable::printSymbolTable() {
     for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
         if (stringToSymbolMap[intToStringVector[i]].type.compare("int") == 0) {
             std::cout << "Identifier: " << intToStringVector[i] 
-            << "\tValue: " << std::any_cast<int>(stringToSymbolMap[intToStringVector[i]].value) 
+            << "\tValue: " << std::any_cast<double>(stringToSymbolMap[intToStringVector[i]].value) 
             << std::endl;
         } else if (stringToSymbolMap[intToStringVector[i]].type.compare("string") == 0) {
             std::cout << "Identifier: " << intToStringVector[i] 

@@ -13,18 +13,25 @@ void ASTInterpreter::visitChildren(AST* astree){
     }
 }
 
-void ASTInterpreter::visitAssignTree (AST* astree) {
+void ASTInterpreter::visitAssignTree(AST* astree) {
     AssignTree* t = ((AssignTree*)astree);
     assert(t->getChildren().size() > 0);
     this->visitChildren(t);
-    this->contextManager->reassignSymbol(t->);
-    //this->contextManager->reassignSymbol();
+    this->contextManager->reassignSymbol(t->getIdentifier(), ((ExpressionTree*)(t->getChildren()[0]))->getVal(), t->getLine());
 }
 void ASTInterpreter::visitIfTree (AST* astree) {
+    
 
 }
 void ASTInterpreter::visitExpressionTree (AST* astree) {
-
+    ExpressionTree* t = ((ExpressionTree*)astree);
+    this->visitChildren(t);
+    t->setVal( std::any_cast<double>((dynamic_cast<Evaluatable*>(t->getChildren()[0])->getVal())) );
+}
+void ASTInterpreter::visitStringExpressionTree (AST* astree) {
+    ExpressionTree* t = ((ExpressionTree*)astree);
+    this->visitChildren(t);
+    t->setVal( std::any_cast<std::string>((dynamic_cast<Evaluatable*>(t->getChildren()[0])->getVal())) );
 }
 void ASTInterpreter::visitDivideTree (AST* astree) {
 
@@ -33,7 +40,9 @@ void ASTInterpreter::visitMultiplyTree (AST* astree) {
 
 }
 void ASTInterpreter::visitAddTree (AST* astree) {
-
+    AddTree* t = ((AddTree*)astree);
+    //t->visitChildren(this);
+    //t->add(t->getChildren()[0], t->getChildren()[1]);
 }
 void ASTInterpreter::visitSubtractTree (AST* astree) {
 
@@ -45,7 +54,10 @@ void ASTInterpreter::visitDeclarationTree (AST* astree) {
     DeclarationTree* t = ((DeclarationTree*)astree);
     this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), t->getType());
     contextManager->printSymbolTable();
-    this->visitChildren(astree);
+    if (t->getChildren().size() != 0) {
+        this->visitChildren(astree);
+    }
+    contextManager->printSymbolTable();
     return;
 }
 void ASTInterpreter::visitBlockTree (AST* astree) {
@@ -70,7 +82,9 @@ void ASTInterpreter::visitWhileTree (AST* astree) {
 void ASTInterpreter::visitElseTree (AST* astree) {
 
 }
-void ASTInterpreter::visitNumberTree (AST* astree) {}
+void ASTInterpreter::visitNumberTree (AST* astree) {
+
+}
 void ASTInterpreter::visitStringTree (AST* astree) {}
 void ASTInterpreter::visitGreaterTree (AST* astree) {}
 void ASTInterpreter::visitGreaterEqualTree (AST* astree) {}

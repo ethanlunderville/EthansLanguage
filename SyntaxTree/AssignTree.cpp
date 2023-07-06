@@ -5,6 +5,11 @@ AssignTree::AssignTree(std::string identifier, int line) {
     this->identifier = identifier;
     this->line = line;
 }
+
+int AssignTree::getLine() {
+    return this->line;
+}
+
 std::string AssignTree::getIdentifier() {
     return this->identifier;
 }
