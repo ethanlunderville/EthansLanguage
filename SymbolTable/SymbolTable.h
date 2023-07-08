@@ -1,6 +1,7 @@
 #ifndef TABLE_H
 #define TABLE_H
 
+#include "SymbolTable/Types/Types.h"
 #include <iostream>
 #include <string>
 #include <any>
@@ -11,7 +12,7 @@
 typedef struct SymbolInfo {
     int line;
     std::any value;
-    std::string type;
+    Type* type;
 } SymbolInfo;
 
 /*
@@ -20,17 +21,16 @@ typedef struct SymbolInfo {
 class SymbolTable {
 public:
     SymbolTable(SymbolTable* tableReference);
-
     void pushScope();
     void popScope();
-    void declareSymbol(int line, std::string identifier, std::string type);
+    void declareSymbol(int line, std::string identifier, Type* typeHandler);
     void reassignSymbol(std::string identifier, std::any value);
-    std::string getTypeOfSymbol(std::string identifier);
+    Type* getTypeOfSymbol(std::string identifier);
     std::any getValueStoredInSymbol(std::string identifier);
     int getCurrentSize();
     int contains(std::string identifier);
     void printSymbolTable();
-    bool variableTypeCheck(std::string type , std::any value);
+    bool variableTypeCheck(Type* typeHandler , std::any value);
 
 private:
     SymbolTable* globalTable;

@@ -1,0 +1,2 @@
+Incorrect declaration of already declared variable: k on line: 5
+make: *** [Makefile:37: run] Error 1

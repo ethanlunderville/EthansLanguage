@@ -2,6 +2,7 @@
 
 ContextManager::ContextManager() {
     this->globalContext = new SymbolTable(nullptr);
+    this->typeManager = new TypeManager();
 }
 ContextManager::~ContextManager() {
     while (this->contextStack.size() != 0) {
@@ -10,6 +11,8 @@ ContextManager::~ContextManager() {
     }
     delete this->globalContext;
     this->globalContext = nullptr; 
+    delete this->typeManager;
+    this->typeManager = nullptr;
 }
 void ContextManager::pushContext() {
     this->contextStack.push(new SymbolTable(this->globalContext));
@@ -39,10 +42,11 @@ void ContextManager::popScope(){
     std::cerr << "Unable to pop empty scope stack" << std::endl; 
     exit(1);
 }
-void ContextManager::declareSymbol(int line, std::string identifier, std::string type) {  
+void ContextManager::declareSymbol(int line, std::string identifier, std::string type) {
+    Type* currentType = this->typeManager->getTypeHandler(type);  
     if (this->contextStack.size() != 0) {
         if (this->contextStack.top()->contains(identifier) == -1 && this->globalContext->contains(identifier) == -1) {
-            this->contextStack.top()->declareSymbol(line, identifier, type);
+            this->contextStack.top()->declareSymbol(line, identifier, currentType);
         } else {
             std::cerr << 
             "Incorrect declaration of already declared variable: " 
@@ -52,7 +56,7 @@ void ContextManager::declareSymbol(int line, std::string identifier, std::string
         } 
     } else { // IF WE ARE IN GLOBAL SCOPE
         if (this->globalContext->contains(identifier) == -1) {
-            this->globalContext->declareSymbol(line, identifier, type);
+            this->globalContext->declareSymbol(line, identifier, currentType);
         } else {
             std::cerr << 
             "Incorrect declaration of already declared variable: " 
@@ -101,7 +105,7 @@ std::any ContextManager::getValueStoredInSymbol(std::string identifier) {
         exit(1);
     }
 }
-std::string ContextManager::getTypeOfSymbol(std::string identifier) {
+Type* ContextManager::getTypeOfSymbol(std::string identifier) {
     if (this->contextStack.size() != 0 && this->contextStack.top()->contains(identifier) == -1) {
         return this->contextStack.top()->getTypeOfSymbol(identifier);
     } else if (this->globalContext->contains(identifier) == -1) {

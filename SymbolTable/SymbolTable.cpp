@@ -20,9 +20,9 @@ void SymbolTable::popScope(){
     }
 }
 
-void SymbolTable::declareSymbol(int line, std::string identifier, std::string type) {
+void SymbolTable::declareSymbol(int line, std::string identifier, Type* typeHandler) {
     this->intToStringVector.push_back(identifier);
-    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, type.compare("string") == 0 ? std::string("") : std::any(0.00), type};
+    this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, typeHandler->getNullValue(), typeHandler};
     return;
 }
 
@@ -30,7 +30,7 @@ void SymbolTable::reassignSymbol(std::string identifier , std::any value) {
     this->stringToSymbolMap[identifier].value = value;
 }
 
-std::string SymbolTable::getTypeOfSymbol(std::string identifier) {
+Type* SymbolTable::getTypeOfSymbol(std::string identifier) {
     return this->stringToSymbolMap[identifier].type;
 }
 
@@ -51,13 +51,8 @@ int SymbolTable::contains(std::string identifier) {
     return -1;
 }
 
-bool SymbolTable::variableTypeCheck(std::string type , std::any value) {
-    if (
-          value.type() == typeid(std::string) && type.compare("string") == 0
-        ||
-          // IMPORTANT::EVERY NUMBER IS A DOUBLE IN THIS LANGUAGE
-          value.type() == typeid(double) && type.compare("int") == 0
-    ) {
+bool SymbolTable::variableTypeCheck(Type* typeHandler , std::any value) {
+    if (typeHandler->checkType(value)) {
         return true;
     }
     return false;
@@ -66,15 +61,8 @@ bool SymbolTable::variableTypeCheck(std::string type , std::any value) {
 void SymbolTable::printSymbolTable() {
     std::cout << "---- ***Table*** ---" << std::endl;
     for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
-        if (stringToSymbolMap[intToStringVector[i]].type.compare("int") == 0) {
-            std::cout << "Identifier: " << intToStringVector[i] 
-            << "\tValue: " << std::any_cast<double>(stringToSymbolMap[intToStringVector[i]].value) 
-            << std::endl;
-        } else if (stringToSymbolMap[intToStringVector[i]].type.compare("string") == 0) {
-            std::cout << "Identifier: " << intToStringVector[i] 
-            << "\tValue: " << std::any_cast<std::string>(stringToSymbolMap[intToStringVector[i]].value) 
-            << std::endl;
-        }
+        stringToSymbolMap[intToStringVector[i]].type
+        ->printSymbol(intToStringVector[i], stringToSymbolMap[intToStringVector[i]].value);
     }
 }
 

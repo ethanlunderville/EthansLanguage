@@ -6,6 +6,10 @@
 ASTInterpreter::ASTInterpreter() {
     this->contextManager = new ContextManager();
 }
+ASTInterpreter::~ASTInterpreter() {
+    delete this->contextManager;
+    this->contextManager = nullptr;
+}
 
 void ASTInterpreter::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {

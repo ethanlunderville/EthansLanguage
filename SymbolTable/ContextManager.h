@@ -1,6 +1,5 @@
 #ifndef CONTEXTMANAGER_H
 #define CONTEXTMANAGER_H
-
 #include "SymbolTable.h"
 #include <iostream>
 #include <stack>
@@ -19,10 +18,11 @@ public:
     void reassignSymbol(std::string identifier, std::any value, int line);
     void printSymbolTable();
     std::any getValueStoredInSymbol(std::string identifier);
-    std::string getTypeOfSymbol(std::string identifier);
+    Type* getTypeOfSymbol(std::string identifier);
 private:
     SymbolTable* globalContext;
     std::stack<SymbolTable*> contextStack;
+    TypeManager* typeManager;
 };
 
 #endif
