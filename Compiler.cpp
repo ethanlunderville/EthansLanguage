@@ -26,6 +26,7 @@
 #include "Visitors/ASTVisitor.h"
 
 int main () {
+    ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file);
     Parser* parser = new Parser(lexer);
@@ -33,9 +34,10 @@ int main () {
     lexer->printLexemes(lexer->scanTokens());
     AST* abstractSyntaxTree = parser->parse();
     ASTChecker* checker = new ASTChecker();
+    std::cout << "***PRINTING AST***" << std::endl;
+    abstractSyntaxTree->accept(pVisit);
     abstractSyntaxTree->accept(checker);
     std::cout << "***PRINTING AST***" << std::endl;
-    ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     abstractSyntaxTree->accept(pVisit);
     std::cout << "***INTERPRETING AST***" << std::endl;
     ContextManager* cm = new ContextManager();

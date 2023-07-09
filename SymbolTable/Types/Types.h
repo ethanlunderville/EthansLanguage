@@ -10,7 +10,7 @@ class Type {
         virtual std::any getNullValue() = 0;
         virtual bool checkType(std::any value) = 0;
         virtual void printSymbol(std::string identifier, std::any symbol) = 0;
-        virtual void handleSymbol(AST* node) = 0;
+        virtual bool handleSymbol(AST* node, int line) = 0;
 };
 
 class TypeManager {
@@ -28,7 +28,7 @@ class Number : public Type {
         std::any getNullValue() override;
         bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        void handleSymbol(AST* node) override;
+        bool handleSymbol(AST* node, int line) override;
 };
 class String : public Type {
     public:
@@ -36,6 +36,6 @@ class String : public Type {
         std::any getNullValue() override;
         bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        void handleSymbol(AST* node) override;
+        bool handleSymbol(AST* node, int line) override;
 };
 

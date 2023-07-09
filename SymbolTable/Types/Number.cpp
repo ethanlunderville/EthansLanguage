@@ -11,11 +11,11 @@ bool Number::checkType(std::any value) {
 }
 
 void Number::printSymbol(std::string identifier, std::any symbol) {
-    std::cout << "Identifier: " << identifier 
+    std::cout << "Identifier: " << identifier
     << "\tValue: " << std::any_cast<double>(symbol) 
     << std::endl;
 }
 
-void Number::handleSymbol(AST* node) {
-
+bool Number::handleSymbol(AST* node, int line) {
+    return true;
 }

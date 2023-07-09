@@ -29,6 +29,9 @@ std::string getTypeOfSymbol(std::string identifier);
 void ASTChecker::visitAssignTree(AST* astree) {
     AssignTree* t = ((AssignTree*)astree);
     assert(t->getChildren().size() > 0);
+    if (!(contextManager->getTypeOfSymbol(t->getIdentifier()))->handleSymbol(t->getChildren()[0], t->getLine())) {
+        exit(1);    
+    }
 }
 void ASTChecker::visitIfTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitExpressionTree (AST* astree) {

@@ -106,12 +106,12 @@ std::any ContextManager::getValueStoredInSymbol(std::string identifier) {
     }
 }
 Type* ContextManager::getTypeOfSymbol(std::string identifier) {
-    if (this->contextStack.size() != 0 && this->contextStack.top()->contains(identifier) == -1) {
+    if (this->contextStack.size() != 0 && this->contextStack.top()->contains(identifier) != -1) {
         return this->contextStack.top()->getTypeOfSymbol(identifier);
-    } else if (this->globalContext->contains(identifier) == -1) {
+    } else if (this->globalContext->contains(identifier) != -1) {
         return this->globalContext->getTypeOfSymbol(identifier);
     } 
-    std::cerr << "Unrecognized identifier: " << identifier << std::endl;
+    std::cerr << "Unrecognized identifier: " << identifier <<std::endl;
     exit(1);
 }
 void ContextManager::printSymbolTable() {
