@@ -1,5 +1,4 @@
-#ifndef TABLE_H
-#define TABLE_H
+#pragma once
 
 #include "SymbolTable/Types/Types.h"
 #include <iostream>
@@ -38,5 +37,3 @@ private:
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;
 };
-
-#endif

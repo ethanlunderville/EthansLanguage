@@ -1,8 +1,7 @@
 #include "Parser.h"
 
 Parser::Parser(Lexer* lexer) {
-    this->lexer = lexer;
-    this->tokens = this->lexer->scanTokens();
+    this->tokens = lexer->scanTokens();
 }
 //WRAPPER FOR ABSTRACTION
 AST* Parser::parse() {
@@ -345,7 +344,7 @@ bool Parser::onStatement() {
     return false;
 }
 bool Parser::onDeclaration() {
-    if (isCurrentToken(INT) || isCurrentToken(BOOL) || isCurrentToken(STRINGTYPE)) {
+    if (isCurrentToken(INT) || isCurrentToken(STRINGTYPE)) {
         return true;
     }
     return false;
@@ -368,9 +367,7 @@ bool Parser::onOperand() {
 }
 bool Parser::isData() {
     if (isCurrentToken(IDENTIFIER) 
-    || isCurrentToken(TRUE) 
     || isCurrentToken(NUMBER) 
-    || isCurrentToken(FALSE) 
     || isCurrentToken(STRING)) {
         return true;
     }

@@ -46,8 +46,7 @@
     outweigh the negatives for this project.
     
 */
-#ifndef ASTVISITOR_H
-#define ASTVISITOR_H
+#pragma once
 #include <iostream>
 
 class AST;
@@ -238,5 +237,3 @@ class ASTChecker: public ASTVisitor {
     private:
         ContextManager* contextManager;
 };
-
-#endif

@@ -8,27 +8,21 @@
     to the tokens of the langauge.
     
 */
-#ifndef KEYWORDS_H
-#define KEYWORDS_H
+#pragma once
 #include <iostream>
 #include <map>
 #include <string>
 
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR, KARAT,
-    BANG, BANG_EQUAL,
-    EQUAL, EQUAL_EQUAL,
-    GREATER, GREATER_EQUAL,
-    LESS, LESS_EQUAL, 
-    IDENTIFIER, STRING, NUMBER,
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NONE, OR,
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, 
-    INT,BOOL, STRINGTYPE, RESERVED,
-    EOF_TOKEN
+    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+    KARAT, BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
+    GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
+    NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
+    WHILE, INT, STRINGTYPE,EOF_TOKEN
 };
 
-TokenType Operators[] = {   
+static TokenType Operators[] = {   
     LESS,
     GREATER,
     LESS_EQUAL,
@@ -44,7 +38,7 @@ TokenType Operators[] = {
     SLASH 
 };
 
-TokenType Operands[] = {
+static TokenType Operands[] = {
     STRING,
     NUMBER,
     IDENTIFIER,
@@ -76,43 +70,28 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {STRING, "STRING"},
     {NUMBER, "NUMBER"},
     {AND, "AND"},
-    {CLASS, "CLASS"},
     {ELSE, "ELSE"},
-    {FALSE, "FALSE"},
-    {FUN, "FUN"},
-    {FOR, "FOR"},
     {IF, "IF"},
-    {NONE, "NONE"},
+    {NULLTYPE, "NULLTYPE"},
     {OR, "OR"},
     {PRINT, "PRINT"},
     {RETURN, "RETURN"},
-    {SUPER, "SUPER"},
-    {THIS, "THIS"},
-    {TRUE, "TRUE"},
-    {VAR, "VAR"},
     {WHILE, "WHILE"},
     {EOF_TOKEN, "EOF_TOKEN"},
     {INT, "INT"},
-    {BOOL, "BOOL"},
     {STRING, "STRING"},
     {STRINGTYPE, "STRINGTYPE"},
-    {RESERVED, "RESERVED"},
     {KARAT, "KARAT"}
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {
     {"else", ELSE},
-    {"false", FALSE},
-    {"for", FOR},
     {"if", IF},
-    {"NULL", NONE},
+    {"NULL", NULLTYPE},
     {"return", RETURN},
-    {"true", TRUE},
     {"while", WHILE},
     {"EOF", EOF_TOKEN},
-    //TYPES
     {"int", INT},
-    {"bool", BOOL},
     {"string", STRINGTYPE}
 };
 
@@ -121,5 +100,3 @@ struct Token {
     int line;
     std::string lexeme;
 };
-
-#endif

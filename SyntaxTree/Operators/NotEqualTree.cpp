@@ -2,7 +2,7 @@
 #include "Visitors/ASTVisitor.h"
 
 NotEqualTree::NotEqualTree() : Operator() {
-    precedence = 1;
+    this->setPrecedence(1);
 }
 
 double NotEqualTree::notEqual(double x, double y) {

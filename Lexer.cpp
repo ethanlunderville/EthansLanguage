@@ -116,7 +116,7 @@
     void Lexer::printLexemes(std::vector<Token> tokens) {
         for (int i = 0 ; i < tokens.size() ; i++) {
             if (tokens[i].type == IDENTIFIER || tokens[i].type == NUMBER 
-            || tokens[i].type == STRINGTYPE || tokens[i].type == RESERVED ) {
+            || tokens[i].type == STRINGTYPE) {
                 std::cout << tokenToStringMap[tokens[i].type] << ": " << tokens[i].lexeme << std::endl;
             }
             else {
@@ -166,9 +166,6 @@
         }
         if (ident.compare("int") == 0) {
             addToken(INT, line, ident);
-            return;
-        } else if (ident.compare("bool") == 0) {
-            addToken(BOOL, line, ident);
             return;
         } else if (ident.compare("string") == 0) {
             addToken(STRINGTYPE, line, ident);

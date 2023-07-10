@@ -2,7 +2,7 @@
 #include "Visitors/ASTVisitor.h"
 
 SubtractTree::SubtractTree() : Operator() {
-    precedence = 2;
+    this->setPrecedence(2);
 }
 
 double SubtractTree::subtract(double x, double y) {

@@ -15,14 +15,13 @@
     or print funcions.
     
 */
-#ifndef LEXER_H
-#define LEXER_H
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <regex>
+#include "Keywords.h"
 
 class Lexer {
 public:
@@ -40,5 +39,3 @@ private:
     bool previousTokenTypeWas(TokenType t);
     bool previousTokenWasOperator();
 };
-
-#endif

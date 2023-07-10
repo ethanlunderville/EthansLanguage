@@ -1,2 +1,6 @@
-Incorrect declaration of already declared variable: k on line: 5
-make: *** [Makefile:37: run] Error 1
+/usr/bin/ld: /tmp/cc4J31vi.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: multiple definition of `Operators'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: first defined here
+/usr/bin/ld: /tmp/cc4J31vi.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: multiple definition of `Operands'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: first defined here
+/usr/bin/ld: /tmp/ccPqHLqX.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: multiple definition of `Operators'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: first defined here
+/usr/bin/ld: /tmp/ccPqHLqX.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: multiple definition of `Operands'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: first defined here
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:21: program] Error 1

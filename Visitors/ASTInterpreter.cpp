@@ -1,7 +1,6 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
-#include <cassert>
 
 ASTInterpreter::ASTInterpreter() {
     this->contextManager = new ContextManager();
@@ -19,7 +18,6 @@ void ASTInterpreter::visitChildren(AST* astree){
 
 void ASTInterpreter::visitAssignTree(AST* astree) {
     AssignTree* t = ((AssignTree*)astree);
-    assert(t->getChildren().size() > 0);
     this->visitChildren(t);
     this->contextManager->reassignSymbol(t->getIdentifier(), ((ExpressionTree*)(t->getChildren()[0]))->getVal(), t->getLine());
 }

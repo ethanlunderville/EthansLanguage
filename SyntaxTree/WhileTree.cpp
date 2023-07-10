@@ -2,4 +2,5 @@
 #include "Visitors/ASTVisitor.h"
 
 WhileTree::WhileTree() {}
+
 void WhileTree::accept(ASTVisitor* v) { v->visitWhileTree(this); }

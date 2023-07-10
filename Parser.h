@@ -14,10 +14,10 @@
     The Parser holds a reference to the Lexer.
     
 */
-#ifndef PARSER_H
-#define PARSER_H
-//#define PRINTEXPRESSION (0x1)
+#pragma once
 #include "SyntaxTree/AST.h"
+#include <stack>
+#include "Lexer.h"
 
 class Parser {
     public:
@@ -25,7 +25,7 @@ class Parser {
         AST* parse(); // ONLY PUBLIC FUNCTION IS PARSE (ENCAPSULATION, ABSTRACTION)
     private:
         int currentTokenIndex;
-        Lexer* lexer; // PARSER HOLDS REFERENCE TO THE LEXER
+        Lexer* lexer;
         std::vector<Token> tokens;
         //PARSER FUNCTIONS
         AST* sProgram();
@@ -55,4 +55,3 @@ class Parser {
         void scan();
         void expect(TokenType tokenType);
 };
-#endif

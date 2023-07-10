@@ -2,7 +2,7 @@
 #include "Visitors/ASTVisitor.h"
 
 MultiplyTree::MultiplyTree() : Operator() {
-    precedence = 3;
+    this->setPrecedence(3);
 }
 
 double MultiplyTree::multiply(double x, double y) {

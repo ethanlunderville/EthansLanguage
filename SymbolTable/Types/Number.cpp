@@ -16,6 +16,6 @@ void Number::printSymbol(std::string identifier, std::any symbol) {
     << std::endl;
 }
 
-bool Number::handleSymbol(AST* node, int line) {
+bool Number::checkIfExpressionOfThisTypeIsValid(AST* node, int line) {
     return true;
 }

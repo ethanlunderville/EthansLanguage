@@ -2,4 +2,5 @@
 #include "Visitors/ASTVisitor.h"
 
 ElseTree::ElseTree() {}
+
 void ElseTree::accept(ASTVisitor* v) { v->visitElseTree(this); }

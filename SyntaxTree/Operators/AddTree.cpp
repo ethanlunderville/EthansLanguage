@@ -2,7 +2,7 @@
 #include "Visitors/ASTVisitor.h"
 
 AddTree::AddTree() : Operator() {
-    this->setPrecendence(2);
+    this->setPrecedence(2);
 }
 
 std::string AddTree::add(double x, std::string y) {

@@ -2,11 +2,13 @@
 #include "Visitors/ASTVisitor.h"
 
 GreaterEqualTree::GreaterEqualTree() : Operator() {
-    precedence = 1;
+    this->setPrecedence(1);
 }
+
 double GreaterEqualTree::greaterEqual(double x, double y) {
     double res = x >= y;
     this->setVal(res);
     return res; 
 }
+
 void GreaterEqualTree::accept(ASTVisitor* v) { v->visitGreaterEqualTree(this); }

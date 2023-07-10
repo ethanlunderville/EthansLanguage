@@ -9,19 +9,21 @@
     [Additional notes, caveats, or important information]
     
 */
+
 #pragma once
 #include <vector>
 #include <string>
 #include <any>
+
 class ASTVisitor;
 
 class AST {
     public:
         AST();
+        virtual ~AST();
         void addChild(AST* tree);
         std::vector<AST*> getChildren();
         virtual void accept(ASTVisitor* v) = 0; 
-        virtual ~AST();
     private:
         std::vector<AST*> children;
 };
@@ -106,8 +108,6 @@ class DeclarationTree : public AST {
 
 //EVALUATABLES
 
-//OPERANDS
-
 class Evaluatable : public AST {
     public:
         Evaluatable();
@@ -142,7 +142,7 @@ class ExpressionTree : public Evaluatable {
         void accept(ASTVisitor* v) override;
 };
 
-class StringExpressionTree : public ExpressionTree {
+class StringExpressionTree : public Evaluatable {
     public:
         StringExpressionTree();
         void accept(ASTVisitor* v) override;
@@ -154,13 +154,11 @@ class Operator : public Evaluatable {
     public:
         Operator();
         virtual ~Operator();
-        void setPrecendence(short precedence);
+        void setPrecedence(short precedence);
         short getPrecendence();
         void accept(ASTVisitor* v) override;
+    private:
         short precedence;
-
-    //private:
-        
 };
 
 class AddTree : public Operator {

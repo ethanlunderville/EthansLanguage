@@ -1,7 +1,6 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
-#include <cassert>
 
 ASTChecker::ASTChecker() {
     this->contextManager = new ContextManager();
@@ -28,8 +27,9 @@ std::string getTypeOfSymbol(std::string identifier);
 */
 void ASTChecker::visitAssignTree(AST* astree) {
     AssignTree* t = ((AssignTree*)astree);
-    assert(t->getChildren().size() > 0);
-    if (!(contextManager->getTypeOfSymbol(t->getIdentifier()))->handleSymbol(t->getChildren()[0], t->getLine())) {
+    if (!(contextManager->getTypeOfSymbol(t->getIdentifier()))
+          ->checkIfExpressionOfThisTypeIsValid(t->getChildren()[0], t->getLine())
+        ) {
         exit(1);    
     }
 }

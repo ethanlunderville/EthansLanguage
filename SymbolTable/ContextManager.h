@@ -1,5 +1,4 @@
-#ifndef CONTEXTMANAGER_H
-#define CONTEXTMANAGER_H
+#pragma once
 #include "SymbolTable.h"
 #include <iostream>
 #include <stack>
@@ -24,5 +23,3 @@ private:
     std::stack<SymbolTable*> contextStack;
     TypeManager* typeManager;
 };
-
-#endif

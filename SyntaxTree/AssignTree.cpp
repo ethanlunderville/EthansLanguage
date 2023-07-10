@@ -13,4 +13,5 @@ int AssignTree::getLine() {
 std::string AssignTree::getIdentifier() {
     return this->identifier;
 }
+
 void AssignTree::accept(ASTVisitor* v) { v->visitAssignTree(this); }

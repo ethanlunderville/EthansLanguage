@@ -18,14 +18,16 @@
 
     
 */
+//            declString -> tokenType
+// string ->  tokenType -> ASTNode -> TypeHandler
 
-#include "Keywords.h"
-#include "Lexer.cpp" // NO NEED TO OVERCOMPLICATE
-#include "Parser.cpp"
+#include "Lexer.h" // NO NEED TO OVERCOMPLICATE
+#include "Parser.h"
 #include "SymbolTable/ContextManager.h"
 #include "Visitors/ASTVisitor.h"
 
 int main () {
+
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file);
