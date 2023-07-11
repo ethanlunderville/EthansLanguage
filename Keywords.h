@@ -22,7 +22,7 @@ enum TokenType {
     WHILE, INT, STRINGTYPE,EOF_TOKEN
 };
 
-static TokenType Operators[] = {   
+static TokenType OperatorArray[] = {   
     LESS,
     GREATER,
     LESS_EQUAL,
@@ -38,12 +38,12 @@ static TokenType Operators[] = {
     SLASH 
 };
 
-static TokenType Operands[] = {
-    STRING,
-    NUMBER,
-    IDENTIFIER,
-    LEFT_PAREN,
-    RIGHT_PAREN
+
+static TokenType Statement[] = {   
+    IF,
+    WHILE,
+    RETURN,
+    IDENTIFIER
 };
 
 static std::map<TokenType, std::string> tokenToStringMap = {

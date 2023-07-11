@@ -16,17 +16,22 @@
 */
 #pragma once
 #include "SyntaxTree/AST.h"
+#include "TypeManager.h"
 #include <stack>
 #include "Lexer.h"
+#include <typeinfo>
+#include <map>
+#include <functional>
 
 class Parser {
     public:
-        Parser(Lexer* lexer);
+        Parser(Lexer* lexer, TypeManager* typeManager);
         AST* parse(); // ONLY PUBLIC FUNCTION IS PARSE (ENCAPSULATION, ABSTRACTION)
     private:
         int currentTokenIndex;
         Lexer* lexer;
         std::vector<Token> tokens;
+        TypeManager* typeManager;
         //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
@@ -39,19 +44,31 @@ class Parser {
         TokenType getCurrentToken();
         std::string getCurrentLexeme();
         int getCurrentLine();
-        //RETURNS POINTER TO AST OR OPERATOR
-        //NOTE: OPERATOR IS A SUBCLASS OF AST
-        Operator* OperatorFactory(TokenType type);
-        AST* operatorToASTCaster(Operator* op);
         //RETURNS BOOL
         bool onStatement();
         bool onDeclaration();
-        bool onOperand();
+        bool onData();
         bool onOperator();
-        bool isData();
         bool isCurrentToken(int tokenType);
         //NO RETURN
         void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
         void scan();
         void expect(TokenType tokenType);
 };
+
+static std::map< TokenType, std::function<Operator*()>> OperatorMap = {
+    { KARAT, []() { return new ExponentTree(); } },
+    { STAR, []() { return new MultiplyTree(); } },
+    { SLASH, []() { return new DivideTree(); } },
+    { PLUS, []() { return new AddTree(); } },
+    { MINUS, []() { return new SubtractTree(); } },
+    { GREATER, []() { return new GreaterTree(); } },
+    { GREATER_EQUAL, []() { return new GreaterEqualTree(); } },
+    { LESS, []() { return new LessTree(); } },
+    { LESS_EQUAL, []() { return new LessEqualTree(); } },
+    { EQUAL_EQUAL, []() { return new EqualTree(); } },
+    { BANG_EQUAL, []() { return new NotEqualTree(); } },
+    { AND, []() { return new AndTree(); } },
+    { OR, []() { return new OrTree(); } }
+};
+        

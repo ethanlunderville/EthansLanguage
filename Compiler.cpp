@@ -21,17 +21,18 @@
 //            declString -> tokenType
 // string ->  tokenType -> ASTNode -> TypeHandler
 
-#include "Lexer.h" // NO NEED TO OVERCOMPLICATE
+#include "Lexer.h"
 #include "Parser.h"
 #include "SymbolTable/ContextManager.h"
 #include "Visitors/ASTVisitor.h"
 
 int main () {
 
+    TypeManager* typeManager = new TypeManager();
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file);
-    Parser* parser = new Parser(lexer);
+    Parser* parser = new Parser(lexer, typeManager);
     std::cout << "***PRINTING LEXEMES***" << std::endl; 
     lexer->printLexemes(lexer->scanTokens());
     AST* abstractSyntaxTree = parser->parse();
@@ -49,6 +50,8 @@ int main () {
     std::cout << "***DEALLOCATING AST***" << std::endl;
     ASTDeallocationVisitor* dVisit = new ASTDeallocationVisitor();
     abstractSyntaxTree->accept(dVisit);
+    delete typeManager;
+    typeManager = nullptr;
     delete cm;
     cm = nullptr;
     delete pVisit;

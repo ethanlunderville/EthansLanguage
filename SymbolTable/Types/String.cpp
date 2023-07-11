@@ -6,6 +6,14 @@ std::any String::getNullValue() {
     return std::string("");
 }
 
+AST* String::getNewTreenode(std::string value) {
+    return new StringTree(value);
+}
+
+AST* String::getExpressionNode() {
+    return new StringExpressionTree();
+}
+
 bool String::checkType(std::any value) {
     return value.type() == typeid(std::string);
 }

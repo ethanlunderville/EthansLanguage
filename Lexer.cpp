@@ -164,13 +164,6 @@
             ident.push_back(*c);
             *c = inStream.get();
         }
-        if (ident.compare("int") == 0) {
-            addToken(INT, line, ident);
-            return;
-        } else if (ident.compare("string") == 0) {
-            addToken(STRINGTYPE, line, ident);
-            return;
-        } 
         if (stringToTokenMap.count(ident) > 0) {
             addToken(stringToTokenMap[ident], line, ident);
             return;    
@@ -186,8 +179,8 @@
     }
 
     bool Lexer::previousTokenWasOperator() {
-        for (int i = 0 ; i < (sizeof(Operators)/sizeof(Operators[0])) ; i++) {
-            if (previousTokenTypeWas(Operators[i])) {
+        for (int i = 0 ; i < (sizeof(OperatorArray)/sizeof(OperatorArray[0])) ; i++) {
+            if (previousTokenTypeWas(OperatorArray[i])) {
                 return true;
             }
         }

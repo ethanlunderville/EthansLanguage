@@ -1,7 +1,8 @@
 #include "Parser.h"
 
-Parser::Parser(Lexer* lexer) {
+Parser::Parser(Lexer* lexer, TypeManager* typeManager) {
     this->tokens = lexer->scanTokens();
+    this->typeManager = typeManager;
 }
 //WRAPPER FOR ABSTRACTION
 AST* Parser::parse() {
@@ -55,7 +56,7 @@ AST* Parser::sStatement() {
         t->addChild(sBlock());
     } else if (isCurrentToken(RETURN)) {
         scan();
-        if (isData()) {
+        if (onData() || isCurrentToken(IDENTIFIER)) {
             t = new ReturnTree(getCurrentLexeme());
             scan();
         } else {
@@ -127,29 +128,24 @@ AST* Parser::sExpression() {
         #ifdef PRINTEXPRESSION
             std::cout << getCurrentLexeme() << " ";
         #endif
-        if(onOperand()) {
-            if (isCurrentToken(LEFT_PAREN)){
-                scan();
-                operandStack.push(sExpression());
-                expect(RIGHT_PAREN);
-            } 
-            if (isCurrentToken(STRING)){
-                StringTree* sTree = new StringTree(getCurrentLexeme());
-                operandStack.push(sTree);
-                scan();
-            } else if (isCurrentToken(NUMBER)) {
-                NumberTree* nTree = new NumberTree(getCurrentLexeme());
-                operandStack.push(nTree);
-                scan();
-            } else if (isCurrentToken(RIGHT_PAREN)) {
-                break;
-            }
-        } else { 
-            std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
-            exit(1);
-        }
-        if (onOperator()) {
-            Operator* opTree = OperatorFactory(getCurrentToken());
+        //
+        if (isCurrentToken(LEFT_PAREN)){
+            scan();
+            operandStack.push(sExpression());
+            expect(RIGHT_PAREN);
+        } 
+        if (isCurrentToken(IDENTIFIER)) {
+            //IdentifierTree* identTree = new IdentifierTree();
+            //operandStack.push(identTree);
+            //scan();
+        } else if (onData()) {
+            AST* nTree = this->typeManager->getTypeHandler(getCurrentToken())->getNewTreenode(getCurrentLexeme());
+            operandStack.push(nTree);
+            scan();
+        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
+            break;
+        } else if (onOperator()) {
+            Operator* opTree = OperatorMap[getCurrentToken()]();
             if (operatorStack.top()->getPrecendence() > opTree->getPrecendence()) {
                 int target = opTree->getPrecendence();
                 while (operatorStack.top()->getPrecendence() > target) {
@@ -158,7 +154,7 @@ AST* Parser::sExpression() {
                     AST* operand1 = operandStack.top();
                     operandStack.pop();
                     int savePrecedence = operatorStack.top()->getPrecendence();
-                    AST* operatorHold = operatorToASTCaster(operatorStack.top());
+                    AST* operatorHold = dynamic_cast<AST*>(operatorStack.top());
                     operatorStack.pop();
                     /* EDGE CASE */
                     nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
@@ -169,8 +165,6 @@ AST* Parser::sExpression() {
             }
             operatorStack.push(opTree);
             scan();
-        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
-            break;
         } else { 
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
@@ -189,7 +183,7 @@ AST* Parser::sExpression() {
         AST* operand1 = operandStack.top();
         operandStack.pop();
         int savePrecedence = operatorStack.top()->getPrecendence();
-        AST* operatorHold = operatorToASTCaster(operatorStack.top());
+        AST* operatorHold = dynamic_cast<AST*>(operatorStack.top());
         operatorStack.pop();
         
         nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
@@ -249,127 +243,37 @@ std::string Parser::getCurrentLexeme() {
 int Parser::getCurrentLine() {
     return tokens[currentTokenIndex].line;
 }
-// WAS UNABLE TO TO MAKE THIS WORK WITH POLYMORPHISM 
-// AND WAS FORCED TO VIOLATE OPEN CLOSED PRINCIPLE
-Operator* Parser::OperatorFactory(TokenType type) {
-    Operator* t;
-    switch (type) {
-        case KARAT:
-            t = new ExponentTree();
-        break;
-        case STAR:
-            t = new MultiplyTree();
-        break;
-        case SLASH:
-            t = new DivideTree();
-        break;
-        case PLUS:
-            t = new AddTree();
-        break;
-        case MINUS:
-            t = new SubtractTree();
-        break;
-        case GREATER:
-            t = new GreaterTree();
-        break;
-        case GREATER_EQUAL:
-            t = new GreaterEqualTree();
-        break;
-        case LESS:
-            t = new LessTree();
-        break;
-        case LESS_EQUAL:
-            t = new LessEqualTree();
-        break;
-        case EQUAL_EQUAL:
-            t = new EqualTree();
-        break;
-        case BANG_EQUAL:
-            t = new NotEqualTree();
-        break;
-        case AND:
-            t = new AndTree();
-        break;
-        case OR:
-            t = new OrTree();
-        break;
-        default:
-        std::cerr << "Unexpected type: " << type << ", expected an operator"<< std::endl;
-        exit(1);
-    }
-    return t;
-}
-// WAS UNABLE TO TO MAKE THIS WORK WITH POLYMORPHISM 
-// AND WAS FORCED TO VIOLATE OPEN CLOSED PRINCIPLE
-AST* Parser::operatorToASTCaster(Operator *op) {
-    AST* t;
-        if (typeid(*op) == typeid(ExponentTree)){
-            t = (AST*)((ExponentTree*) op);
-        } else if (typeid(*op) == typeid(MultiplyTree)){
-            t = (AST*)((MultiplyTree*) op);
-        } else if (typeid(*op) == typeid(DivideTree)){
-            t = (AST*)((DivideTree*) op);
-        } else if (typeid(*op) == typeid(AddTree)){
-            t = (AST*)((AddTree*) op);
-        } else if ( typeid(*op) == typeid(SubtractTree)){
-            t = (AST*)((SubtractTree*) op);
-        } else if ( typeid(*op) == typeid(GreaterTree)){
-            t = (AST*)((GreaterTree*) op);
-        } else if ( typeid(*op) == typeid(LessTree)){
-            t = (AST*)((LessTree*) op);
-        } else if ( typeid(*op) == typeid(GreaterEqualTree)){
-            t = (AST*)((GreaterEqualTree*) op);
-        } else if ( typeid(*op) == typeid(LessEqualTree)){
-            t = (AST*)((LessEqualTree*) op);
-        } else if ( typeid(*op) == typeid(EqualTree)){
-            t = (AST*)((EqualTree*) op);
-        } else if ( typeid(*op) == typeid(NotEqualTree)){
-            t = (AST*)((NotEqualTree*) op);
-        } else if ( typeid(*op) == typeid(AndTree)){
-            t = (AST*)((AndTree*) op);
-        } else if ( typeid(*op) == typeid(OrTree)){
-            t = (AST*)((OrTree*) op);
-        } else {
-        std::cerr << "Unexpected type" << std::endl;
-        exit(1);
-        }
-    return t;
-}
 
 bool Parser::onStatement() {
-    if (isCurrentToken(IF) || isCurrentToken(WHILE) || 
-        isCurrentToken(RETURN) || isCurrentToken(IDENTIFIER)) {
-        return true;
+    for (int i = 0 ; i < sizeof(Statement)/sizeof(Statement[0]); i++) {
+        if (isCurrentToken(Statement[i])) {
+            return true;
+        }
     }
     return false;
 }
+
 bool Parser::onDeclaration() {
-    if (isCurrentToken(INT) || isCurrentToken(STRINGTYPE)) {
-        return true;
+    for (int i = 0 ; i < sizeof(Declarator)/sizeof(Declarator[0]); i++) {
+        if (isCurrentToken(Declarator[i])) {
+            return true;
+        }
     }
     return false;
 }
 bool Parser::onOperator() {
-    for (int i = 0 ; i < sizeof(Operators)/sizeof(Operators[0]); i++) {
-        if (isCurrentToken(Operators[i])) {
+    for (int i = 0 ; i < sizeof(OperatorArray)/sizeof(OperatorArray[0]); i++) {
+        if (isCurrentToken(OperatorArray[i])) {
             return true;
         }
     }
     return false;
 }
-bool Parser::onOperand() {
-    for (int i = 0 ; i < sizeof(Operands)/sizeof(Operands[0]); i++) {
-        if (isCurrentToken(Operands[i])) {
+bool Parser::onData() {
+    for (int i = 0 ; i < sizeof(Data)/sizeof(Data[0]); i++) {
+        if (isCurrentToken(Data[i])) {
             return true;
         }
-    }
-    return false;
-}
-bool Parser::isData() {
-    if (isCurrentToken(IDENTIFIER) 
-    || isCurrentToken(NUMBER) 
-    || isCurrentToken(STRING)) {
-        return true;
     }
     return false;
 }
