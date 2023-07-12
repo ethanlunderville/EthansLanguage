@@ -1,7 +1,6 @@
 #pragma once
 #include <any>
 #include <string>
-#include <map>
 #include <iostream>
 #include "SyntaxTree/AST.h"
 
@@ -18,22 +17,32 @@ class Type {
 
 class Number : public Type {
     public:
-        Number();
         std::any getNullValue() override;
         AST* getNewTreenode(std::string value) override;
         AST* getExpressionNode() override;
         bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
         bool checkIfExpressionOfThisTypeIsValid(AST* node, int line) override;
+        static Number* getInstance() {
+            static Number instance;
+            return &instance;
+        }  
+    private:
+        Number();  
 };
 class String : public Type {
     public:
-        String();
         std::any getNullValue() override;
         AST* getNewTreenode(std::string value) override;
         AST* getExpressionNode() override;
         bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
         bool checkIfExpressionOfThisTypeIsValid(AST* node, int line) override;
+        static String* getInstance() {
+            static String instance;
+            return &instance;
+        }
+    private:
+        String();
 };
 

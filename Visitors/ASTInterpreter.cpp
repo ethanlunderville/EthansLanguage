@@ -2,8 +2,8 @@
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
 
-ASTInterpreter::ASTInterpreter() {
-    this->contextManager = new ContextManager();
+ASTInterpreter::ASTInterpreter(TypeManager* typeManager) {
+    this->contextManager = new ContextManager(typeManager);
 }
 ASTInterpreter::~ASTInterpreter() {
     delete this->contextManager;
@@ -88,6 +88,7 @@ void ASTInterpreter::visitNumberTree (AST* astree) {
 
 }
 void ASTInterpreter::visitStringTree (AST* astree) {}
+void ASTInterpreter::visitIdentifierTree (AST* astree) {}
 void ASTInterpreter::visitGreaterTree (AST* astree) {}
 void ASTInterpreter::visitGreaterEqualTree (AST* astree) {}
 void ASTInterpreter::visitLessTree (AST* astree) {}

@@ -17,12 +17,13 @@
 #pragma once
 #include "SyntaxTree/AST.h"
 #include "TypeManager.h"
-#include <stack>
 #include "Lexer.h"
+#include <stack>
 #include <typeinfo>
 #include <map>
 #include <functional>
 
+class TypeManager;
 class Parser {
     public:
         Parser(Lexer* lexer, TypeManager* typeManager);

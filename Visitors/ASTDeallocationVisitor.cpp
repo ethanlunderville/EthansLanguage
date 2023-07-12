@@ -39,6 +39,7 @@ void ASTDeallocationVisitor::visitWhileTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitElseTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitNumberTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitStringTree (AST* astree) {deallocate(astree);}
+void ASTDeallocationVisitor::visitIdentifierTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitGreaterTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitGreaterEqualTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitLessTree (AST* astree) {deallocate(astree);}

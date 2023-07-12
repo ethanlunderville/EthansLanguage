@@ -1,14 +1,12 @@
 #pragma once
 #include "SymbolTable.h"
 #include "TypeManager.h"
-#include <iostream>
 #include <stack>
-#include <any>
 #include <string>
 
 class ContextManager {
 public:
-    ContextManager();
+    ContextManager(TypeManager* typeManager);
     ~ContextManager();
     void pushContext();
     void popContext();

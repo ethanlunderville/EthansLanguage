@@ -1,2 +1,2 @@
 make clean
-make run --jobs 4
+make run -j4

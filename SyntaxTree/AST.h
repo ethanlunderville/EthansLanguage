@@ -136,6 +136,16 @@ class StringTree : public Evaluatable {
         std::string sString;
 };
 
+class IdentifierTree : public Evaluatable {
+    public:
+        IdentifierTree(std::string identifier);
+        void accept(ASTVisitor* v) override;
+        std::string getIdentifier();
+        void setIdentifier(std::string identifier);
+    private:
+        std::string identifier;
+};
+
 class ExpressionTree : public Evaluatable {
     public:
         ExpressionTree();

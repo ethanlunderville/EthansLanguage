@@ -22,7 +22,8 @@ AST* Parser::sProgram() {
             if (isCurrentToken(EQUAL) || isCurrentToken(SEMICOLON)) {
                 //Option 1 since this is a regular Dec.
                 pTree->addChild(sDeclaration(type,name,1));
-            } else if (isCurrentToken(LEFT_PAREN)) {
+            } 
+            if (isCurrentToken(LEFT_PAREN)) {
                 pTree->addChild(sFunctionDeclaration(name));
             }
         } else {
@@ -82,6 +83,7 @@ AST* Parser::sDeclaration( std::string type , std::string identifier, short opti
     AssignTree* at = nullptr;
     if (option) {
         if (isCurrentToken(SEMICOLON)) {
+            scan();
             t = new DeclarationTree(type, identifier, getCurrentLine());
             return t;
         }
@@ -135,9 +137,9 @@ AST* Parser::sExpression() {
             expect(RIGHT_PAREN);
         } 
         if (isCurrentToken(IDENTIFIER)) {
-            //IdentifierTree* identTree = new IdentifierTree();
-            //operandStack.push(identTree);
-            //scan();
+            IdentifierTree* identTree = new IdentifierTree(getCurrentLexeme());
+            operandStack.push(identTree);
+            scan();
         } else if (onData()) {
             AST* nTree = this->typeManager->getTypeHandler(getCurrentToken())->getNewTreenode(getCurrentLexeme());
             operandStack.push(nTree);
@@ -210,7 +212,7 @@ AST* Parser::sBlock() {
             scan();
             std::string name = getCurrentLexeme();
             scan();
-            if (isCurrentToken(EQUAL)) {
+            if (isCurrentToken(EQUAL) || isCurrentToken(SEMICOLON)) {
                 //Option 1 since this is a regular Dec.
                 bTree->addChild(sDeclaration(type, name, 1));
             }
@@ -254,8 +256,8 @@ bool Parser::onStatement() {
 }
 
 bool Parser::onDeclaration() {
-    for (int i = 0 ; i < sizeof(Declarator)/sizeof(Declarator[0]); i++) {
-        if (isCurrentToken(Declarator[i])) {
+    for (int i = 0 ; i < this->typeManager->Declarator.size(); i++) {
+        if (isCurrentToken(this->typeManager->Declarator[i])) {
             return true;
         }
     }
@@ -270,8 +272,8 @@ bool Parser::onOperator() {
     return false;
 }
 bool Parser::onData() {
-    for (int i = 0 ; i < sizeof(Data)/sizeof(Data[0]); i++) {
-        if (isCurrentToken(Data[i])) {
+    for (int i = 0 ; i < this->typeManager->Data.size(); i++) {
+        if (isCurrentToken(this->typeManager->Data[i])) {
             return true;
         }
     }

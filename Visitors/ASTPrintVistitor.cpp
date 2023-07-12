@@ -78,6 +78,7 @@ void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree)
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
 void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string(std::any_cast<double>(((NumberTree*)astree)->getVal())));}
 void ASTPrintVisitor::visitStringTree (AST* astree) {printer("StringTree", astree, std::any_cast<std::string>(((StringTree*)astree)->getVal()));}
+void ASTPrintVisitor::visitIdentifierTree (AST* astree) {printer("Identifier",astree, ((IdentifierTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitGreaterTree (AST* astree) {printer("GreaterTree", astree, ">");}
 void ASTPrintVisitor::visitGreaterEqualTree (AST* astree) {printer("GreaterEqualTree", astree, ">=");}
 void ASTPrintVisitor::visitLessTree (AST* astree) {printer("LessTree", astree, "<");}

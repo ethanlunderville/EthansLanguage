@@ -9,7 +9,6 @@
     
 */
 #pragma once
-#include <iostream>
 #include <map>
 #include <string>
 
@@ -19,10 +18,10 @@ enum TokenType {
     KARAT, BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
     GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
     NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
-    WHILE, INT, STRINGTYPE,EOF_TOKEN
+    WHILE, INT, STRINGTYPE, COLON ,EOF_TOKEN
 };
 
-static TokenType OperatorArray[] = {   
+static const TokenType OperatorArray[] = {   
     LESS,
     GREATER,
     LESS_EQUAL,
@@ -38,8 +37,7 @@ static TokenType OperatorArray[] = {
     SLASH 
 };
 
-
-static TokenType Statement[] = {   
+static const TokenType Statement[] = {   
     IF,
     WHILE,
     RETURN,
@@ -56,6 +54,7 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {MINUS, "MINUS"},
     {PLUS, "PLUS"},
     {SEMICOLON, "SEMICOLON"},
+    {COLON, "COLON"},
     {SLASH, "SLASH"},
     {STAR, "STAR"},
     {BANG, "BANG"},

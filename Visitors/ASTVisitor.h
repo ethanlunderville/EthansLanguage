@@ -48,6 +48,7 @@
 */
 #pragma once
 #include <iostream>
+#include "TypeManager.h"
 
 class AST;
 class ContextManager;
@@ -73,6 +74,7 @@ class ContextManager;
         virtual void visitElseTree(AST* astree)=0;
         virtual void visitStringTree(AST* astree)=0;
         virtual void visitNumberTree(AST* astree)=0;
+        virtual void visitIdentifierTree(AST* astree)=0;
         virtual void visitGreaterTree (AST* astree)=0;
         virtual void visitGreaterEqualTree (AST* astree)=0;
         virtual void visitLessTree (AST* astree)=0;
@@ -106,6 +108,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
         void visitNumberTree(AST* astree) override;
+        void visitIdentifierTree(AST* astree) override;
         void visitExponentTree(AST* astree) override;
         void visitGreaterTree (AST* astree) override;
         void visitGreaterEqualTree (AST* astree) override;
@@ -146,6 +149,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
+        void visitIdentifierTree(AST* astree) override;
         void visitNumberTree(AST* astree) override;
         void visitExponentTree(AST* astree) override;
         void visitGreaterTree (AST* astree) override;
@@ -165,7 +169,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
 
 class ASTInterpreter: public ASTVisitor {
     public:
-        ASTInterpreter();
+        ASTInterpreter(TypeManager* typeManager);
         ~ASTInterpreter();
         ASTInterpreter(ContextManager* cm);
         //INHERITED FUNCTIONS
@@ -188,6 +192,7 @@ class ASTInterpreter: public ASTVisitor {
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
         void visitNumberTree(AST* astree) override;
+        void visitIdentifierTree(AST* astree) override;
         void visitExponentTree(AST* astree) override;
         void visitGreaterTree (AST* astree) override;
         void visitGreaterEqualTree (AST* astree) override;
@@ -203,7 +208,7 @@ class ASTInterpreter: public ASTVisitor {
 
 class ASTChecker: public ASTVisitor {
     public:
-        ASTChecker();
+        ASTChecker(TypeManager* typeManager);
         ~ASTChecker();
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
@@ -225,6 +230,7 @@ class ASTChecker: public ASTVisitor {
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
         void visitNumberTree(AST* astree) override;
+        void visitIdentifierTree(AST* astree) override;
         void visitExponentTree(AST* astree) override;
         void visitGreaterTree (AST* astree) override;
         void visitGreaterEqualTree (AST* astree) override;

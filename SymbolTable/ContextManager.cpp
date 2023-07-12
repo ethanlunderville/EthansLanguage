@@ -1,8 +1,8 @@
 #include "ContextManager.h"
 
-ContextManager::ContextManager() {
+ContextManager::ContextManager(TypeManager* typeManager) {
     this->globalContext = new SymbolTable(nullptr);
-    this->typeManager = new TypeManager();
+    this->typeManager = typeManager;
 }
 ContextManager::~ContextManager() {
     while (this->contextStack.size() != 0) {

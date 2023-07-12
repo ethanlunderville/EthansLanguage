@@ -14,13 +14,10 @@
 // {
 //    std::string declString;   
 //};
-
-
 int i = "a" ^ "p" * (33 - 1 / (100000) / 66) / "g"+11111^4-99;
 
 int a = 1.88;
-
-int fun(int k, string g, int z) {
+int fun(int k, string g) {
 
     k = 1;
 

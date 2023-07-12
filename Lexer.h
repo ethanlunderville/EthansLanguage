@@ -16,22 +16,24 @@
     
 */
 #pragma once
-#include <iostream>
+#include <iosfwd>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include "Keywords.h"
-
+#include "TypeManager.h"
+class TypeManager;
 class Lexer {
 public:
-    Lexer(std::istream& inStream);
+    Lexer(std::istream& inStream, TypeManager* typeManager);
     std::vector<Token> scanTokens();
     void printLexemes(std::vector<Token> tokens);
 private:
     std::istream& inStream;
     std::stringstream currentLexeme;
     std::vector<Token> tokens;
+    TypeManager* typeManager;
     void addToken(TokenType type, int line, std::string lexeme);
     void string(std::vector<Token> tokens, int line);
     void number(char* c, std::vector<Token> tokens, int line, bool isNegative);

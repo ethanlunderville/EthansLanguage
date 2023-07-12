@@ -2,8 +2,8 @@
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
 
-ASTChecker::ASTChecker() {
-    this->contextManager = new ContextManager();
+ASTChecker::ASTChecker(TypeManager* typeManager) {
+    this->contextManager = new ContextManager(typeManager);
 }
 ASTChecker::~ASTChecker() {
     delete this->contextManager;
@@ -62,6 +62,7 @@ void ASTChecker::visitWhileTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitElseTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitNumberTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitStringTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitIdentifierTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitGreaterTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitGreaterEqualTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitLessTree (AST* astree) {this->visitChildren(astree);}

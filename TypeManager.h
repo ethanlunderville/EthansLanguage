@@ -1,6 +1,6 @@
+#pragma once
 #include "SymbolTable/Types/Types.h"
 #include "Keywords.h"
-#pragma once
 
 class TypeManager {
     public:
@@ -8,15 +8,12 @@ class TypeManager {
         ~TypeManager();
         Type* getTypeHandler(std::string type);
         Type* getTypeHandler(TokenType type);
+        void addTypeDecl(std::string sString, TokenType token, Type* typeHandle);
+        void addTypeRVal(TokenType token, Type* typeHandle); 
+        bool tokenIsRValue(TokenType tokenType);
+        std::vector<TokenType> Data;
+        std::vector<TokenType> Declarator;
     private:
-        std::map<std::string, Type*> stringToTypeHandler;
+        std::map<std::string ,Type*> stringToTypeHandler;
         std::map<TokenType, Type*> tokenToTypeHandler;
-};
-
-static TokenType Data[] = {
-    STRING,NUMBER
-};
-
-static TokenType Declarator[] = {
-    STRINGTYPE,INT
 };
