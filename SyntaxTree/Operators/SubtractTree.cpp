@@ -5,8 +5,8 @@ SubtractTree::SubtractTree() : Operator() {
     this->setPrecedence(2);
 }
 
-double SubtractTree::subtract(double x, double y) {
-    double res = x - y;
+std::any SubtractTree::subtract(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) - std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }

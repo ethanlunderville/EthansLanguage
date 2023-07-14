@@ -44,6 +44,7 @@ static const TokenType Statement[] = {
     IDENTIFIER
 };
 
+
 static std::map<TokenType, std::string> tokenToStringMap = {
     {LEFT_PAREN, "LEFT_PAREN"},
     {RIGHT_PAREN, "RIGHT_PAREN"},

@@ -5,8 +5,8 @@ LessEqualTree::LessEqualTree() : Operator() {
     this->setPrecedence(1);
 }
 
-double LessEqualTree::lessEqual(double x, double y) {
-    double res = x <= y;
+std::any LessEqualTree::lessEqual(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) <= std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }

@@ -6,8 +6,8 @@ ExponentTree::ExponentTree() : Operator() {
     this->setPrecedence(4);
 }
 
-double ExponentTree::exponent(double x, double y) {
-    double res = std::pow(x,y);
+std::any ExponentTree::exponent(std::any x, std::any y) {
+    double res = std::pow(std::any_cast<double>(x),std::any_cast<double>(y));
     this->setVal(res);
     return res; 
 }

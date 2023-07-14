@@ -178,89 +178,90 @@ class AddTree : public Operator {
         std::string add(std::string x, double y);
         std::string add(std::string x, std::string y);
         double add(double x, double y);
+        std::any add(std::any operand1, std::any operand2);
         void accept(ASTVisitor* v) override;
 };
 
 class SubtractTree : public Operator {
     public:
         SubtractTree();
-        double subtract(double x, double y);
+        std::any subtract(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class MultiplyTree : public Operator {
     public:
         MultiplyTree();
-        double multiply(double x, double y);
+        std::any multiply(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class DivideTree : public Operator {
     public:
         DivideTree();
-        double divide(double x, double y);
+        std::any divide(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class ExponentTree : public Operator {
     public:
         ExponentTree();
-        double exponent(double x, double y);
+        std::any exponent(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class GreaterTree : public Operator {
     public:
         GreaterTree();
-        double greaterThan(double x, double y);
+        std::any greaterThan(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class LessTree : public Operator {
     public:
         LessTree();
-        double lessThan(double x, double y);
+        std::any lessThan(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class GreaterEqualTree : public Operator {
     public:
         GreaterEqualTree();
-        double greaterEqual(double x, double y);
+        std::any greaterEqual(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class LessEqualTree : public Operator {
     public:
         LessEqualTree();
-        double lessEqual(double x, double y);
+        std::any lessEqual(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class EqualTree : public Operator {
     public:
         EqualTree();
-        double equal(double x, double y);
+        std::any equal(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class NotEqualTree : public Operator {
     public:
         NotEqualTree();
-        double notEqual(double x, double y);
+        std::any notEqual(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class AndTree : public Operator {
     public:
         AndTree();
-        double opAnd(double x, double y);
+        std::any opAnd(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };
 
 class OrTree : public Operator {
     public:
         OrTree();
-        double opOr(double x, double y);
+        std::any opOr(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };

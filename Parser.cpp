@@ -123,6 +123,7 @@ AST* Parser::sExpression() {
     std::stack<AST*> operandStack;
     Operator* bottom = new Operator();
     operatorStack.push(bottom);
+    #define PRINTEXPRESSION (0x1)
     #ifdef PRINTEXPRESSION
         std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
     #endif
@@ -131,22 +132,29 @@ AST* Parser::sExpression() {
             std::cout << getCurrentLexeme() << " ";
         #endif
         //
-        if (isCurrentToken(LEFT_PAREN)){
-            scan();
-            operandStack.push(sExpression());
-            expect(RIGHT_PAREN);
-        } 
-        if (isCurrentToken(IDENTIFIER)) {
-            IdentifierTree* identTree = new IdentifierTree(getCurrentLexeme());
-            operandStack.push(identTree);
-            scan();
-        } else if (onData()) {
-            AST* nTree = this->typeManager->getTypeHandler(getCurrentToken())->getNewTreenode(getCurrentLexeme());
-            operandStack.push(nTree);
-            scan();
-        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
-            break;
-        } else if (onOperator()) {
+        if (onOperand()) {
+            if (isCurrentToken(LEFT_PAREN)){
+                scan();
+                operandStack.push(sExpression());
+                expect(RIGHT_PAREN);
+            } 
+            if (isCurrentToken(IDENTIFIER)) {
+                IdentifierTree* identTree = new IdentifierTree(getCurrentLexeme());
+                operandStack.push(identTree);
+                scan();
+            } else if (onData()) {
+                AST* nTree = this->typeManager->getTypeHandler(getCurrentToken())->getNewTreenode(getCurrentLexeme());
+                operandStack.push(nTree);
+                scan();
+            } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
+                break;
+            } 
+        } else {
+            std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+            exit(1);
+        }
+        
+        if (onOperator()) {
             Operator* opTree = OperatorMap[getCurrentToken()]();
             if (operatorStack.top()->getPrecendence() > opTree->getPrecendence()) {
                 int target = opTree->getPrecendence();
@@ -167,6 +175,8 @@ AST* Parser::sExpression() {
             }
             operatorStack.push(opTree);
             scan();
+        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON)){
+            break;
         } else { 
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
@@ -271,6 +281,14 @@ bool Parser::onOperator() {
     }
     return false;
 }
+
+bool Parser::onOperand() {
+    if ( isCurrentToken(RIGHT_PAREN) || isCurrentToken(LEFT_PAREN) || isCurrentToken(IDENTIFIER) || onData() ) {
+        return true;
+    }
+    return false;
+}
+
 bool Parser::onData() {
     for (int i = 0 ; i < this->typeManager->Data.size(); i++) {
         if (isCurrentToken(this->typeManager->Data[i])) {

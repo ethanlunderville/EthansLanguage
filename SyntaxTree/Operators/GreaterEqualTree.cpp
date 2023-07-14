@@ -5,8 +5,8 @@ GreaterEqualTree::GreaterEqualTree() : Operator() {
     this->setPrecedence(1);
 }
 
-double GreaterEqualTree::greaterEqual(double x, double y) {
-    double res = x >= y;
+std::any GreaterEqualTree::greaterEqual(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) >= std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }

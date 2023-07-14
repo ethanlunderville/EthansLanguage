@@ -8,11 +8,11 @@
 #include <vector>
 #include <map>
 
-typedef struct SymbolInfo {
+struct SymbolInfo {
     int line;
     std::any value;
     Type* type;
-} SymbolInfo;
+} ;
 
 /*
 * Unopinionated SymbolTable
@@ -30,9 +30,8 @@ public:
     int contains(std::string identifier);
     void printSymbolTable();
     bool variableTypeCheck(Type* typeHandler , std::any value);
-
+    SymbolTable* tableReference;
 private:
-    SymbolTable* globalTable;
     std::stack<int> scopeStack;
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;

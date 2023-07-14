@@ -5,8 +5,8 @@ LessTree::LessTree() : Operator() {
     this->setPrecedence(1);
 }
 
-double LessTree::lessThan(double x, double y) {
-    double res = x < y;
+std::any LessTree::lessThan(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) < std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }

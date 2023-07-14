@@ -4,6 +4,7 @@
 #include <stack>
 #include <string>
 
+class Type;
 class ContextManager {
 public:
     ContextManager(TypeManager* typeManager);
@@ -14,6 +15,7 @@ public:
     void popScope();
     void declareSymbol(int line, std::string identifier, std::string type);
     void reassignSymbol(std::string identifier, std::any value, int line);
+    void contextPopRecurse(SymbolTable* sym);
     void printSymbolTable();
     std::any getValueStoredInSymbol(std::string identifier);
     Type* getTypeOfSymbol(std::string identifier);

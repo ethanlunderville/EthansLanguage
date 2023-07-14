@@ -14,22 +14,10 @@ void ASTChecker::visitChildren(AST* astree){
         (child)->accept(this);
     }
 }
-/*
-void pushContext();
-void popContext();
-void pushScope();
-void popScope();
-void declareSymbol(int line, std::string identifier, std::string type);
-void reassignSymbol(std::string identifier, std::any value, int line);
-void printSymbolTable();
-std::any getValueStoredInSymbol(std::string identifier);
-std::string getTypeOfSymbol(std::string identifier);
-*/
 void ASTChecker::visitAssignTree(AST* astree) {
-    AssignTree* t = ((AssignTree*)astree);
-    if (!(contextManager->getTypeOfSymbol(t->getIdentifier()))
-          ->checkIfExpressionOfThisTypeIsValid(t->getChildren()[0], t->getLine())
-        ) {
+    AssignTree* tree = ((AssignTree*)astree);
+    Type* type = (contextManager->getTypeOfSymbol(tree->getIdentifier()));
+    if (!(type->changeExpressionToDeclaredTypeIfItIsLegal(tree->getChildren()[0], tree->getLine(), this->contextManager))) {
         exit(1);    
     }
 }

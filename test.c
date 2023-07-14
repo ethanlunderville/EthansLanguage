@@ -1,24 +1,8 @@
-// ***NOTE***
-// THIS IS A SOURCE FILE OF THE LANGUAGE NOT A C FILE
+int i = 897 < 1-2-3-4+(8/4)-5-6-7-8-9;
 
-// declaration strings, Actaul Tokens[]
-// std::string declstring ->
-
-//  struct TypeInfo {
-//    Type* typeHandler;
-//    TokenType actualToken;
-//    AST* node;
-//    TokenType declToken;
-//    AST* getExpressionNode;
-    // DECL INFO
-// {
-//    std::string declString;   
-//};
-int i = "a" ^ "p" * (33 - 1 / (100000) / 66) / "g"+11111^4-99;
-
-int a = 1.88;
-int fun(int k, string g) {
-
+int k = i + 22;
+if (i > 4) {
     k = 1;
-
+} else {
+    k = 9;
 }

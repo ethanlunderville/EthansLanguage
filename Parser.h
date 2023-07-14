@@ -50,6 +50,7 @@ class Parser {
         bool onDeclaration();
         bool onData();
         bool onOperator();
+        bool onOperand();
         bool isCurrentToken(int tokenType);
         //NO RETURN
         void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);

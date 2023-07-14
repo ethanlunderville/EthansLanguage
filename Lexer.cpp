@@ -111,7 +111,6 @@ std::vector<Token> Lexer::scanTokens() {
                 break;
         }
     }
-    addToken(EOF_TOKEN, line, "END");
     return tokens;
 }
 void Lexer::printLexemes(std::vector<Token> tokens) {

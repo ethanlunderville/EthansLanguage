@@ -1,6 +1,6 @@
 #include "SymbolTable.h"
 
-SymbolTable::SymbolTable(SymbolTable* tableReference) : globalTable(tableReference) {
+SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableReference) {
     pushScope();
 }
 

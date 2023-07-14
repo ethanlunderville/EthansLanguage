@@ -5,8 +5,8 @@ MultiplyTree::MultiplyTree() : Operator() {
     this->setPrecedence(3);
 }
 
-double MultiplyTree::multiply(double x, double y) {
-    double res = x * y;
+std::any MultiplyTree::multiply(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) * std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }

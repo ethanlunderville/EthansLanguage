@@ -5,8 +5,8 @@ DivideTree::DivideTree() : Operator() {
     this->setPrecedence(3);
 }
 
-double DivideTree::divide(double x, double y) {
-    double res = x / y;
+std::any DivideTree::divide(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) / std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }

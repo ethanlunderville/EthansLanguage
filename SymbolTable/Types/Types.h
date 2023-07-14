@@ -4,6 +4,7 @@
 #include <iostream>
 #include "SyntaxTree/AST.h"
 
+class ContextManager;
 class Type {
     public:
         virtual ~Type() = 0;
@@ -12,7 +13,7 @@ class Type {
         virtual AST* getExpressionNode() = 0;
         virtual bool checkType(std::any value) = 0;
         virtual void printSymbol(std::string identifier, std::any symbol) = 0;
-        virtual bool checkIfExpressionOfThisTypeIsValid(AST* node, int line) = 0;
+        virtual bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) = 0;
 };
 
 class Number : public Type {
@@ -22,7 +23,7 @@ class Number : public Type {
         AST* getExpressionNode() override;
         bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        bool checkIfExpressionOfThisTypeIsValid(AST* node, int line) override;
+        bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) override;
         static Number* getInstance() {
             static Number instance;
             return &instance;
@@ -37,7 +38,10 @@ class String : public Type {
         AST* getExpressionNode() override;
         bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        bool checkIfExpressionOfThisTypeIsValid(AST* node, int line) override;
+        bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) override;
+        void checkSubExpressionForString(AST* node);
+        bool numberCheck(AST* node, int line, ContextManager* contextManager);
+        bool checkTree(AST* node, int line, ContextManager* contextManager);
         static String* getInstance() {
             static String instance;
             return &instance;

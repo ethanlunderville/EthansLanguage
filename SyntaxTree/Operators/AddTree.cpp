@@ -29,4 +29,19 @@ double AddTree::add(double x, double y) {
     return res; 
 }
 
+std::any AddTree::add(std::any operand1, std::any operand2) {
+    std::any res;
+    if (typeid(std::string)==operand1.type() && typeid(std::string)==operand2.type()) {
+        res = static_cast<std::string>(std::any_cast<std::string>(operand1) + std::any_cast<std::string>(operand2));
+    } else if (typeid(std::string)==operand1.type() && typeid(double)==operand2.type()) {
+        res = static_cast<std::string>(std::any_cast<std::string>(operand1) + std::to_string(std::any_cast<double>(operand2)));
+    } else if (typeid(double)==operand1.type() && typeid(std::string)==operand2.type()) {
+        res = static_cast<std::string>(std::to_string(std::any_cast<double>(operand1)) + std::any_cast<std::string>(operand2));
+    } else if (typeid(double)==operand1.type() && typeid(double)==operand2.type()) {
+        res = static_cast<double>(std::any_cast<double>(operand1) + std::any_cast<double>(operand2));
+    }
+    this->setVal(res);
+    return res;
+}
+
 void AddTree::accept(ASTVisitor* v) { v->visitAddTree(this); }

@@ -1,4 +1,5 @@
 #include "Types.h"
+#include "SymbolTable/ContextManager.h"
 
 String::String() {}
 
@@ -24,24 +25,65 @@ void String::printSymbol(std::string identifier, std::any symbol) {
     << std::endl;
 }
 
-bool String::checkIfExpressionOfThisTypeIsValid(AST* node, int line) {
+static int stringNumCounter = 0;
+
+bool String::numberCheck(AST* node, int line, ContextManager* contextManager) {
+    for (AST* child : node->getChildren()) {
+        if (typeid(*child) == typeid(StringTree)) {
+            std::cerr << "Invlalid string found on line " << line <<  std::endl;
+            std::cerr << "Cannot create subexpressions with strings" <<  std::endl;
+            exit(1);
+        } else if (typeid(*child) == typeid(IdentifierTree)) {
+            IdentifierTree* ident = dynamic_cast<IdentifierTree*>(child);
+            if (typeid(*(contextManager->getTypeOfSymbol(ident->getIdentifier()))) == typeid(String)) {
+                std::cerr << "Invlalid string found on line " << line <<  std::endl;
+                std::cerr << "Cannot create subexpressions with strings" <<  std::endl;
+                exit(1);
+            } 
+        }
+        if (!numberCheck(child, line, contextManager)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool String::checkTree(AST* node, int line, ContextManager* contextManager) {
     for (AST* stringExpressionNode : node->getChildren()) {
         bool nodeTypeIsExpressionTree = typeid(*stringExpressionNode) == typeid(ExpressionTree);
         if (typeid(*stringExpressionNode) != typeid(NumberTree) &&
             typeid(*stringExpressionNode) != typeid(AddTree) &&
-            typeid(*stringExpressionNode) != typeid(StringTree) && !nodeTypeIsExpressionTree) {
-            std::cerr << "\nError: Incorrect expression on line " << line << std::endl;
-            std::cerr << "string assignment expressions may only contain" << std::endl;
-            std::cerr << "strings or string identifiers that can optionally" << std::endl;
-            std::cerr << "be separated by a concatenation operator: +\n" << std::endl;
+            typeid(*stringExpressionNode) != typeid(StringTree) && 
+            !nodeTypeIsExpressionTree) {
             return false;
         }
         if (nodeTypeIsExpressionTree) {
+            if (!this->numberCheck(stringExpressionNode, line, contextManager)) {
+                return false;
+            }
             continue;
         }
-        if (!this->checkIfExpressionOfThisTypeIsValid(stringExpressionNode, line)) {
+        if (!checkTree(stringExpressionNode, line , contextManager)) {
             return false;
         }
+        if (typeid(*node) == typeid(StringTree)) {
+            stringNumCounter++;
+        }
     }
+    return true;
+}
+
+bool String::changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) {
+    if (!checkTree(node, line,contextManager)) {
+        std::cerr << "Error: Incorrect string expression on line " << line << std::endl;
+        std::cerr << "Expression must contain at least one string or string identifier " << line << std::endl;
+        return false;
+    }
+    stringNumCounter = 0;
+    AST* child = node->getChildren()[0];
+    delete node;
+    node = new StringExpressionTree();
+    node->addChild(child);
     return true;
 }

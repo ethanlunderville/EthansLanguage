@@ -5,8 +5,8 @@ AndTree::AndTree() : Operator() {
     this->setPrecedence(0);
 }
 
-double AndTree::opAnd(double x, double y) {
-    double res = x && y;
+std::any AndTree::opAnd(std::any x, std::any y) {
+    double res = std::any_cast<double>(x) && std::any_cast<double>(y);
     this->setVal(res);
     return res; 
 }
