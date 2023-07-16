@@ -21,6 +21,7 @@ public:
     Type* getTypeOfSymbol(std::string identifier);
 private:
     SymbolTable* globalContext;
+    SymbolTable* globalScopeLinkedList;
     std::stack<SymbolTable*> contextStack;
     TypeManager* typeManager;
 };

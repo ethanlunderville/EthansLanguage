@@ -1,14 +1,17 @@
 #include "ContextManager.h"
-
+/* This code is kind of insane so be warned */
 ContextManager::ContextManager(TypeManager* typeManager) {
     this->globalContext = new SymbolTable(nullptr);
+    this->globalScopeLinkedList = nullptr;
     this->typeManager = typeManager;
 }
 ContextManager::~ContextManager() {
     while (this->contextStack.size() != 0) {
         SymbolTable* pointer = this->contextStack.top();
         contextPopRecurse(pointer);
+        contextStack.pop();
     }
+    contextPopRecurse(this->globalScopeLinkedList);
     delete this->globalContext;
     this->globalContext = nullptr; 
     delete this->typeManager;
@@ -21,13 +24,16 @@ void ContextManager::pushContext() {
 }
 
 void ContextManager::contextPopRecurse(SymbolTable* sym) {
-    if (sym->tableReference == nullptr) {
-        delete this;
+    if (sym == nullptr) {
         return;
     }
-    contextPopRecurse(sym);
-    delete this;
-    return;
+    if (sym->tableReference == nullptr) {
+        delete sym;
+        return;
+    }
+    SymbolTable* next = sym->tableReference;
+    delete sym;
+    contextPopRecurse(next);
 }
 
 void ContextManager::popContext() {
@@ -46,28 +52,64 @@ void ContextManager::popContext() {
     exit(1);
 }
 void ContextManager::pushScope() {
-    SymbolTable* pointer = this->globalContext;
-    while (pointer != nullptr) {
-        pointer = pointer->tableReference;
+    SymbolTable* pointer;
+    if (contextStack.size() > 0) {
+        pointer = this->contextStack.top();
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = this->globalScopeLinkedList;
+    } else {
+        this->globalScopeLinkedList = new SymbolTable(nullptr);
+        return;
     }
-    pointer = new SymbolTable(nullptr);
-}
-
-void ContextManager::popScope(){
-    SymbolTable* pointer = this->globalContext;
     while (pointer->tableReference != nullptr) {
         pointer = pointer->tableReference;
     }
-    if (pointer != this->globalContext) {
+    pointer->tableReference = new SymbolTable(nullptr);
+    return;
+}
+
+void ContextManager::popScope(){
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->contextStack.top();
+        while (pointer->tableReference != nullptr) {
+            pointer = pointer->tableReference;
+        }
+        if (pointer != contextStack.top()) {
+            delete pointer;
+        }
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = this->globalScopeLinkedList;
+        while (pointer->tableReference != nullptr) {
+            pointer = pointer->tableReference;
+        }
+
         delete pointer;
-        pointer = nullptr;
+        if (pointer == this->globalScopeLinkedList) {
+            this->globalScopeLinkedList = nullptr;
+        }
+    } else {
+        std::cerr << "Unable to pop empty scope stack" << std::endl;
+        exit(1);
     }
-    std::cerr << "Unable to pop empty scope stack" << std::endl;
-    exit(1);
 }
 void ContextManager::declareSymbol(int line, std::string identifier, std::string type) {
     Type* currentType = this->typeManager->getTypeHandler(type);
-    SymbolTable* pointer = this->globalContext;
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = this->globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            std::cerr << 
+            "Incorrect declaration of already declared variable: " 
+            << identifier  << " on line: " << line 
+            << std::endl;
+            exit(1);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
     while (pointer != nullptr) {
         if (pointer->contains(identifier) != -1) {
             std::cerr << 
@@ -81,11 +123,31 @@ void ContextManager::declareSymbol(int line, std::string identifier, std::string
             return;
         }
         pointer = pointer->tableReference;
-    } 
+    }
     return;
 }   
 void ContextManager::reassignSymbol(std::string identifier , std::any value, int line) { 
-    SymbolTable* pointer = this->globalContext;
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) { 
+        pointer = this->globalContext;
+    } else if ( this->globalScopeLinkedList != nullptr) {
+        pointer = this->globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1 ) {
+            if (pointer->variableTypeCheck(this->globalContext->getTypeOfSymbol(identifier), value)) {
+                pointer->reassignSymbol(identifier, value);
+                return;
+            } else {
+                std::cerr <<
+                "Incorrect reassignment of undeclared variable: " 
+                << identifier  << " on line: " << line
+                << " due to incorrect type."   
+                << std::endl;
+                exit(1);
+            }
+        }
+    } else {
+        pointer = this->globalContext;
+    }
     while (pointer != nullptr) {
         if (pointer->contains(identifier) != -1 ) {
             if (pointer->variableTypeCheck(pointer->getTypeOfSymbol(identifier), value)) {
@@ -109,7 +171,17 @@ void ContextManager::reassignSymbol(std::string identifier , std::any value, int
     exit(1);
 }   
 std::any ContextManager::getValueStoredInSymbol(std::string identifier) {
-SymbolTable* pointer = this->globalContext;
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            return this->globalContext->getValueStoredInSymbol(identifier);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
     while (pointer != nullptr) {
         if (pointer->contains(identifier) != -1) {
             return pointer->getValueStoredInSymbol(identifier);
@@ -120,7 +192,17 @@ SymbolTable* pointer = this->globalContext;
     exit(1);
 }
 Type* ContextManager::getTypeOfSymbol(std::string identifier) {
-    SymbolTable* pointer = this->globalContext;
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            return this->globalContext->getTypeOfSymbol(identifier);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
     while (pointer != nullptr) {
         if (pointer->contains(identifier) != -1) {
             return pointer->getTypeOfSymbol(identifier);
@@ -131,9 +213,16 @@ Type* ContextManager::getTypeOfSymbol(std::string identifier) {
     exit(1);
 }
 void ContextManager::printSymbolTable() {
-    SymbolTable* pointer = this->globalContext;
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else {
+        this->globalContext->printSymbolTable();
+        pointer = this->globalScopeLinkedList;
+    }
     while (pointer != nullptr) {
         pointer->printSymbolTable();
         pointer = pointer->tableReference;
     }
+    return;
 }

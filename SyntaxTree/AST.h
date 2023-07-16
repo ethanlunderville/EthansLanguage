@@ -58,12 +58,6 @@ class BlockTree : public AST {
         void accept(ASTVisitor* v) override;
 };
 
-class FunctionTree : public AST {
-    public:
-        FunctionTree();
-        void accept(ASTVisitor* v) override;
-};
-
 class AssignTree : public AST {
     public:
         AssignTree();
@@ -85,17 +79,9 @@ class ReturnTree : public AST {
         std::string name;
 };
 
-class FunctionDeclarationTree : public AST {
-    public:
-        FunctionDeclarationTree(std::string name);
-        void accept(ASTVisitor* v) override;
-    private:
-        std::string name;
-};
-
 class DeclarationTree : public AST {
     public:
-        DeclarationTree(std::string type, std::string name, int line);
+        DeclarationTree(std::string type, std::string identifier, int line);
         void accept(ASTVisitor* v) override;
         std::string getIdentifier();
         std::string getType();
@@ -134,6 +120,28 @@ class StringTree : public Evaluatable {
         void accept(ASTVisitor* v) override;
     private:
         std::string sString;
+};
+
+class FunctionDeclarationTree : public Evaluatable {
+    public:
+        FunctionDeclarationTree(std::string type, std::string identifier, int line);
+        void accept(ASTVisitor* v) override;
+        std::string getIdentifier();
+        std::string getType();
+        int getLine();
+    private:
+        std::string identifier;
+        std::string type;
+        int line;
+};
+
+class FunctionCallTree : public Evaluatable {
+    public:
+        FunctionCallTree(std::string identifier);
+        void accept(ASTVisitor* v) override;
+        std::string getIdentifier();
+    private:
+        std::string identifier;
 };
 
 class IdentifierTree : public Evaluatable {

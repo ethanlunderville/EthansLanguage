@@ -9,7 +9,6 @@ ASTInterpreter::~ASTInterpreter() {
     delete this->contextManager;
     this->contextManager = nullptr;
 }
-
 void ASTInterpreter::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {
         (child)->accept(this);
@@ -34,7 +33,6 @@ void ASTInterpreter::visitStringExpressionTree (AST* astree) {
     this->visitChildren(t);
     t->setVal( std::any_cast<std::string>((dynamic_cast<Evaluatable*>(t->getChildren()[0])->getVal())) );
 }
-
 void ASTInterpreter::visitDeclarationTree (AST* astree) {
     DeclarationTree* t = ((DeclarationTree*)astree);
     this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), t->getType());
@@ -63,14 +61,36 @@ void ASTInterpreter::visitBlockTree (AST* astree) {
 void ASTInterpreter::visitReturnTree (AST* astree) {
 
 }
-void ASTInterpreter::visitFunctionTree (AST* astree) {
-
-}
 void ASTInterpreter::visitFunctionDeclarationTree (AST* astree) {
-
+    FunctionDeclarationTree* t = ((FunctionDeclarationTree*)astree);
+    this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), t->getType());
+    this->functionBinder[t->getIdentifier()] = t; 
+}
+void ASTInterpreter::visitFunctionCallTree (AST* astree) {
+    FunctionCallTree* functionCall = ((FunctionCallTree*)astree);
+    FunctionDeclarationTree* functionDefinition = ((FunctionDeclarationTree*)this->functionBinder[functionCall->getIdentifier()]);
+    std::vector<AST*> arguments = functionCall->getChildren();
+    std::vector<AST*> parameters = functionDefinition->getChildren();
+    
+    this->contextManager->pushContext();
+    int i = 0;
+    while (typeid(parameters[i]) != typeid(BlockTree)) {
+        FunctionCallTree* argument = ((FunctionCallTree*)arguments[i]);
+        FunctionDeclarationTree* parameter = ((FunctionDeclarationTree*)parameters[i]); 
+        this->contextManager->declareSymbol(parameter[i].getLine(),parameter[i].getIdentifier(),parameter[i].getType());
+        this->contextManager->reassignSymbol(parameter[i].getIdentifier(), argument[i].getVal() ,parameter[i].getLine());
+        i++;
+    }
+    this->visitBlockTree(parameters[i]);
+    this->contextManager->popContext();
 }
 void ASTInterpreter::visitWhileTree (AST* astree) {
-
+    std::vector<AST*> children = astree->getChildren();
+    ExpressionTree* conditionExpr = ((ExpressionTree*)(children[0]));
+    this->visitExpressionTree(conditionExpr);
+    if (std::any_cast<double>(conditionExpr->getVal())) {
+        this->visitBlockTree((BlockTree*)(children[1]));
+    }
 }
 void ASTInterpreter::visitElseTree (AST* astree) {
     this->visitChildren(astree);

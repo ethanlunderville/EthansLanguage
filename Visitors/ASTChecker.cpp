@@ -44,8 +44,8 @@ void ASTChecker::visitDeclarationTree (AST* astree) {
 void ASTChecker::visitBlockTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitReturnTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitProgramTree (AST* astree) {this->visitChildren(astree);}
-void ASTChecker::visitFunctionTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitFunctionDeclarationTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitFunctionCallTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitWhileTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitElseTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitNumberTree (AST* astree) {this->visitChildren(astree);}

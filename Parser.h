@@ -37,7 +37,7 @@ class Parser {
         AST* sProgram();
         AST* sStatement();
         AST* sDeclaration(std::string name, std::string type, short option);
-        AST* sFunctionDeclaration(std::string name);
+        AST* sFunctionDeclaration(std::string type, std::string name);
         AST* sExpression();
         AST* sBlock();
         AssignTree* sAssignment(std::string identifier);

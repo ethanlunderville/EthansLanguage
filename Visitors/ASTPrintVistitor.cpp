@@ -72,8 +72,8 @@ void ASTPrintVisitor::visitDeclarationTree (AST* astree) {printer("DeclarationTr
 void ASTPrintVisitor::visitBlockTree (AST* astree) {printer("BlockTree", astree);}
 void ASTPrintVisitor::visitReturnTree (AST* astree) {printer("ReturnTree", astree);}
 void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree);}
-void ASTPrintVisitor::visitFunctionTree (AST* astree) {printer("FunctionTree", astree);}
-void ASTPrintVisitor::visitFunctionDeclarationTree (AST* astree) {printer("FunctionDeclTree", astree);}
+void ASTPrintVisitor::visitFunctionDeclarationTree (AST* astree) {printer("FunctionDeclarationTree", astree, ((FunctionDeclarationTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitFunctionCallTree (AST* astree) {printer("FunctionCallTree", astree, ((FunctionCallTree*)astree)->getIdentifier() );}
 void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree);}
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
 void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string(std::any_cast<double>(((NumberTree*)astree)->getVal())));}

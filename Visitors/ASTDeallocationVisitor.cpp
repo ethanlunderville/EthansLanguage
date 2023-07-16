@@ -33,8 +33,8 @@ void ASTDeallocationVisitor::visitDeclarationTree (AST* astree) {deallocate(astr
 void ASTDeallocationVisitor::visitBlockTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitReturnTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitProgramTree (AST* astree) {deallocate(astree);}
-void ASTDeallocationVisitor::visitFunctionTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitFunctionDeclarationTree (AST* astree) {deallocate(astree);}
+void ASTDeallocationVisitor::visitFunctionCallTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitWhileTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitElseTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitNumberTree (AST* astree) {deallocate(astree);}

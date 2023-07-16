@@ -13,19 +13,22 @@
 
     Sourcefile.el -> LEXER -> ProgramTokens 
     ProgramTokens -> PARSER -> AbstractSyntaxTree
+    AbstractSyntaxTree -> CHECKER -> CheckerAbstractSyntaxTree
     if [TREEWALKER] 
-        AbstractSyntaxTree -> TREEWALKER -> ProgramOutput
+        CheckedAbstractSyntaxTree -> TREEWALKER -> ProgramOutput
+    else if [LLVM backend] -> NOT IMPLEMENTED YET
+        CheckedAbstractSyntaxTree -> LLVM Backend -> ExecutableFile
 
     
 */
 //            declString -> tokenType
 // string ->  tokenType -> ASTNode -> TypeHandler
 
-//#include "Lexer.h"
-//#include "Parser.h"
+#include "Lexer.h"
+#include "Parser.h"
 #include "SymbolTable/ContextManager.h"
 #include "SyntaxTree/AST.h"
-//#include "Visitors/ASTVisitor.h"
+#include "Visitors/ASTVisitor.h"
 
 TypeManager* initTypes(){
     TypeManager* tManage = new TypeManager();
@@ -38,7 +41,6 @@ TypeManager* initTypes(){
 
 int main () {
     TypeManager* typeManager = initTypes();
-    /*
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file, typeManager);
@@ -69,7 +71,7 @@ int main () {
     lexer = nullptr;
     delete dVisit;
     dVisit = nullptr;
-    */
+    
     /*
     ContextManager(TypeManager* typeManager);
     ~ContextManager();
@@ -84,41 +86,36 @@ int main () {
     std::any getValueStoredInSymbol(std::string identifier);
     Type* getTypeOfSymbol(std::string identifier);
     */
+    /*
     ContextManager* cm = new ContextManager(typeManager);
     cm->declareSymbol(1, std::string("hello"), std::string("int"));
-    std::cout << "------------------\n";
+    std::cout << "\n\n------------------\n\n";
     cm->printSymbolTable();
     cm->reassignSymbol(std::string("hello"), 11.00 , 2);
-    std::cout << "------------------\n";
+    std::cout << "\n\n------------------\n\n";
     cm->printSymbolTable();
     cm->pushScope();
     cm->declareSymbol(1, std::string("g"), std::string("int"));
     cm->reassignSymbol(std::string("g"), 2222.00 , 2);
     cm->declareSymbol(1, std::string("r"), std::string("int"));
     cm->reassignSymbol(std::string("r"), 2232.00 , 2);
-    std::cout << "------------------\n";
+    std::cout << "\n\n------------------\n\n";
     cm->printSymbolTable();
-    cm->pushScope();
-    cm->declareSymbol(1, std::string("b"), std::string("int"));
-    cm->reassignSymbol(std::string("b"), 262.00 , 2);
-    std::cout << "------------------\n";
-    cm->printSymbolTable();
+
     cm->pushContext();
-    std::cout << "------------------\n";
-    cm->printSymbolTable();
-    cm->declareSymbol(1, std::string("n"), std::string("int"));
-    cm->reassignSymbol(std::string("n"), 22333332.00 , 2);
-    std::cout << "------------------\n";
+    cm->declareSymbol(1, std::string("g"), std::string("int"));
+    cm->reassignSymbol(std::string("g"), 2222.00 , 2);
+    std::cout << "\n\n------------------\n\n";
     cm->printSymbolTable();
     cm->popContext();
-    std::cout << "------------------\n";
+    std::cout << "\n\n------------------\n\n";
     cm->printSymbolTable();
-    cm->reassignSymbol(std::string("b"), 244.00 , 2);
+
     cm->popScope();
-    std::cout << "------------------\n";
+    std::cout << "\n\n------------------\n\n";
     cm->printSymbolTable();
-    cm->reassignSymbol(std::string("hello"), "11.00" , 2);
 
     delete cm;
+    */
     return 0;
 }

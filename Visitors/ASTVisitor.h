@@ -68,7 +68,6 @@ class ContextManager;
         virtual void visitBlockTree(AST* astree)=0;
         virtual void visitReturnTree(AST* astree)=0;
         virtual void visitProgramTree(AST* astree)=0;
-        virtual void visitFunctionTree(AST* astree)=0;
         virtual void visitFunctionDeclarationTree(AST* astree)=0;
         virtual void visitWhileTree(AST* astree)=0;
         virtual void visitElseTree(AST* astree)=0;
@@ -83,6 +82,7 @@ class ContextManager;
         virtual void visitNotEqualTree (AST* astree)=0;
         virtual void visitAndTree (AST* astree)=0;
         virtual void visitOrTree (AST* astree)=0;
+        virtual void visitFunctionCallTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -102,7 +102,6 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitBlockTree (AST* astree) override;
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
-        void visitFunctionTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
@@ -118,6 +117,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitNotEqualTree (AST* astree) override;
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
+        void visitFunctionCallTree(AST* astree) override;
         //Visitor specific functions
         void printIndent();
         void printer(std::string type, AST* node, std::string symbol);
@@ -144,7 +144,6 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitBlockTree (AST* astree) override;
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
-        void visitFunctionTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
@@ -160,6 +159,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitNotEqualTree (AST* astree) override;
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
+        void visitFunctionCallTree(AST* astree) override;
         //Deallocator specific functions
         void deAllocateChildren();
         void deallocate(AST* node);
@@ -186,7 +186,6 @@ class ASTInterpreter: public ASTVisitor {
         void visitBlockTree (AST* astree) override;
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
-        void visitFunctionTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
@@ -202,8 +201,10 @@ class ASTInterpreter: public ASTVisitor {
         void visitNotEqualTree (AST* astree) override;
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
+        void visitFunctionCallTree(AST* astree) override;
     private:
         ContextManager* contextManager;
+        std::map<std::string, FunctionDeclarationTree*> functionBinder;
 };
 
 class ASTChecker: public ASTVisitor {
@@ -224,7 +225,6 @@ class ASTChecker: public ASTVisitor {
         void visitBlockTree (AST* astree) override;
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
-        void visitFunctionTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
@@ -240,6 +240,7 @@ class ASTChecker: public ASTVisitor {
         void visitNotEqualTree (AST* astree) override;
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
+        void visitFunctionCallTree(AST* astree) override;
     private:
         ContextManager* contextManager;
 };
