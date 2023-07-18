@@ -4,6 +4,18 @@
 
 ASTInterpreter::ASTInterpreter(TypeManager* typeManager) {
     this->contextManager = new ContextManager(typeManager);
+    this->typeManager = typeManager;
+    
+    auto printFunc = [](std::any expression) {
+        if (expression.type() == typeid(double)) {
+            std::cout << std::any_cast<double>(expression) << std::endl;
+        } else {
+            std::cout << std::any_cast<std::string>(expression) << std::endl;
+        }
+        //return NULL;
+    };
+
+    //this->functionBinder["print"] = ((void*)printFunc);
 }
 ASTInterpreter::~ASTInterpreter() {
     delete this->contextManager;
@@ -20,6 +32,20 @@ void ASTInterpreter::visitProgramTree (AST* astree) {
 }
 void ASTInterpreter::visitAssignTree(AST* astree) {
     AssignTree* t = ((AssignTree*)astree);
+    //AssignTree may have an expression node member
+    //if it does get the value stored in the keyword from 
+    //the context manager
+    //      Then if the subscript of the assigntree is NULL
+    //      Reassign the actual symbol stored in the assigntree 
+    //      to whatever the first child of Astree evluates to
+    //          
+    //      If the subscript is not NULL get the identifier from the
+    //      table and anycast it to a vector of the type of the identifier.
+    //      then assign the vector at the evaluated subscript to the RVAL
+    //      
+    //      Modify the reassign symbol function to take a subscript as a parameter 
+    //      so that it can handle the above situations
+    //      Also modify the get value stored in symbol function in the same way
     this->visitChildren(t);
     this->contextManager->reassignSymbol(t->getIdentifier(), ((ExpressionTree*)(t->getChildren()[0]))->getVal(), t->getLine());
 }
@@ -33,9 +59,11 @@ void ASTInterpreter::visitStringExpressionTree (AST* astree) {
     this->visitChildren(t);
     t->setVal( std::any_cast<std::string>((dynamic_cast<Evaluatable*>(t->getChildren()[0])->getVal())) );
 }
+// Declaration of primitive type
 void ASTInterpreter::visitDeclarationTree (AST* astree) {
     DeclarationTree* t = ((DeclarationTree*)astree);
-    this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), t->getType());
+    PrimitiveType* type = this->typeManager->getTypeHandler(t->getType());
+    this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), type);
     if (t->getChildren().size() != 0) {
         this->visitChildren(astree);
     }
@@ -63,10 +91,17 @@ void ASTInterpreter::visitReturnTree (AST* astree) {
 }
 void ASTInterpreter::visitFunctionDeclarationTree (AST* astree) {
     FunctionDeclarationTree* t = ((FunctionDeclarationTree*)astree);
-    this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), t->getType());
-    this->functionBinder[t->getIdentifier()] = t; 
+    //Type*
+    PrimitiveType* returnType = this->typeManager->getTypeHandler(t->getType());
+    this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), new Function(returnType));
+    this->contextManager->reassignSymbol(t->getIdentifier(), astree, t->getLine());  
 }
 void ASTInterpreter::visitFunctionCallTree (AST* astree) {
+
+    if (!1) {
+
+    }
+
     FunctionCallTree* functionCall = ((FunctionCallTree*)astree);
     FunctionDeclarationTree* functionDefinition = ((FunctionDeclarationTree*)this->functionBinder[functionCall->getIdentifier()]);
     std::vector<AST*> arguments = functionCall->getChildren();
@@ -77,8 +112,9 @@ void ASTInterpreter::visitFunctionCallTree (AST* astree) {
     while (typeid(parameters[i]) != typeid(BlockTree)) {
         FunctionCallTree* argument = ((FunctionCallTree*)arguments[i]);
         FunctionDeclarationTree* parameter = ((FunctionDeclarationTree*)parameters[i]); 
-        this->contextManager->declareSymbol(parameter[i].getLine(),parameter[i].getIdentifier(),parameter[i].getType());
-        this->contextManager->reassignSymbol(parameter[i].getIdentifier(), argument[i].getVal() ,parameter[i].getLine());
+        //NOTE ::: Visit respective declaration tree to get correct polymorphic call
+        //this->contextManager->declareSymbol(parameter[i].getLine(),parameter[i].getIdentifier(), parameter[i].getType());
+        //this->contextManager->reassignSymbol(parameter[i].getIdentifier(), argument[i].getVal() ,parameter[i].getLine());
         i++;
     }
     this->visitBlockTree(parameters[i]);
@@ -95,6 +131,8 @@ void ASTInterpreter::visitWhileTree (AST* astree) {
 void ASTInterpreter::visitElseTree (AST* astree) {
     this->visitChildren(astree);
 }
+void ASTInterpreter::visitStructDeclarationTree (AST* astree) {}
+void ASTInterpreter::visitArrayDeclarationTree (AST* astree) {}
 void ASTInterpreter::visitNumberTree (AST* astree) {}
 void ASTInterpreter::visitStringTree (AST* astree) {}
 void ASTInterpreter::visitIdentifierTree (AST* astree) {

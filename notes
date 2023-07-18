@@ -1,0 +1,9 @@
+assigning array indexes
+    RVAL : Identifier tree can have an expression node stored as a member for its subscript
+    LVAL: DeclarationTree tree can have an expression node stored as a member for its subscript
+
+declaring arrays
+    LVAL : DeclarationTree
+assigning arrays
+    LVAL: 
+    RVAL: If identifier has no expression node actual array pointer is returned

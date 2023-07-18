@@ -92,6 +92,45 @@ class DeclarationTree : public AST {
         int line;
 };
 
+class FunctionDeclarationTree : public AST {
+    public:
+        FunctionDeclarationTree(std::string type, std::string identifier, int line);
+        void accept(ASTVisitor* v) override;
+        std::string getIdentifier();
+        std::string getType();
+        int getLine();
+    private:
+        std::string identifier;
+        std::string type;
+        int line;
+};
+
+class ArrayDeclarationTree : public AST {
+    public:
+        ArrayDeclarationTree(std::string type, std::string identifier, int line);
+        void accept(ASTVisitor* v) override;
+        std::string getIdentifier();
+        std::string getType();
+        int getLine();
+    private:
+        std::string identifier;
+        std::string type;
+        int line;
+};
+
+class StructDeclarationTree : public AST {
+    public:
+        StructDeclarationTree(std::string type, std::string identifier, int line);
+        void accept(ASTVisitor* v) override;
+        std::string getIdentifier();
+        std::string getType();
+        int getLine();
+    private:
+        std::string identifier;
+        std::string type;
+        int line;
+};
+
 //EVALUATABLES
 
 class Evaluatable : public AST {
@@ -122,18 +161,6 @@ class StringTree : public Evaluatable {
         std::string sString;
 };
 
-class FunctionDeclarationTree : public Evaluatable {
-    public:
-        FunctionDeclarationTree(std::string type, std::string identifier, int line);
-        void accept(ASTVisitor* v) override;
-        std::string getIdentifier();
-        std::string getType();
-        int getLine();
-    private:
-        std::string identifier;
-        std::string type;
-        int line;
-};
 
 class FunctionCallTree : public Evaluatable {
     public:

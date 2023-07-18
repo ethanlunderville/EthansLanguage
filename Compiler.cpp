@@ -30,7 +30,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
-TypeManager* initTypes(){
+TypeManager* initPrimitiveTypes(){
     TypeManager* tManage = new TypeManager();
     tManage->addTypeDecl(std::string("string"), STRINGTYPE, String::getInstance());
     tManage->addTypeRVal(STRING, String::getInstance());
@@ -40,7 +40,7 @@ TypeManager* initTypes(){
 }
 
 int main () {
-    TypeManager* typeManager = initTypes();
+    TypeManager* typeManager = initPrimitiveTypes();
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
     std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file, typeManager);

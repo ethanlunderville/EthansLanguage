@@ -4,6 +4,12 @@ SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableRefe
     pushScope();
 }
 
+SymbolTable::~SymbolTable() {
+    for (int i = 0 ; i < this->deletableTypes.size() ; i++) {
+        delete this->deletableTypes[i];
+    }
+}
+
 void SymbolTable::pushScope() {
     scopeStack.push(this->getCurrentSize());
 }
@@ -22,6 +28,9 @@ void SymbolTable::popScope(){
 
 void SymbolTable::declareSymbol(int line, std::string identifier, Type* typeHandler) {
     this->intToStringVector.push_back(identifier);
+    if (dynamic_cast<PrimitiveType*>(typeHandler) == nullptr) { // If the type is not primitve then it must be manually deallocated
+        this->deletableTypes.push_back(typeHandler);
+    }
     this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, typeHandler->getNullValue(), typeHandler};
     return;
 }

@@ -13,7 +13,9 @@ public:
     void popContext();
     void pushScope();
     void popScope();
-    void declareSymbol(int line, std::string identifier, std::string type);
+    void declarePrimitiveSymbol(int line, std::string identifier, std::string type);
+    void declareSymbol(int line, std::string identifier, Type* type);
+    void declareSymbol(int, std::string, std::string);
     void reassignSymbol(std::string identifier, std::any value, int line);
     void contextPopRecurse(SymbolTable* sym);
     void printSymbolTable();

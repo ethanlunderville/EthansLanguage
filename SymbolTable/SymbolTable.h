@@ -20,6 +20,7 @@ struct SymbolInfo {
 class SymbolTable {
 public:
     SymbolTable(SymbolTable* tableReference);
+    ~SymbolTable();
     void pushScope();
     void popScope();
     void declareSymbol(int line, std::string identifier, Type* typeHandler);
@@ -35,4 +36,5 @@ private:
     std::stack<int> scopeStack;
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;
+    std::vector<Type*> deletableTypes; 
 };

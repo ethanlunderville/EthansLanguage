@@ -17,6 +17,10 @@ AST* Number::getExpressionNode() {
 }
 
 bool Number::checkType(std::any value) {
+    // check if type is a vector of doubles
+    if (typeid(value.type()) == typeid(FunctionDeclarationTree*)) {
+        
+    }
     return value.type() == typeid(double);
 }
 

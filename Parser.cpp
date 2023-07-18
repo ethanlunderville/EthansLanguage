@@ -95,21 +95,21 @@ AST* Parser::sDeclaration( std::string type , std::string identifier, short opti
     DeclarationTree* t;
     AssignTree* at = nullptr;
     if (option) {
-        if (isCurrentToken(SEMICOLON)) {
+        if (isCurrentToken(SEMICOLON)) { //DECLARATION WITHOUT ASSIGNMENT 
             scan();
             t = new DeclarationTree(type, identifier, getCurrentLine());
             return t;
         }
-        at = sAssignment(identifier);
-    } else {
+        // DECLARATION WITH ASSIGNMENT
+        t = new DeclarationTree(type, identifier, getCurrentLine());
+        t->addChild(sAssignment(identifier));
+        
+    } else { // FUNCITON PARAMETERS
         scan();
         if(!isCurrentToken(RIGHT_PAREN)) {
             expect(COMMA);
         }
-    }
-    t = new DeclarationTree(type, identifier, getCurrentLine());
-    if (at != nullptr) {
-        t->addChild(at);
+        t = new DeclarationTree(type, identifier, getCurrentLine());
     }
     return t;
 }

@@ -93,6 +93,40 @@ void ContextManager::popScope(){
         exit(1);
     }
 }
+
+void ContextManager::declareSymbol(int line, std::string identifier, Type* currentType) {
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = this->globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            std::cerr << 
+            "Incorrect declaration of already declared variable: " 
+            << identifier  << " on line: " << line 
+            << std::endl;
+            exit(1);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
+    while (pointer != nullptr) {
+        if (pointer->contains(identifier) != -1) {
+            std::cerr << 
+            "Incorrect declaration of already declared variable: " 
+            << identifier  << " on line: " << line 
+            << std::endl;
+            exit(1);
+        }
+        if (pointer->tableReference == nullptr && pointer->contains(identifier) == -1) {
+            pointer->declareSymbol(line, identifier, currentType);
+            return;
+        }
+        pointer = pointer->tableReference;
+    }
+    return;
+}
+
 void ContextManager::declareSymbol(int line, std::string identifier, std::string type) {
     Type* currentType = this->typeManager->getTypeHandler(type);
     SymbolTable* pointer;

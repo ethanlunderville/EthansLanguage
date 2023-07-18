@@ -69,6 +69,8 @@ class ContextManager;
         virtual void visitReturnTree(AST* astree)=0;
         virtual void visitProgramTree(AST* astree)=0;
         virtual void visitFunctionDeclarationTree(AST* astree)=0;
+        virtual void visitArrayDeclarationTree(AST* astree)=0;
+        virtual void visitStructDeclarationTree(AST* astree)=0;
         virtual void visitWhileTree(AST* astree)=0;
         virtual void visitElseTree(AST* astree)=0;
         virtual void visitStringTree(AST* astree)=0;
@@ -103,6 +105,8 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
+        void visitArrayDeclarationTree (AST* astree) override;
+        void visitStructDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
@@ -145,6 +149,8 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
+        void visitArrayDeclarationTree (AST* astree) override;
+        void visitStructDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
@@ -187,6 +193,8 @@ class ASTInterpreter: public ASTVisitor {
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
+        void visitArrayDeclarationTree (AST* astree) override;
+        void visitStructDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
@@ -204,7 +212,8 @@ class ASTInterpreter: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
     private:
         ContextManager* contextManager;
-        std::map<std::string, FunctionDeclarationTree*> functionBinder;
+        TypeManager* typeManager;
+        std::map<std::string, void*> functionBinder;
 };
 
 class ASTChecker: public ASTVisitor {
@@ -226,6 +235,8 @@ class ASTChecker: public ASTVisitor {
         void visitReturnTree (AST* astree) override;
         void visitProgramTree (AST* astree) override;
         void visitFunctionDeclarationTree (AST* astree) override;
+        void visitArrayDeclarationTree (AST* astree) override;
+        void visitStructDeclarationTree (AST* astree) override;
         void visitWhileTree (AST* astree) override;
         void visitElseTree (AST* astree) override;
         void visitStringTree(AST* astree) override;
@@ -243,4 +254,5 @@ class ASTChecker: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
     private:
         ContextManager* contextManager;
+        TypeManager* typeManager;
 };
