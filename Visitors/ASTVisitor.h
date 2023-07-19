@@ -56,6 +56,9 @@ class ContextManager;
     public:
         virtual void visitChildren(AST* astree)=0;
         virtual void visitAssignTree(AST* astree)=0;
+        virtual void visitFunctionAssignTree(AST* astree)=0;
+        virtual void visitArrayAssignTree(AST* astree)=0;
+        virtual void visitStructAssignTree(AST* astree)=0;
         virtual void visitIfTree(AST* astree)=0;
         virtual void visitExpressionTree(AST* astree)=0;
         virtual void visitStringExpressionTree (AST* astree)=0;
@@ -93,6 +96,9 @@ class ASTPrintVisitor: public ASTVisitor {
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
+        void visitFunctionAssignTree (AST* astree) override;
+        void visitArrayAssignTree (AST* astree) override;
+        void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
@@ -137,6 +143,9 @@ class ASTDeallocationVisitor: public ASTVisitor {
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
+        void visitFunctionAssignTree (AST* astree) override;
+        void visitArrayAssignTree (AST* astree) override;
+        void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
@@ -181,6 +190,9 @@ class ASTInterpreter: public ASTVisitor {
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
+        void visitFunctionAssignTree (AST* astree) override;
+        void visitArrayAssignTree (AST* astree) override;
+        void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
@@ -223,6 +235,9 @@ class ASTChecker: public ASTVisitor {
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
         void visitAssignTree (AST* astree) override;
+        void visitFunctionAssignTree (AST* astree) override;
+        void visitArrayAssignTree (AST* astree) override;
+        void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;

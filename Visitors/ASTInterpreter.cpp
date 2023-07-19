@@ -49,6 +49,10 @@ void ASTInterpreter::visitAssignTree(AST* astree) {
     this->visitChildren(t);
     this->contextManager->reassignSymbol(t->getIdentifier(), ((ExpressionTree*)(t->getChildren()[0]))->getVal(), t->getLine());
 }
+void ASTInterpreter::visitFunctionAssignTree(AST* astree) {}
+void ASTInterpreter::visitArrayAssignTree(AST* astree) {}
+void ASTInterpreter::visitStructAssignTree(AST* astree) {}
+
 void ASTInterpreter::visitExpressionTree (AST* astree) {
     ExpressionTree* t = ((ExpressionTree*)astree);
     this->visitChildren(t);

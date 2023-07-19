@@ -27,10 +27,12 @@ void ASTChecker::visitAssignTree(AST* astree) {
         std::cerr << "Compiler error:: expected a primitive type but got a complex type. Error occured on line: " << tree->getLine() << std::endl; 
     }  
 }
+
+void ASTChecker::visitFunctionAssignTree(AST* astree) {}
+void ASTChecker::visitArrayAssignTree(AST* astree) {}
+void ASTChecker::visitStructAssignTree(AST* astree) {}
 void ASTChecker::visitIfTree (AST* astree) {this->visitChildren(astree);}
-void ASTChecker::visitExpressionTree (AST* astree) {
-    
-}
+void ASTChecker::visitExpressionTree (AST* astree) {}
 void ASTChecker::visitStringExpressionTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitDivideTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitMultiplyTree (AST* astree) {this->visitChildren(astree);}

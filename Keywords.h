@@ -18,7 +18,7 @@ enum TokenType {
     KARAT, BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
     GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
     NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
-    WHILE, INT, STRINGTYPE, COLON ,EOF_TOKEN
+    WHILE, INT, STRINGTYPE, COLON ,EOF_TOKEN, LEFT_BRACKET, RIGHT_BRACKET
 };
 
 static const TokenType OperatorArray[] = {   
@@ -81,7 +81,9 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {INT, "INT"},
     {STRING, "STRING"},
     {STRINGTYPE, "STRINGTYPE"},
-    {KARAT, "KARAT"}
+    {KARAT, "KARAT"},
+    {LEFT_BRACKET,"LEFT_BRACKET"},
+    {RIGHT_BRACKET,"RIGHT_BRACKET"}
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {

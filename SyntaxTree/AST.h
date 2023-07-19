@@ -58,10 +58,46 @@ class BlockTree : public AST {
         void accept(ASTVisitor* v) override;
 };
 
+//AssignTrees
+
 class AssignTree : public AST {
     public:
         AssignTree();
         AssignTree(std::string identifier, int line);
+        std::string getIdentifier();
+        int getLine();
+        void accept(ASTVisitor* v) override;
+    private:
+        std::string identifier;
+        int line;
+};
+
+class FunctionAssignTree : public AST {
+    public:
+        FunctionAssignTree();
+        FunctionAssignTree(std::string identifier, int line);
+        std::string getIdentifier();
+        int getLine();
+        void accept(ASTVisitor* v) override;
+    private:
+        std::string identifier;
+        int line;
+};
+class ArrayAssignTree : public AST {
+    public:
+        ArrayAssignTree();
+        ArrayAssignTree(std::string identifier, int line);
+        std::string getIdentifier();
+        int getLine();
+        void accept(ASTVisitor* v) override;
+    private:
+        std::string identifier;
+        int line;
+};
+class StructAssignTree : public AST {
+    public:
+        StructAssignTree();
+        StructAssignTree(std::string identifier, int line);
         std::string getIdentifier();
         int getLine();
         void accept(ASTVisitor* v) override;
@@ -174,11 +210,15 @@ class FunctionCallTree : public Evaluatable {
 class IdentifierTree : public Evaluatable {
     public:
         IdentifierTree(std::string identifier);
+        IdentifierTree(std::string identifier, AST* subScript);
         void accept(ASTVisitor* v) override;
         std::string getIdentifier();
         void setIdentifier(std::string identifier);
+        AST* getSubscript();
+        void setSubscript(AST* subScript);
     private:
         std::string identifier;
+        AST* subScript;
 };
 
 class ExpressionTree : public Evaluatable {

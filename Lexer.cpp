@@ -13,6 +13,8 @@ std::vector<Token> Lexer::scanTokens() {
             // Single-character lexemes
             case '(': addToken(LEFT_PAREN, line, "("); break;
             case ')': addToken(RIGHT_PAREN, line, ")"); break;
+            case '[': addToken(LEFT_BRACKET, line, "["); break;
+            case ']': addToken(RIGHT_BRACKET, line, "]"); break;
             case '{': addToken(LEFT_BRACE, line, "{"); break;
             case '}': addToken(RIGHT_BRACE, line, "}"); break;
             case ',': addToken(COMMA, line, ","); break;

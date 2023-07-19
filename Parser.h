@@ -22,7 +22,7 @@
 #include <typeinfo>
 #include <map>
 #include <functional>
-
+static bool programBlock = true;
 class TypeManager;
 class Parser {
     public:
@@ -36,11 +36,10 @@ class Parser {
         //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
-        AST* sDeclaration(std::string name, std::string type, short option);
-        AST* sFunctionDeclaration(std::string type, std::string name);
         AST* sExpression();
         AST* sBlock();
-        AssignTree* sAssignment(std::string identifier);
+        AST* sContext(AST* pTree);
+        AST* sAssignment(std::string identifier);
         //HELPER FUNCTIONS
         TokenType getCurrentToken();
         std::string getCurrentLexeme();

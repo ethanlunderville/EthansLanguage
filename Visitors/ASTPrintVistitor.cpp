@@ -60,6 +60,9 @@ void ASTPrintVisitor::printer(std::string type, AST* node) {
 }
 
 void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree, ((AssignTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitFunctionAssignTree (AST* astree) { printer("AssignTree", astree, ((FunctionAssignTree *)astree)->getIdentifier());}
+void ASTPrintVisitor::visitArrayAssignTree (AST* astree) { printer("AssignTree", astree, ((ArrayAssignTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitStructAssignTree (AST* astree) { printer("AssignTree", astree, ((StructAssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitIfTree (AST* astree) {printer("IfTree", astree);}
 void ASTPrintVisitor::visitExpressionTree (AST* astree) {printer("ExpressionTree", astree);}
 void ASTPrintVisitor::visitStringExpressionTree (AST* astree) {printer("StringExpressionTree", astree);}
@@ -80,7 +83,13 @@ void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree)
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
 void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string(std::any_cast<double>(((NumberTree*)astree)->getVal())));}
 void ASTPrintVisitor::visitStringTree (AST* astree) {printer("StringTree", astree, std::any_cast<std::string>(((StringTree*)astree)->getVal()));}
-void ASTPrintVisitor::visitIdentifierTree (AST* astree) {printer("Identifier",astree, ((IdentifierTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitIdentifierTree (AST* astree) {
+    IdentifierTree* t = ((IdentifierTree*)astree);
+    printer("Identifier",astree, t->getIdentifier());
+    //if (t->getSubscript() != nullptr) {
+   //     printIndent();
+   // }
+}
 void ASTPrintVisitor::visitGreaterTree (AST* astree) {printer("GreaterTree", astree, ">");}
 void ASTPrintVisitor::visitGreaterEqualTree (AST* astree) {printer("GreaterEqualTree", astree, ">=");}
 void ASTPrintVisitor::visitLessTree (AST* astree) {printer("LessTree", astree, "<");}
