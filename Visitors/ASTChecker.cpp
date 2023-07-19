@@ -71,3 +71,5 @@ void ASTChecker::visitEqualTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitNotEqualTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitAndTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitOrTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitArrowOpTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitAssignOpTree (AST* astree) {this->visitChildren(astree);}

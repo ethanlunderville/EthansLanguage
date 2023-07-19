@@ -14,7 +14,7 @@
 
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+    COMMA, ARROW, MINUS, PLUS, SEMICOLON, SLASH, STAR,
     KARAT, BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
     GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
     NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
@@ -34,7 +34,9 @@ static const TokenType OperatorArray[] = {
     MINUS,
     AND,
     OR,
-    SLASH 
+    SLASH,
+    ARROW,
+    EQUAL
 };
 
 static const TokenType Statement[] = {   
@@ -51,7 +53,7 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {LEFT_BRACE, "LEFT_BRACE"},
     {RIGHT_BRACE, "RIGHT_BRACE"},
     {COMMA, "COMMA"},
-    {DOT, "DOT"},
+    {ARROW, "ARROW"},
     {MINUS, "MINUS"},
     {PLUS, "PLUS"},
     {SEMICOLON, "SEMICOLON"},

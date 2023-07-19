@@ -234,3 +234,19 @@ void ASTInterpreter::visitOrTree (AST* astree) {
     std::any operand2 = ((Evaluatable*)(t->getChildren()[1]))->getVal();
     t->opOr(operand1, operand2);
 }
+
+void ASTInterpreter::visitAssignOpTree (AST* astree) {
+    AssignOpTree* t = ((AssignOpTree*)astree);
+    this->visitChildren(t);
+    std::any operand1 = ((Evaluatable*)(t->getChildren()[0]))->getVal();
+    std::any operand2 = ((Evaluatable*)(t->getChildren()[1]))->getVal();
+    t->assign(operand1, operand2);
+}
+
+void ASTInterpreter::visitArrowOpTree (AST* astree) {
+    ArrowOpTree* t = ((ArrowOpTree*)astree);
+    this->visitChildren(t);
+    std::any operand1 = ((Evaluatable*)(t->getChildren()[0]))->getVal();
+    std::any operand2 = ((Evaluatable*)(t->getChildren()[1]))->getVal();
+    t->getOp(operand1, operand2);
+}

@@ -48,29 +48,10 @@ AST* Parser::sStatement() {
         expect(SEMICOLON);
         return t;
     } else if (isCurrentToken(IDENTIFIER)) {
-        std::string identifier = getCurrentLexeme();
-        scan();
-        if (isCurrentToken(EQUAL)) { // IF IT IS A REASSIGNMENT OF ALREADY DECLARED VARIABLE
+        t = sExpression();
+        if (isCurrentToken(SEMICOLON)) {
             scan();
-            t = sAssignment(identifier);
-        } else {
-            while (!isCurrentToken(SEMICOLON)) {
-                expect(IDENTIFIER);
-                
-
-            }
-        } /*else { // IF IT IS A FUNCTION CALL
-            expect(LEFT_PAREN);
-            t = new FunctionCallTree(identifier);
-            while (!isCurrentToken(RIGHT_PAREN)) {
-                t->addChild(sExpression());
-                if (isCurrentToken(COMMA)) {
-                    scan();
-                }
-            }
-            scan();
-            expect(SEMICOLON);
-        }*/
+        }
     } 
     return t;
 }
@@ -90,20 +71,50 @@ AST* Parser::sExpression() {
             std::cout << getCurrentLexeme() << " ";
         #endif
         //
-        if (onOperand()) {
+        if (isCurrentToken(LEFT_BRACKET)) {
+            AST* assignFunction = sAssignment(std::string("FILLER"));
+            operandStack.push(assignFunction);
+            break;
+        } else if (onOperand()) {
             if (isCurrentToken(LEFT_PAREN)){
                 scan();
+                if (onDeclaration()) {
+                    goBack();
+                    AST* assignFunction = sAssignment(std::string("FILLER"));
+                    operandStack.push(assignFunction);
+                    break;
+                }
                 operandStack.push(sExpression());
                 expect(RIGHT_PAREN);
             } else if (isCurrentToken(IDENTIFIER)) {
-                IdentifierTree* identTree = new IdentifierTree(getCurrentLexeme());
-                operandStack.push(identTree);
+                AST* identTree;// = new IdentifierTree(getCurrentLexeme());
+                std::string identifier = getCurrentLexeme();
                 scan();
+                if (isCurrentToken(LEFT_BRACKET)) {
+                    identTree = new IdentifierTree(identifier);
+                    scan();
+                    identTree->addChild(sExpression());
+                    expect(RIGHT_BRACKET);
+                } else if (isCurrentToken(LEFT_PAREN)) {
+                    scan();
+                    identTree = new FunctionCallTree(identifier);
+                    while (!isCurrentToken(RIGHT_PAREN)) {
+                        identTree->addChild(sExpression());
+                        if (isCurrentToken(COMMA)) {
+                            scan();
+                        }
+                    }
+                    scan();
+                } else {
+                    identTree = new IdentifierTree(identifier);
+                }
+                operandStack.push(identTree);
             } else if (onData()) {
                 AST* nTree = this->typeManager->getTypeHandler(getCurrentToken())->getNewTreenode(getCurrentLexeme());
                 operandStack.push(nTree);
                 scan();
-            } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA)){
+            } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA) 
+                       || isCurrentToken(RIGHT_BRACKET)){
                 break;
             } 
         } else {
@@ -132,7 +143,8 @@ AST* Parser::sExpression() {
             }
             operatorStack.push(opTree);
             scan();
-        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA)){
+        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA) 
+                       || isCurrentToken(RIGHT_BRACKET)){
             break;
         } else { 
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
@@ -230,7 +242,7 @@ AST* Parser::sContext(AST* pTree) {
 }
 
 AST* Parser::sAssignment(std::string identifier) {
-    AST* aTree; //= new AssignTree(identifier, getCurrentLine());
+    AST* aTree;
     if (isCurrentToken(LEFT_PAREN)) {
         aTree = new FunctionAssignTree(identifier, getCurrentLine());
         scan();
@@ -239,11 +251,13 @@ AST* Parser::sAssignment(std::string identifier) {
             scan();
             std::string name;
             if (isCurrentToken(LEFT_BRACKET)) {
+                scan();
                 expect(RIGHT_BRACKET);
                 name = getCurrentLexeme();
                 aTree->addChild(new ArrayDeclarationTree(type,name, getCurrentLine()));
                 scan();
             } else if (isCurrentToken(LEFT_PAREN)) {
+                scan();
                 expect(RIGHT_PAREN);
                 name = getCurrentLexeme();
                 aTree->addChild(new FunctionDeclarationTree(type, name, getCurrentLine()));
@@ -270,6 +284,7 @@ AST* Parser::sAssignment(std::string identifier) {
         while (1) { 
             aTree->addChild(sExpression());
             if (isCurrentToken(RIGHT_BRACKET)) {
+                scan();
                 break;
             }
             expect(COMMA);
@@ -348,6 +363,10 @@ bool Parser::isCurrentToken(int tokenType) {
 
 void Parser::scan() {
     this->currentTokenIndex++;
+}
+
+void Parser::goBack() {
+    this->currentTokenIndex--;
 }
 
 void Parser::nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence) {

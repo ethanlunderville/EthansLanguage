@@ -98,3 +98,6 @@ void ASTPrintVisitor::visitEqualTree (AST* astree) {printer("EqualTree", astree,
 void ASTPrintVisitor::visitNotEqualTree (AST* astree) {printer("NotEqualTree", astree, "!=");}
 void ASTPrintVisitor::visitAndTree (AST* astree) {printer("AndTree", astree, "&&");}
 void ASTPrintVisitor::visitOrTree (AST* astree) {printer("OrTree", astree, "||");}
+void ASTPrintVisitor::visitAssignOpTree (AST* astree) {printer("AssignOpTree", astree, "=");}
+void ASTPrintVisitor::visitArrowOpTree (AST* astree) {printer("ArrowOpTree", astree, "->");}
+

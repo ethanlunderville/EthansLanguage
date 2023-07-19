@@ -33,6 +33,7 @@ class Parser {
         Lexer* lexer;
         std::vector<Token> tokens;
         TypeManager* typeManager;
+        std::string mostRecentIdentifier;
         //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
@@ -54,6 +55,7 @@ class Parser {
         //NO RETURN
         void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
         void scan();
+        void goBack();
         void expect(TokenType tokenType);
 };
 
@@ -70,6 +72,8 @@ static std::map< TokenType, std::function<Operator*()>> OperatorMap = {
     { EQUAL_EQUAL, []() { return new EqualTree(); } },
     { BANG_EQUAL, []() { return new NotEqualTree(); } },
     { AND, []() { return new AndTree(); } },
-    { OR, []() { return new OrTree(); } }
+    { OR, []() { return new OrTree(); } },
+    { ARROW, []() { return new ArrowOpTree(); } },
+    { EQUAL, []() { return new AssignOpTree(); } }
 };
         

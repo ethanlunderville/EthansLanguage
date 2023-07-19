@@ -53,3 +53,5 @@ void ASTDeallocationVisitor::visitEqualTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitNotEqualTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitAndTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitOrTree (AST* astree) {deallocate(astree);}
+void ASTDeallocationVisitor::visitAssignOpTree (AST* astree) {deallocate(astree);}
+void ASTDeallocationVisitor::visitArrowOpTree (AST* astree) {deallocate(astree);}

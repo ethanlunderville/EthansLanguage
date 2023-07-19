@@ -214,8 +214,7 @@ class IdentifierTree : public Evaluatable {
         void accept(ASTVisitor* v) override;
         std::string getIdentifier();
         void setIdentifier(std::string identifier);
-        AST* getSubscript();
-        void setSubscript(AST* subScript);
+
     private:
         std::string identifier;
         AST* subScript;
@@ -338,5 +337,19 @@ class OrTree : public Operator {
     public:
         OrTree();
         std::any opOr(std::any x, std::any y);
+        void accept(ASTVisitor* v) override;
+};
+
+class ArrowOpTree : public Operator {
+    public:
+        ArrowOpTree();
+        std::any getOp(std::any x, std::any y);
+        void accept(ASTVisitor* v) override;
+};
+
+class AssignOpTree : public Operator {
+    public:
+        AssignOpTree();
+        std::any assign(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
 };

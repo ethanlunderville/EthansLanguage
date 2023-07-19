@@ -18,7 +18,6 @@ std::vector<Token> Lexer::scanTokens() {
             case '{': addToken(LEFT_BRACE, line, "{"); break;
             case '}': addToken(RIGHT_BRACE, line, "}"); break;
             case ',': addToken(COMMA, line, ","); break;
-            case '.': addToken(DOT, line, "."); break;
             case '+': addToken(PLUS, line, "+"); break;
             case ';': addToken(SEMICOLON, line, ";"); break;
             case ':': addToken(COLON, line, ":"); break;
@@ -77,7 +76,10 @@ std::vector<Token> Lexer::scanTokens() {
                     } else {
                         std::cerr << "Error at line " << line << ": unexpected character '" << c << "'\n";
                         exit(1);
-                    }
+                    } 
+                } else if (inStream.peek() == '>'){
+                    addToken(ARROW , line, "->");
+                    c = inStream.get(); 
                 } else {
                     addToken(MINUS, line, "-");
                 } 

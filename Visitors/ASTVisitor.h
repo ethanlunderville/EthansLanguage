@@ -88,6 +88,8 @@ class ContextManager;
         virtual void visitAndTree (AST* astree)=0;
         virtual void visitOrTree (AST* astree)=0;
         virtual void visitFunctionCallTree (AST* astree)=0;
+        virtual void visitAssignOpTree (AST* astree)=0;
+        virtual void visitArrowOpTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -128,6 +130,8 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
         void visitFunctionCallTree(AST* astree) override;
+        void visitAssignOpTree (AST* astree) override;
+        void visitArrowOpTree(AST* astree) override;
         //Visitor specific functions
         void printIndent();
         void printer(std::string type, AST* node, std::string symbol);
@@ -175,6 +179,8 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
         void visitFunctionCallTree(AST* astree) override;
+        void visitAssignOpTree (AST* astree) override;
+        void visitArrowOpTree(AST* astree) override;
         //Deallocator specific functions
         void deAllocateChildren();
         void deallocate(AST* node);
@@ -222,6 +228,8 @@ class ASTInterpreter: public ASTVisitor {
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
         void visitFunctionCallTree(AST* astree) override;
+        void visitAssignOpTree (AST* astree) override;
+        void visitArrowOpTree(AST* astree) override;
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;
@@ -267,6 +275,8 @@ class ASTChecker: public ASTVisitor {
         void visitAndTree (AST* astree) override;
         void visitOrTree (AST* astree) override;
         void visitFunctionCallTree(AST* astree) override;
+        void visitAssignOpTree (AST* astree) override;
+        void visitArrowOpTree(AST* astree) override;
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;
