@@ -120,7 +120,7 @@ std::vector<Token> Lexer::scanTokens() {
 void Lexer::printLexemes(std::vector<Token> tokens) {
     for (int i = 0 ; i < tokens.size() ; i++) {
         if (tokens[i].type == IDENTIFIER || this->typeManager->tokenIsRValue(tokens[i].type)) {
-            std::cout << tokenToStringMap[tokens[i].type] << ": " << tokens[i].lexeme << std::endl;
+            std::cout << tokenToStringMap[tokens[i].type] << ": {" << tokens[i].lexeme << "}" << std::endl;
         } else {
             std::cout << tokenToStringMap[tokens[i].type] << std::endl;        
         }
@@ -137,6 +137,7 @@ void Lexer::string(std::vector<Token> tokens , int line) {
         char temp = inStream.get();
         literal.push_back(temp);
         if (temp == '"') {
+            literal.push_back('\0');
             addToken(STRING, line, literal);
             return;    
         }

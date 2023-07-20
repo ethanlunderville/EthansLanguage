@@ -6,6 +6,12 @@ StructAssignTree::StructAssignTree(std::string identifier, int line) {
     this->line = line;
 }
 
+StructAssignTree::StructAssignTree(std::string identifier, std::string typeName ,int line) {
+    this->typeName = typeName;
+    this->identifier = identifier;
+    this->line = line;
+}
+
 int StructAssignTree::getLine() {
     return this->line;
 }

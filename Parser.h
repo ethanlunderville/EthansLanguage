@@ -22,7 +22,6 @@
 #include <typeinfo>
 #include <map>
 #include <functional>
-static bool programBlock = true;
 class TypeManager;
 class Parser {
     public:
@@ -33,7 +32,7 @@ class Parser {
         Lexer* lexer;
         std::vector<Token> tokens;
         TypeManager* typeManager;
-        std::string mostRecentIdentifier;
+        std::vector<std::string> userDefinedTypes;
         //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
@@ -43,7 +42,8 @@ class Parser {
         AST* sAssignment(std::string identifier);
         //HELPER FUNCTIONS
         TokenType getCurrentToken();
-        std::string getCurrentLexeme();
+        bool onUserDefinedType();
+        std::string& getCurrentLexeme();
         int getCurrentLine();
         //RETURNS BOOL
         bool onStatement();

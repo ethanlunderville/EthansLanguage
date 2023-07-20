@@ -12,3 +12,7 @@ void AST::addChild(AST* tree) {
 std::vector<AST*> AST::getChildren() {
     return children;
 }
+
+void AST::prependToChildren(AST* prependNode) {
+    this->children.insert(this->children.begin(), prependNode);
+}

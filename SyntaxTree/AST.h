@@ -23,7 +23,8 @@ class AST {
         virtual ~AST();
         void addChild(AST* tree);
         std::vector<AST*> getChildren();
-        virtual void accept(ASTVisitor* v) = 0; 
+        virtual void accept(ASTVisitor* v) = 0;
+        void prependToChildren(AST* prependNode);
     private:
         std::vector<AST*> children;
 };
@@ -98,12 +99,14 @@ class StructAssignTree : public AST {
     public:
         StructAssignTree();
         StructAssignTree(std::string identifier, int line);
+        StructAssignTree(std::string identifier, std::string typeName, int line);
         std::string getIdentifier();
         int getLine();
         void accept(ASTVisitor* v) override;
     private:
         std::string identifier;
         int line;
+        std::string typeName;
 };
 
 class ReturnTree : public AST {

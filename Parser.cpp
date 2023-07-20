@@ -39,15 +39,13 @@ AST* Parser::sStatement() {
         t->addChild(sBlock());
     } else if (isCurrentToken(RETURN)) {
         scan();
-        if (onData() || isCurrentToken(IDENTIFIER)) {
-            t = new ReturnTree(getCurrentLexeme());
-            scan();
-        } else {
-            t = new ReturnTree();
+        t = new ReturnTree();
+        if (!isCurrentToken(SEMICOLON)) {
+            t->addChild(sExpression());
         }
         expect(SEMICOLON);
         return t;
-    } else if (isCurrentToken(IDENTIFIER)) {
+    } else if (isCurrentToken(IDENTIFIER) && !onUserDefinedType()) {
         t = sExpression();
         if (isCurrentToken(SEMICOLON)) {
             scan();
@@ -71,7 +69,9 @@ AST* Parser::sExpression() {
             std::cout << getCurrentLexeme() << " ";
         #endif
         //
-        if (isCurrentToken(LEFT_BRACKET)) {
+        if (0) {
+
+        } else if (isCurrentToken(LEFT_BRACKET)) {
             AST* assignFunction = sAssignment(std::string("FILLER"));
             operandStack.push(assignFunction);
             break;
@@ -166,7 +166,6 @@ AST* Parser::sExpression() {
         int savePrecedence = operatorStack.top()->getPrecendence();
         AST* operatorHold = dynamic_cast<AST*>(operatorStack.top());
         operatorStack.pop();
-        
         nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
         operatorHold->addChild(operand1);
         operatorHold->addChild(operand2);
@@ -192,8 +191,9 @@ AST* Parser::sContext(AST* pTree) {
     while (1) {
         if (onStatement()) {
             pTree->addChild(sStatement());
-        } else if (onDeclaration()) {
-            std::string type  = getCurrentLexeme();
+        } else if ( isCurrentToken(STRUCT)|| onDeclaration()) {
+            //std::string identifier = getCurrentLexeme();
+            std::string type = getCurrentLexeme();
             scan();
             std::string name;
             if (isCurrentToken(LEFT_BRACKET)) {
@@ -203,10 +203,6 @@ AST* Parser::sContext(AST* pTree) {
                 AST* arrayDeclaration = new ArrayDeclarationTree(type,name, getCurrentLine());
                 pTree->addChild(arrayDeclaration);
                 scan();
-                if (isCurrentToken(EQUAL)) {
-                    scan();
-                    arrayDeclaration->addChild(sAssignment(name));
-                } 
             } else if (isCurrentToken(LEFT_PAREN)) {
                 scan();
                 expect(RIGHT_PAREN);
@@ -214,23 +210,29 @@ AST* Parser::sContext(AST* pTree) {
                 AST* functionDeclaration = new FunctionDeclarationTree(type, name, getCurrentLine());
                 pTree->addChild(functionDeclaration);
                 scan();
-                if (isCurrentToken(EQUAL)) {
-                    scan();
-                    functionDeclaration->addChild(sAssignment(name));
-                } 
             } else if (isCurrentToken(IDENTIFIER)) { 
                 name = getCurrentLexeme();
-                AST* declaration = new DeclarationTree(type,name,1);
+                AST* declaration;
+                if (type.compare("struct") == 0) { // HARDCODED SINCE IT IS A VERY SPECIAL CASE
+                    declaration = new StructDeclarationTree(type, name, getCurrentLine());
+                    this->userDefinedTypes.push_back(name);
+                } else {
+                    declaration = new DeclarationTree(type,name,getCurrentLine());
+                }
                 pTree->addChild(declaration);
                 scan();
-                if (isCurrentToken(EQUAL)) {
-                    scan();
-                    declaration->addChild(sAssignment(name));
-                } 
             } else {
-                std::cerr << "Expected an identifier after the type on line: " << getCurrentLine() << "Instead got: " << getCurrentLexeme() << std::endl;
+                std::cerr << "Expected an identifier after the type on line: " << getCurrentLine() << " Instead got: " << getCurrentLexeme() << std::endl;
                 exit(1);
             }
+            if (isCurrentToken(EQUAL)) {
+                scan();
+                AST* assignOp = sAssignment(name);
+                ExpressionTree* expressionForParent = new ExpressionTree();
+                assignOp->prependToChildren(new IdentifierTree(name));
+                expressionForParent->addChild(assignOp);
+                pTree->addChild(expressionForParent);                    
+            } 
             if (isCurrentToken(SEMICOLON)) {
                 scan();
             }
@@ -242,29 +244,47 @@ AST* Parser::sContext(AST* pTree) {
 }
 
 AST* Parser::sAssignment(std::string identifier) {
-    AST* aTree;
-    if (isCurrentToken(LEFT_PAREN)) {
-        aTree = new FunctionAssignTree(identifier, getCurrentLine());
+    AST* aTree = new AssignOpTree();
+    if (isCurrentToken(NEW)) {
         scan();
+        if (onUserDefinedType()) {
+            aTree->addChild(new StructAssignTree(identifier, getCurrentLexeme() ,getCurrentLine()));
+            scan();
+            expect(LEFT_PAREN);
+            expect(RIGHT_PAREN);
+            expect(SEMICOLON);
+            return aTree;
+        } else {
+            std::cerr << "Unrecognized struct name: " << getCurrentLexeme() << "on line: " << getCurrentLine();
+            exit(1);
+        }
+    } else if (isCurrentToken(LEFT_BRACE)) {
+        StructAssignTree* sAssignTree = new StructAssignTree(identifier, getCurrentLine());
+        sAssignTree->addChild(sBlock());
+        aTree->addChild(sAssignTree);
+        return aTree;
+    } else if (isCurrentToken(LEFT_PAREN)) {
+        scan();
+        FunctionAssignTree* functionAssignTree = new FunctionAssignTree(getCurrentLexeme(), getCurrentLine());
         while (onDeclaration()) {
-            std::string type  = getCurrentLexeme();
+            std::string type = getCurrentLexeme();
             scan();
             std::string name;
             if (isCurrentToken(LEFT_BRACKET)) {
                 scan();
                 expect(RIGHT_BRACKET);
                 name = getCurrentLexeme();
-                aTree->addChild(new ArrayDeclarationTree(type,name, getCurrentLine()));
+                functionAssignTree->addChild(new ArrayDeclarationTree(type,name, getCurrentLine()));
                 scan();
             } else if (isCurrentToken(LEFT_PAREN)) {
                 scan();
                 expect(RIGHT_PAREN);
                 name = getCurrentLexeme();
-                aTree->addChild(new FunctionDeclarationTree(type, name, getCurrentLine()));
+                functionAssignTree->addChild(new FunctionDeclarationTree(type, name, getCurrentLine()));
                 scan();
             } else if (isCurrentToken(IDENTIFIER)) { 
                 name = getCurrentLexeme();
-                aTree->addChild(new DeclarationTree(type,name,1));
+                functionAssignTree->addChild(new DeclarationTree(type,name,1));
                 scan();
             } else {
                 std::cerr << "Expected an identifier after the type on line: " << getCurrentLine() << "Instead got: " << getCurrentLexeme() << std::endl;
@@ -276,13 +296,14 @@ AST* Parser::sAssignment(std::string identifier) {
             scan();
         }
         expect(RIGHT_PAREN);
-        aTree->addChild(sBlock());
+        functionAssignTree->addChild(sBlock());
+        aTree->addChild(functionAssignTree);
         return aTree;
     } else if (isCurrentToken(LEFT_BRACKET)) {
-        aTree = new ArrayAssignTree(identifier, getCurrentLine());
+        ArrayAssignTree* arrayAssignTree = new ArrayAssignTree(getCurrentLexeme(), getCurrentLine());
         scan();
         while (1) { 
-            aTree->addChild(sExpression());
+            arrayAssignTree->addChild(sExpression());
             if (isCurrentToken(RIGHT_BRACKET)) {
                 scan();
                 break;
@@ -290,9 +311,9 @@ AST* Parser::sAssignment(std::string identifier) {
             expect(COMMA);
         }
         expect(SEMICOLON);
+        aTree->addChild(arrayAssignTree);
         return aTree;
     } else if (onOperand()) {
-        aTree = new AssignTree(identifier, getCurrentLine());
         aTree->addChild(sExpression());
         expect(SEMICOLON);
         return aTree;
@@ -306,14 +327,31 @@ AST* Parser::sAssignment(std::string identifier) {
 TokenType Parser::getCurrentToken() {
     return tokens[currentTokenIndex].type;
 }
-std::string Parser::getCurrentLexeme() {
-    return (tokens[currentTokenIndex].lexeme);
+std::string& Parser::getCurrentLexeme() {
+        return tokens[currentTokenIndex].lexeme;
 }
 int Parser::getCurrentLine() {
     return tokens[currentTokenIndex].line;
 }
 
+bool Parser::onUserDefinedType() { 
+    if (this->currentTokenIndex < this->tokens.size()) {
+        std::string lexeme = getCurrentLexeme();
+        for (int i = 0 ; i < this->userDefinedTypes.size() ; i++) {
+            if (this->userDefinedTypes[i].compare(lexeme) == 0) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        return false;
+    }
+}
+
 bool Parser::onStatement() {
+    if (onUserDefinedType()) {
+        return false;
+    }  
     for (int i = 0 ; i < sizeof(Statement)/sizeof(Statement[0]); i++) {
         if (isCurrentToken(Statement[i])) {
             return true;
@@ -323,6 +361,9 @@ bool Parser::onStatement() {
 }
 
 bool Parser::onDeclaration() {
+    if (isCurrentToken(STRUCT) || onUserDefinedType()) {
+        return true;
+    }
     for (int i = 0 ; i < this->typeManager->Declarator.size(); i++) {
         if (isCurrentToken(this->typeManager->Declarator[i])) {
             return true;
@@ -390,7 +431,6 @@ void Parser::nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int
     }
 
 }
-
 void Parser::expect(TokenType tokenType) {
     if (isCurrentToken(tokenType)) {
         scan();
