@@ -33,6 +33,7 @@ void ASTChecker::visitArrayAssignTree(AST* astree) {}
 void ASTChecker::visitStructAssignTree(AST* astree) {}
 void ASTChecker::visitIfTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitExpressionTree (AST* astree) {}
+void ASTChecker::visitStructExpressionTree (AST* astree) {}
 void ASTChecker::visitStringExpressionTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitDivideTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitMultiplyTree (AST* astree) {this->visitChildren(astree);}
@@ -73,3 +74,4 @@ void ASTChecker::visitAndTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitOrTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitArrowOpTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitAssignOpTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitPrintTree (AST* astree) {this->visitChildren(astree);}

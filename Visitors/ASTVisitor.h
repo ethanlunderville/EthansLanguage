@@ -61,6 +61,7 @@ class ContextManager;
         virtual void visitStructAssignTree(AST* astree)=0;
         virtual void visitIfTree(AST* astree)=0;
         virtual void visitExpressionTree(AST* astree)=0;
+        virtual void visitStructExpressionTree(AST* astree)=0;
         virtual void visitStringExpressionTree (AST* astree)=0;
         virtual void visitDivideTree(AST* astree)=0;
         virtual void visitMultiplyTree(AST* astree)=0;
@@ -90,6 +91,7 @@ class ContextManager;
         virtual void visitFunctionCallTree (AST* astree)=0;
         virtual void visitAssignOpTree (AST* astree)=0;
         virtual void visitArrowOpTree (AST* astree)=0;
+        virtual void visitPrintTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -103,6 +105,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStructExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
@@ -132,6 +135,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitPrintTree(AST* astree) override;
         //Visitor specific functions
         void printIndent();
         void printer(std::string type, AST* node, std::string symbol);
@@ -152,6 +156,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStructExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
@@ -181,6 +186,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitPrintTree(AST* astree) override;
         //Deallocator specific functions
         void deAllocateChildren();
         void deallocate(AST* node);
@@ -201,6 +207,7 @@ class ASTInterpreter: public ASTVisitor {
         void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStructExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
@@ -230,6 +237,7 @@ class ASTInterpreter: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitPrintTree(AST* astree) override;
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;
@@ -248,6 +256,7 @@ class ASTChecker: public ASTVisitor {
         void visitStructAssignTree (AST* astree) override;
         void visitIfTree (AST* astree) override;
         void visitExpressionTree (AST* astree) override;
+        void visitStructExpressionTree (AST* astree) override;
         void visitStringExpressionTree (AST* astree) override;
         void visitDivideTree (AST* astree) override;
         void visitMultiplyTree (AST* astree) override;
@@ -277,6 +286,7 @@ class ASTChecker: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitPrintTree(AST* astree) override;
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;

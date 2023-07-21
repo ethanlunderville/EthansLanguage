@@ -30,6 +30,10 @@ void ASTInterpreter::visitProgramTree (AST* astree) {
     this->visitChildren(astree);
     return;
 }
+void ASTInterpreter::visitPrintTree (AST* astree) {
+    this->visitChildren(astree);
+    return;
+}
 void ASTInterpreter::visitAssignTree(AST* astree) {
     AssignTree* t = ((AssignTree*)astree);
     //AssignTree may have an expression node member
@@ -52,7 +56,7 @@ void ASTInterpreter::visitAssignTree(AST* astree) {
 void ASTInterpreter::visitFunctionAssignTree(AST* astree) {}
 void ASTInterpreter::visitArrayAssignTree(AST* astree) {}
 void ASTInterpreter::visitStructAssignTree(AST* astree) {}
-
+void ASTInterpreter::visitStructExpressionTree (AST* astree) {}
 void ASTInterpreter::visitExpressionTree (AST* astree) {
     ExpressionTree* t = ((ExpressionTree*)astree);
     this->visitChildren(t);

@@ -37,6 +37,7 @@ class Parser {
         AST* sProgram();
         AST* sStatement();
         AST* sExpression();
+        AST* sStructExpression();
         AST* sBlock();
         AST* sContext(AST* pTree);
         AST* sAssignment(std::string identifier);

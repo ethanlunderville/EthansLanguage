@@ -65,6 +65,7 @@ void ASTPrintVisitor::visitArrayAssignTree (AST* astree) { printer("ArrayAssignT
 void ASTPrintVisitor::visitStructAssignTree (AST* astree) { printer("StructAssignTree", astree, ((StructAssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitIfTree (AST* astree) {printer("IfTree", astree);}
 void ASTPrintVisitor::visitExpressionTree (AST* astree) {printer("ExpressionTree", astree);}
+void ASTPrintVisitor::visitStructExpressionTree (AST* astree) {printer("StructExpressionTree", astree);}
 void ASTPrintVisitor::visitStringExpressionTree (AST* astree) {printer("StringExpressionTree", astree);}
 void ASTPrintVisitor::visitDivideTree (AST* astree) {printer("DivideTree", astree, "/");}
 void ASTPrintVisitor::visitMultiplyTree (AST* astree) {printer("MultiplyTree", astree,"x");}
@@ -100,4 +101,5 @@ void ASTPrintVisitor::visitAndTree (AST* astree) {printer("AndTree", astree, "&&
 void ASTPrintVisitor::visitOrTree (AST* astree) {printer("OrTree", astree, "||");}
 void ASTPrintVisitor::visitAssignOpTree (AST* astree) {printer("AssignOpTree", astree, "=");}
 void ASTPrintVisitor::visitArrowOpTree (AST* astree) {printer("ArrowOpTree", astree, "->");}
+void ASTPrintVisitor::visitPrintTree (AST* astree) {printer("PrintTree", astree, "***PRINTER***");}
 

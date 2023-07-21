@@ -29,6 +29,12 @@ class AST {
         std::vector<AST*> children;
 };
 
+class PrintTree : public AST {
+    public:
+        PrintTree();
+        void accept(ASTVisitor* v) override;
+};
+
 class ProgramTree : public AST {
     public:
         ProgramTree();
@@ -226,6 +232,12 @@ class IdentifierTree : public Evaluatable {
 class ExpressionTree : public Evaluatable {
     public:
         ExpressionTree();
+        void accept(ASTVisitor* v) override;
+};
+
+class StructExpressionTree : public Evaluatable {
+    public:
+        StructExpressionTree();
         void accept(ASTVisitor* v) override;
 };
 

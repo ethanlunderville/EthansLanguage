@@ -30,6 +30,20 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
+/*
+
+
+                            .__.__                
+  ____  ____   _____ ______ |__|  |   ___________ 
+_/ ___\/  _ \ /     \\____ \|  |  | _/ __ \_  __ \
+\  \__(  <_> )  Y Y  \  |_> >  |  |_\  ___/|  | \/
+ \___  >____/|__|_|  /   __/|__|____/\___  >__|   .cpp
+     \/            \/|__|                \/       
+
+
+
+*/
+
 TypeManager* initPrimitiveTypes(){
     TypeManager* tManage = new TypeManager();
     tManage->addTypeDecl(std::string("string"), STRINGTYPE, String::getInstance());
