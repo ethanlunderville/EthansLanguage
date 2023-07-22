@@ -6,7 +6,7 @@ EqualTree::EqualTree() : Operator() {
 }
 
 std::any EqualTree::equal(std::any x, std::any y) {
-
+    double res;
     if (x.type() == typeid(std::string) && y.type() == typeid(std::string)) {
         if (std::any_cast<std::string>(x).compare(std::any_cast<std::string>(y)) == 0) {
             this->setVal(1);

@@ -14,4 +14,15 @@ std::string FunctionAssignTree::getIdentifier() {
     return this->identifier;
 }
 
+void FunctionAssignTree::checkStruct(Struct* type){}
+void FunctionAssignTree::checkFunction(Function* type){}
+void FunctionAssignTree::checkArray(Array* arrayType){}
+void FunctionAssignTree::checkNumber(Number* arrayType){}
+void FunctionAssignTree::checkString(String* arrayType){}
+void FunctionAssignTree::assignStruct(Struct* type){}
+void FunctionAssignTree::assignFunction(Function* type){}
+void FunctionAssignTree::assignArray(Array* arrayType){}
+void FunctionAssignTree::assignNumber(Number* arrayType){}
+void FunctionAssignTree::assignString(String* arrayType){}
+
 void FunctionAssignTree::accept(ASTVisitor* v) { v->visitFunctionAssignTree(this); }

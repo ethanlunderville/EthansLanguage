@@ -21,6 +21,12 @@ class PrimitiveType : public Type {
         virtual bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) = 0;
 };
 
+class Struct : public Type {
+    std::any getNullValue() override;
+    bool checkType(std::any value) override;
+    void printSymbol(std::string identifier, std::any symbol) override;
+};
+
 class Number : public PrimitiveType {
     public:
         std::any getNullValue() override;

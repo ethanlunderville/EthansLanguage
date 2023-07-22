@@ -28,13 +28,15 @@ void ASTChecker::visitAssignTree(AST* astree) {
     }  
 }
 
-void ASTChecker::visitFunctionAssignTree(AST* astree) {}
+void ASTChecker::visitFunctionAssignTree(AST* astree) {
+
+}
 void ASTChecker::visitArrayAssignTree(AST* astree) {}
 void ASTChecker::visitStructAssignTree(AST* astree) {}
 void ASTChecker::visitIfTree (AST* astree) {this->visitChildren(astree);}
-void ASTChecker::visitExpressionTree (AST* astree) {}
-void ASTChecker::visitStructExpressionTree (AST* astree) {}
-void ASTChecker::visitStringExpressionTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitExpressionTree (AST* astree) {
+
+}
 void ASTChecker::visitDivideTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitMultiplyTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitAddTree (AST* astree) {this->visitChildren(astree);}
@@ -55,7 +57,9 @@ void ASTChecker::visitDeclarationTree (AST* astree) {
 void ASTChecker::visitBlockTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitReturnTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitProgramTree (AST* astree) {this->visitChildren(astree);}
-void ASTChecker::visitFunctionDeclarationTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitFunctionDeclarationTree (AST* astree) {
+    this->visitChildren(astree);
+}
 void ASTChecker::visitArrayDeclarationTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitStructDeclarationTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitFunctionCallTree (AST* astree) {this->visitChildren(astree);}

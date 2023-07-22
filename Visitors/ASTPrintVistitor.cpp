@@ -2,7 +2,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
-//#define PRINTNODES (0x0)
+#define PRINTNODES (0x0)
 
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;
@@ -62,11 +62,9 @@ void ASTPrintVisitor::printer(std::string type, AST* node) {
 void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree, ((AssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitFunctionAssignTree (AST* astree) { printer("FunctionAssignTree", astree, ((FunctionAssignTree *)astree)->getIdentifier());}
 void ASTPrintVisitor::visitArrayAssignTree (AST* astree) { printer("ArrayAssignTree", astree, ((ArrayAssignTree*)astree)->getIdentifier());}
-void ASTPrintVisitor::visitStructAssignTree (AST* astree) { printer("StructAssignTree", astree, ((StructAssignTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitStructAssignTree (AST* astree) { printer("StructAssignTree", astree, ((StructAssignTree*)astree)->getTypeName());}
 void ASTPrintVisitor::visitIfTree (AST* astree) {printer("IfTree", astree);}
 void ASTPrintVisitor::visitExpressionTree (AST* astree) {printer("ExpressionTree", astree);}
-void ASTPrintVisitor::visitStructExpressionTree (AST* astree) {printer("StructExpressionTree", astree);}
-void ASTPrintVisitor::visitStringExpressionTree (AST* astree) {printer("StringExpressionTree", astree);}
 void ASTPrintVisitor::visitDivideTree (AST* astree) {printer("DivideTree", astree, "/");}
 void ASTPrintVisitor::visitMultiplyTree (AST* astree) {printer("MultiplyTree", astree,"x");}
 void ASTPrintVisitor::visitAddTree (AST* astree) {printer("AddTree", astree, "+");}
@@ -75,7 +73,7 @@ void ASTPrintVisitor::visitExponentTree (AST* astree) {printer("ExponentTree", a
 void ASTPrintVisitor::visitDeclarationTree (AST* astree) {printer("DeclarationTree", astree, ((DeclarationTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitBlockTree (AST* astree) {printer("BlockTree", astree);}
 void ASTPrintVisitor::visitReturnTree (AST* astree) {printer("ReturnTree", astree);}
-void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree);}
+void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree); this->lineNum = 1;}
 void ASTPrintVisitor::visitFunctionDeclarationTree (AST* astree) {printer("FunctionDeclarationTree", astree, ((FunctionDeclarationTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitArrayDeclarationTree (AST* astree) {printer("ArrayDeclarationTree", astree, ((ArrayDeclarationTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitStructDeclarationTree (AST* astree) {printer("StructDeclarationTree", astree, ((StructDeclarationTree*)astree)->getIdentifier());}

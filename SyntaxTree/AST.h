@@ -16,6 +16,12 @@
 #include <any>
 
 class ASTVisitor;
+class Type;
+class Function;
+class String;
+class Array;
+class Number;
+class Struct;
 
 class AST {
     public:
@@ -66,49 +72,120 @@ class BlockTree : public AST {
 };
 
 //AssignTrees
-
-class AssignTree : public AST {
+class Evaluatable : public AST {
     public:
-        AssignTree();
+        Evaluatable();
+        virtual ~Evaluatable();
+        std::any getVal();
+        void setVal(std::any value);
+    private:
+        std::any value;
+};
+
+class Assignable : public Evaluatable {
+    public:
+        virtual ~Assignable() {}
+
+        virtual void checkStruct(Struct* type) = 0;
+        virtual void checkFunction(Function* type) = 0;
+        virtual void checkArray(Array* arrayType) = 0;
+        virtual void checkNumber(Number* arrayType) = 0;
+        virtual void checkString(String* arrayType) = 0;
+        virtual void assignStruct(Struct* type) = 0;
+        virtual void assignFunction(Function* type) = 0;
+        virtual void assignArray(Array* arrayType) = 0;
+        virtual void assignNumber(Number* arrayType) = 0;
+        virtual void assignString(String* arrayType) = 0;
+};
+
+class AssignTree : public Assignable {
+    public:
         AssignTree(std::string identifier, int line);
         std::string getIdentifier();
         int getLine();
         void accept(ASTVisitor* v) override;
+
+        void checkStruct(Struct* type) override;
+        void checkFunction(Function* type) override;
+        void checkArray(Array* arrayType) override;
+        void checkNumber(Number* arrayType) override;
+        void checkString(String* arrayType) override;
+        void assignStruct(Struct* type) override;
+        void assignFunction(Function* type) override;
+        void assignArray(Array* arrayType) override;
+        void assignNumber(Number* arrayType) override;
+        void assignString(String* arrayType) override;
+
     private:
         std::string identifier;
         int line;
 };
 
-class FunctionAssignTree : public AST {
+class FunctionAssignTree : public Assignable {
     public:
         FunctionAssignTree();
         FunctionAssignTree(std::string identifier, int line);
         std::string getIdentifier();
         int getLine();
         void accept(ASTVisitor* v) override;
+
+        void checkStruct(Struct* type) override;
+        void checkFunction(Function* type) override;
+        void checkArray(Array* arrayType) override;
+        void checkNumber(Number* arrayType) override;
+        void checkString(String* arrayType) override;
+        void assignStruct(Struct* type) override;
+        void assignFunction(Function* type) override;
+        void assignArray(Array* arrayType) override;
+        void assignNumber(Number* arrayType) override;
+        void assignString(String* arrayType) override;
+
     private:
         std::string identifier;
         int line;
 };
-class ArrayAssignTree : public AST {
+class ArrayAssignTree : public Assignable {
     public:
         ArrayAssignTree();
         ArrayAssignTree(std::string identifier, int line);
         std::string getIdentifier();
         int getLine();
         void accept(ASTVisitor* v) override;
+
+        void checkStruct(Struct* type) override;
+        void checkFunction(Function* type) override;
+        void checkArray(Array* arrayType) override;
+        void checkNumber(Number* arrayType) override;
+        void checkString(String* arrayType) override;
+        void assignStruct(Struct* type) override;
+        void assignFunction(Function* type) override;
+        void assignArray(Array* arrayType) override;
+        void assignNumber(Number* arrayType) override;
+        void assignString(String* arrayType) override;
+
     private:
         std::string identifier;
         int line;
 };
-class StructAssignTree : public AST {
+class StructAssignTree : public Assignable {
     public:
         StructAssignTree();
-        StructAssignTree(std::string identifier, int line);
-        StructAssignTree(std::string identifier, std::string typeName, int line);
-        std::string getIdentifier();
+        StructAssignTree(std::string typeName, int line);
+        std::string getTypeName();
         int getLine();
         void accept(ASTVisitor* v) override;
+
+        void checkStruct(Struct* type) override;
+        void checkFunction(Function* type) override;
+        void checkArray(Array* arrayType) override;
+        void checkNumber(Number* arrayType) override;
+        void checkString(String* arrayType) override;
+        void assignStruct(Struct* type) override;
+        void assignFunction(Function* type) override;
+        void assignArray(Array* arrayType) override;
+        void assignNumber(Number* arrayType) override;
+        void assignString(String* arrayType) override;
+
     private:
         std::string identifier;
         int line;
@@ -178,16 +255,6 @@ class StructDeclarationTree : public AST {
 
 //EVALUATABLES
 
-class Evaluatable : public AST {
-    public:
-        Evaluatable();
-        virtual ~Evaluatable();
-        std::any getVal();
-        void setVal(std::any value);
-    private:
-        std::any value;
-};
-
 class NumberTree : public Evaluatable {
     public:
         NumberTree(std::string number);
@@ -223,27 +290,26 @@ class IdentifierTree : public Evaluatable {
         void accept(ASTVisitor* v) override;
         std::string getIdentifier();
         void setIdentifier(std::string identifier);
-
     private:
         std::string identifier;
         AST* subScript;
 };
 
-class ExpressionTree : public Evaluatable {
+class ExpressionTree : public Assignable {
     public:
         ExpressionTree();
-        void accept(ASTVisitor* v) override;
-};
 
-class StructExpressionTree : public Evaluatable {
-    public:
-        StructExpressionTree();
-        void accept(ASTVisitor* v) override;
-};
-
-class StringExpressionTree : public Evaluatable {
-    public:
-        StringExpressionTree();
+        void checkStruct(Struct* type) override;
+        void checkFunction(Function* type) override;
+        void checkArray(Array* arrayType) override;
+        void checkNumber(Number* arrayType) override;
+        void checkString(String* arrayType) override;
+        void assignStruct(Struct* type) override;
+        void assignFunction(Function* type) override;
+        void assignArray(Array* arrayType) override;
+        void assignNumber(Number* arrayType) override;
+        void assignString(String* arrayType) override;
+        
         void accept(ASTVisitor* v) override;
 };
 

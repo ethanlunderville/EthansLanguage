@@ -12,7 +12,7 @@ AST* String::getNewTreenode(std::string value) {
 }
 
 AST* String::getExpressionNode() {
-    return new StringExpressionTree();
+    return nullptr;
 }
 
 bool String::checkType(std::any value) {
@@ -81,9 +81,5 @@ bool String::changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, Cont
         return false;
     }
     stringNumCounter = 0;
-    AST* child = node->getChildren()[0];
-    delete node;
-    node = new StringExpressionTree();
-    node->addChild(child);
     return true;
 }

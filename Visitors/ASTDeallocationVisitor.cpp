@@ -26,8 +26,6 @@ void ASTDeallocationVisitor::visitStructAssignTree (AST* astree) {deallocate(ast
 void ASTDeallocationVisitor::visitArrayAssignTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitIfTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitExpressionTree (AST* astree) {deallocate(astree);}
-void ASTDeallocationVisitor::visitStructExpressionTree (AST* astree) {deallocate(astree);}
-void ASTDeallocationVisitor::visitStringExpressionTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitDivideTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitMultiplyTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitAddTree (AST* astree) {deallocate(astree);}

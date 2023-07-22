@@ -46,82 +46,18 @@ AST* Parser::sStatement() {
         expect(SEMICOLON);
         return t;
     } else if (isCurrentToken(IDENTIFIER) && !onUserDefinedType()) {
-        std::string identifier = getCurrentLexeme();
-        scan();
-        if (!isCurrentToken(EQUAL)) {
-            goBack();
-            t = sStructExpression();
-        } else {
-            t = new IdentifierTree(identifier);
-        }
-        if (isCurrentToken(EQUAL)) {
-            scan();
-            AST* assignTree = sAssignment(std::string("REMOVE"));
-            assignTree->prependToChildren(t);
-            t = assignTree;
-            return t;
-        } else {
-            expect(SEMICOLON);
-        }
+        t = sExpression();
     } 
     return t;
-}
-
-AST* Parser::sStructExpression() {
-    StructExpressionTree* structExpressionTree = new StructExpressionTree();
-    std::deque<AST*> operandDeque; 
-    while (isCurrentToken(IDENTIFIER)) {
-        std::string identifier = getCurrentLexeme();
-        scan();
-        if (isCurrentToken(LEFT_BRACKET)) {
-            IdentifierTree* iTree = new IdentifierTree(identifier);
-            scan();
-            iTree->addChild(sExpression());
-            operandDeque.push_front(iTree);
-            expect(RIGHT_BRACKET);
-        } else if (isCurrentToken(LEFT_PAREN)) {
-            FunctionCallTree* f = new FunctionCallTree(identifier);
-            scan();
-            while (!isCurrentToken(RIGHT_PAREN)) {
-                f->addChild(sExpression());
-                if (isCurrentToken(COMMA)) {
-                    scan();
-                }
-            }
-            operandDeque.push_front(f);
-            scan();
-        } 
-        
-        if (isCurrentToken(ARROW)) {
-            IdentifierTree* iTree = new IdentifierTree(identifier);
-            scan();
-            operandDeque.push_front(iTree);
-        } else {
-            IdentifierTree* iTree = new IdentifierTree(identifier);
-            operandDeque.push_front(iTree);
-            break;
-        }
-    }
-    while (operandDeque.size() > 1) {
-        AST* operand1 = operandDeque.front();
-        operandDeque.pop_front();
-        AST* operand2 = operandDeque.front();
-        operandDeque.pop_front();
-        ArrowOpTree* arrow = new ArrowOpTree();
-        arrow->addChild(operand1);
-        arrow->addChild(operand2);
-        operandDeque.push_front(arrow);
-    }
-    structExpressionTree->addChild(operandDeque.front());
-    return structExpressionTree;
-}                 
+}              
 
 AST* Parser::sExpression() {
-    ExpressionTree* t = new ExpressionTree();
+    AST* t = new ExpressionTree();
     std::stack<Operator*> operatorStack;
     std::stack<AST*> operandStack;
     Operator* bottom = new Operator();
     operatorStack.push(bottom);
+    bool firstGoAround = true;
     #define PRINTEXPRESSION (0x1)
     #ifdef PRINTEXPRESSION
         std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
@@ -136,7 +72,7 @@ AST* Parser::sExpression() {
                 operandStack.push(sExpression());
                 expect(RIGHT_PAREN);
             } else if (isCurrentToken(IDENTIFIER)) {
-                AST* identTree;// = new IdentifierTree(getCurrentLexeme());
+                AST* identTree;
                 std::string identifier = getCurrentLexeme();
                 scan();
                 if (isCurrentToken(LEFT_BRACKET)) {
@@ -164,17 +100,11 @@ AST* Parser::sExpression() {
                 scan();
             } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA) || isCurrentToken(RIGHT_BRACKET)){
                 break;
-            } 
+            }
+            
         } else {
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
-        }
-        if (isCurrentToken(ARROW)) {
-            operandStack.pop();
-            while (!isCurrentToken(IDENTIFIER)) {
-                goBack();
-            }
-            operandStack.push(sStructExpression());
         }
         if (onOperator()) {
             Operator* opTree = OperatorMap[getCurrentToken()]();
@@ -203,6 +133,7 @@ AST* Parser::sExpression() {
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
         }
+        firstGoAround = false;
     }
     #ifdef PRINTEXPRESSION
         std::cout << "\n";
@@ -245,7 +176,6 @@ AST* Parser::sContext(AST* pTree) {
         if (onStatement()) {
             pTree->addChild(sStatement());
         } else if ( isCurrentToken(STRUCT)|| onDeclaration()) {
-            //std::string identifier = getCurrentLexeme();
             std::string type = getCurrentLexeme();
             scan();
             std::string name;
@@ -301,7 +231,7 @@ AST* Parser::sAssignment(std::string identifier) {
     if (isCurrentToken(NEW)) {
         scan();
         if (onUserDefinedType()) {
-            aTree->addChild(new StructAssignTree(identifier, getCurrentLexeme() ,getCurrentLine()));
+            aTree->addChild(new StructAssignTree(getCurrentLexeme() ,getCurrentLine()));
             scan();
             expect(LEFT_PAREN);
             expect(RIGHT_PAREN);
