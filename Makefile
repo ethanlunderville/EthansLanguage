@@ -10,7 +10,7 @@ OBJDIR = obj
 TARGET = program
 
 # Source files and object files
-SRCS = Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp ./SymbolTable/*.cpp TypeManager.cpp ./SymbolTable/Types/*.cpp  SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp Lexer.cpp Parser.cpp    
+SRCS = Visitors/*.cpp TypeManager.cpp ./SymbolTable/Types/*.cpp Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp ./SymbolTable/*.cpp  SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp Lexer.cpp Parser.cpp    
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
 # Default target

@@ -6,14 +6,16 @@ class TypeManager {
     public:
         TypeManager();
         ~TypeManager();
-        PrimitiveType* getTypeHandler(std::string type);
-        PrimitiveType* getTypeHandler(TokenType type);
-        void addTypeDecl(std::string sString, TokenType token, PrimitiveType* typeHandle);
-        void addTypeRVal(TokenType token, PrimitiveType* typeHandle); 
+        Type* getTypeHandler(std::string type);
+        Type* getTypeHandler(TokenType type);
+        void createType(std::string sString, Struct* typeHandle);
+        void addTypeDecl(std::string sString, TokenType token, Type* typeHandle);
+        void addTypeRVal(TokenType token, Type* typeHandle); 
         bool tokenIsRValue(TokenType tokenType);
         std::vector<TokenType> Data;
         std::vector<TokenType> Declarator;
     private:
-        std::map<std::string ,PrimitiveType*> stringToTypeHandler;
-        std::map<TokenType, PrimitiveType*> tokenToTypeHandler;
+        std::map<std::string ,Type*> stringToTypeHandler;
+        std::map<TokenType, Type*> tokenToTypeHandler;
+        std::vector<Struct*> holderForStructTypeDestructor;
 };

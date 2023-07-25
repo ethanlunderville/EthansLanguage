@@ -64,7 +64,7 @@ void ASTInterpreter::visitExpressionTree (AST* astree) {
 // Declaration of primitive type
 void ASTInterpreter::visitDeclarationTree (AST* astree) {
     DeclarationTree* t = ((DeclarationTree*)astree);
-    PrimitiveType* type = this->typeManager->getTypeHandler(t->getType());
+    Type* type = this->typeManager->getTypeHandler(t->getType());
     this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), type);
     if (t->getChildren().size() != 0) {
         this->visitChildren(astree);
@@ -86,7 +86,7 @@ void ASTInterpreter::visitIfTree (AST* astree) {
 void ASTInterpreter::visitBlockTree (AST* astree) {
     this->contextManager->pushScope();
     this->visitChildren(astree);
-    this->contextManager->popScope();
+    this->contextManager->popScope(false);
 }
 void ASTInterpreter::visitReturnTree (AST* astree) {
 
@@ -94,7 +94,7 @@ void ASTInterpreter::visitReturnTree (AST* astree) {
 void ASTInterpreter::visitFunctionDeclarationTree (AST* astree) {
     FunctionDeclarationTree* t = ((FunctionDeclarationTree*)astree);
     //Type*
-    PrimitiveType* returnType = this->typeManager->getTypeHandler(t->getType());
+    Type* returnType = this->typeManager->getTypeHandler(t->getType());
     this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), new Function(returnType));
     this->contextManager->reassignSymbol(t->getIdentifier(), astree, t->getLine());  
 }

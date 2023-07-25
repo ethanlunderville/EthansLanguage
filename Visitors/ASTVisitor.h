@@ -136,6 +136,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void printIndent();
         void printer(std::string type, AST* node, std::string symbol);
         void printer(std::string type, AST* node);
+        void printer(std::string type, AST* node, const std::vector<std::string>& propList);
     private:
         int indent;
         int lineNum;

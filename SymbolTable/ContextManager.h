@@ -12,7 +12,7 @@ public:
     void pushContext();
     void popContext();
     void pushScope();
-    void popScope();
+    SymbolTable* popScope(bool isStruct);
     void declarePrimitiveSymbol(int line, std::string identifier, std::string type);
     void declareSymbol(int line, std::string identifier, Type* type);
     void declareSymbol(int, std::string, std::string);

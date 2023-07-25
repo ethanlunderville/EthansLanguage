@@ -3,6 +3,11 @@
 
 String::String() {}
 
+std::any String::getBaseArray() {
+    std::vector<std::string> stringVector;
+    return stringVector;
+}
+
 std::any String::getNullValue() {
     return std::string("");
 }
@@ -11,18 +16,32 @@ AST* String::getNewTreenode(std::string value) {
     return new StringTree(value);
 }
 
-AST* String::getExpressionNode() {
-    return nullptr;
+void String::checkAssignment(Assignable* assign) {
+    assign->checkType(this);
 }
 
 bool String::checkType(std::any value) {
-    return value.type() == typeid(std::string);
+    return true;
 }
 
 void String::printSymbol(std::string identifier, std::any symbol) {
     std::cout << "Identifier: " << identifier 
     << "\tValue: " << std::any_cast<std::string>(symbol) 
     << std::endl;
+}
+
+void String::printArrayOfType(std::any vector) {
+    std::cout << "Array of type String -> ";
+    std::vector<std::string> arr = std::any_cast<std::vector<std::string>>(vector);
+    int size = arr.size();
+    std::cout << "[ ";
+    for (int i = 0 ; i < size ; i++) {
+        std::cout << arr[i];
+        if (i != size - 1) {
+            std::cout << ", ";
+        } 
+    }
+    std::cout << " ]\n";
 }
 
 static int stringNumCounter = 0;
@@ -49,7 +68,7 @@ bool String::numberCheck(AST* node, int line, ContextManager* contextManager) {
 }
 
 
-bool String::checkTree(AST* node, int line, ContextManager* contextManager) {
+bool String::checkExpression(AST* node, int line, ContextManager* contextManager) {
     for (AST* stringExpressionNode : node->getChildren()) {
         bool nodeTypeIsExpressionTree = typeid(*stringExpressionNode) == typeid(ExpressionTree);
         if (typeid(*stringExpressionNode) != typeid(NumberTree) &&
@@ -64,22 +83,12 @@ bool String::checkTree(AST* node, int line, ContextManager* contextManager) {
             }
             continue;
         }
-        if (!checkTree(stringExpressionNode, line , contextManager)) {
+        if (!checkExpression(stringExpressionNode, line , contextManager)) {
             return false;
         }
         if (typeid(*node) == typeid(StringTree)) {
             stringNumCounter++;
         }
     }
-    return true;
-}
-
-bool String::changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) {
-    if (!checkTree(node, line,contextManager)) {
-        std::cerr << "Error: Incorrect string expression on line " << line << std::endl;
-        std::cerr << "Expression must contain at least one string or string identifier " << line << std::endl;
-        return false;
-    }
-    stringNumCounter = 0;
     return true;
 }

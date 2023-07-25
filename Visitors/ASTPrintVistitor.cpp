@@ -1,8 +1,7 @@
 #include <cmath>
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
-
-#define PRINTNODES (0x0)
+//#define PRINTNODES (0x0)
 
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;
@@ -59,6 +58,23 @@ void ASTPrintVisitor::printer(std::string type, AST* node) {
     this->indent-=2;
 }
 
+void ASTPrintVisitor::printer(std::string type, AST* node, const std::vector<std::string>& propList) {
+    std::cout << this->lineNum << ".";
+    printIndent();
+    std::cout << type;
+    for (int i = 0 ; i < propList.size() ; i++) {
+        std::cout << " " << propList[i];
+    }
+    #ifdef PRINTNODES 
+        std::cout << " : " << node; 
+    #endif
+    std::cout << std::endl;
+    this->indent+=2;
+    this->lineNum++;
+    this->visitChildren(node);
+    this->indent-=2;
+}
+
 void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree, ((AssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitFunctionAssignTree (AST* astree) { printer("FunctionAssignTree", astree, ((FunctionAssignTree *)astree)->getIdentifier());}
 void ASTPrintVisitor::visitArrayAssignTree (AST* astree) { printer("ArrayAssignTree", astree, ((ArrayAssignTree*)astree)->getIdentifier());}
@@ -70,7 +86,12 @@ void ASTPrintVisitor::visitMultiplyTree (AST* astree) {printer("MultiplyTree", a
 void ASTPrintVisitor::visitAddTree (AST* astree) {printer("AddTree", astree, "+");}
 void ASTPrintVisitor::visitSubtractTree (AST* astree) {printer("SubtractTree", astree, "-");}
 void ASTPrintVisitor::visitExponentTree (AST* astree) {printer("ExponentTree", astree, "^");}
-void ASTPrintVisitor::visitDeclarationTree (AST* astree) {printer("DeclarationTree", astree, ((DeclarationTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitDeclarationTree (AST* astree) {
+    std::vector<std::string> info;
+    info.push_back(((DeclarationTree*)astree)->getType());    
+    info.push_back(((DeclarationTree*)astree)->getIdentifier()); 
+    printer("DeclarationTree", astree, info);
+}
 void ASTPrintVisitor::visitBlockTree (AST* astree) {printer("BlockTree", astree);}
 void ASTPrintVisitor::visitReturnTree (AST* astree) {printer("ReturnTree", astree);}
 void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree); this->lineNum = 1;}

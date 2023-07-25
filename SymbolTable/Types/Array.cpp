@@ -7,15 +7,35 @@ Array::Array(Type* arrayType) {
 
 Array::~Array() {}
 
-bool Array::checkType(std::any value) {
-    return false;
+std::any Array::getBaseArray() {
+    return 0;
 }
+
+bool Array::checkExpression(AST* node, int line, ContextManager* contextManager) {
+    return this->type->checkExpression(node, line, contextManager);
+}
+
+void Array::checkAssignment(Assignable* assign) {
+    this->type->checkAssignment(assign);
+}
+
+bool Array::checkType(std::any value) {
+    return true;
+}
+
+Type* Array::getArrayType() {
+    return this->type;
+}
+
 void Array::printSymbol(std::string identifier, std::any symbol) {
-    std::cout << "Identifier: " << identifier
-    << "\tValue: " << std::any_cast<double>(symbol) 
-    << std::endl;
+    std::cout << "Identifier: " << identifier << " = ";
+    this->type->printArrayOfType(symbol);
+}
+
+void Array::printArrayOfType(std::any vector) {
+
 }
 
 std::any Array::getNullValue() {
-    return 1;
+    return this->type->getBaseArray();
 }

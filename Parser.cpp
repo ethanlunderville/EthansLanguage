@@ -49,15 +49,14 @@ AST* Parser::sStatement() {
         t = sExpression();
     } 
     return t;
-}              
+}          
 
 AST* Parser::sExpression() {
-    AST* t = new ExpressionTree();
+    AST* t = new ExpressionTree(getCurrentLine());
     std::stack<Operator*> operatorStack;
     std::stack<AST*> operandStack;
     Operator* bottom = new Operator();
     operatorStack.push(bottom);
-    bool firstGoAround = true;
     #define PRINTEXPRESSION (0x1)
     #ifdef PRINTEXPRESSION
         std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
@@ -95,13 +94,12 @@ AST* Parser::sExpression() {
                 }
                 operandStack.push(identTree);
             } else if (onData()) {
-                AST* nTree = this->typeManager->getTypeHandler(getCurrentToken())->getNewTreenode(getCurrentLexeme());
+                AST* nTree = dynamic_cast<PrimitiveType*>(this->typeManager->getTypeHandler(getCurrentToken()))->getNewTreenode(getCurrentLexeme());
                 operandStack.push(nTree);
                 scan();
             } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA) || isCurrentToken(RIGHT_BRACKET)){
                 break;
             }
-            
         } else {
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
@@ -133,7 +131,6 @@ AST* Parser::sExpression() {
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
             exit(1);
         }
-        firstGoAround = false;
     }
     #ifdef PRINTEXPRESSION
         std::cout << "\n";
@@ -199,6 +196,12 @@ AST* Parser::sContext(AST* pTree) {
                 if (type.compare("struct") == 0) { // HARDCODED SINCE IT IS A VERY SPECIAL CASE
                     declaration = new StructDeclarationTree(type, name, getCurrentLine());
                     this->userDefinedTypes.push_back(name);
+                    while (!isCurrentToken(LEFT_BRACE)) {
+                        scan();
+                    }
+                    declaration->addChild(sBlock());
+                    pTree->addChild(declaration);
+                    continue;
                 } else {
                     declaration = new DeclarationTree(type,name,getCurrentLine());
                 }
@@ -211,7 +214,7 @@ AST* Parser::sContext(AST* pTree) {
             if (isCurrentToken(EQUAL)) {
                 scan();
                 AST* assignOp = sAssignment(name);
-                ExpressionTree* expressionForParent = new ExpressionTree();
+                ExpressionTree* expressionForParent = new ExpressionTree(getCurrentLine());
                 assignOp->prependToChildren(new IdentifierTree(name));
                 expressionForParent->addChild(assignOp);
                 pTree->addChild(expressionForParent);                    

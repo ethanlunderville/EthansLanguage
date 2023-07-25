@@ -7,9 +7,30 @@ Function::Function(Type* returnType) {
 
 Function::~Function() {}
 
-bool Function::checkType(std::any value) {
+std::any Function::getBaseArray() {
+    return 0;
+}
+
+bool Function::checkExpression(AST* node, int line, ContextManager* contextManager) {
     return false;
 }
+
+void Function::checkAssignment(Assignable* assign) {
+    this->type->checkAssignment(assign);
+}
+
+bool Function::checkType(std::any value) {
+    return true;
+    //assign->checkType(this);
+}
+Type* Function::getFunctionType() {
+    return this->type;
+}
+
+void Function::printArrayOfType(std::any vector) {
+
+}
+
 
 void Function::printSymbol(std::string identifier, std::any symbol) {
     std::cout << "Identifier: " << identifier
@@ -18,5 +39,5 @@ void Function::printSymbol(std::string identifier, std::any symbol) {
 }
 
 std::any Function::getNullValue() {
-    return 1;
+    return this->type->getBaseArray();
 };

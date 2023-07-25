@@ -65,6 +65,7 @@ int main () {
     ASTChecker* checker = new ASTChecker(typeManager);
     std::cout << "***PRINTING AST***" << std::endl;
     abstractSyntaxTree->accept(pVisit);
+    std::cout << "***CHECKING AST***" << std::endl;
     abstractSyntaxTree->accept(checker);
     std::cout << "***PRINTING AST***" << std::endl;
     abstractSyntaxTree->accept(pVisit);

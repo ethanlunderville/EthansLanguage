@@ -68,30 +68,60 @@ void ContextManager::pushScope() {
     return;
 }
 
-void ContextManager::popScope(){
-    SymbolTable* pointer;
+SymbolTable* ContextManager::popScope(bool isStruct){
+    if (this->globalContext->tableReference != nullptr) {
+        std::cerr << "Unable to pop global scope" << std::endl;
+        exit(1);
+    }
+    SymbolTable* pointer = this->globalContext;
+    while (pointer->tableReference->tableReference != nullptr) {
+        pointer = pointer->tableReference;
+    }
+    if (pointer->tableReference == contextStack.top()) {
+        std::cerr << "Attempted to pop context when scope should have been popped" << std::endl;
+        exit(1);
+    }
+    SymbolTable* pointerHold = nullptr;
+    if (isStruct) {
+        pointerHold = pointer->tableReference;
+        pointer->tableReference = nullptr;
+    } else {
+        delete pointer->tableReference;
+        pointer->tableReference = nullptr;
+    }
+    return pointerHold;
+    
+    /*
     if (this->contextStack.size() > 0) {
         pointer = this->contextStack.top();
         while (pointer->tableReference != nullptr) {
             pointer = pointer->tableReference;
         }
         if (pointer != contextStack.top()) {
+            if (struct) {
+                return pointer;
+            }
             delete pointer;
         }
+        return nullptr;
     } else if (this->globalScopeLinkedList != nullptr) {
         pointer = this->globalScopeLinkedList;
         while (pointer->tableReference != nullptr) {
             pointer = pointer->tableReference;
         }
-
+        if (struct) {
+            return pointer;
+        }
         delete pointer;
         if (pointer == this->globalScopeLinkedList) {
             this->globalScopeLinkedList = nullptr;
         }
+        return nullptr;
     } else {
         std::cerr << "Unable to pop empty scope stack" << std::endl;
         exit(1);
     }
+    */
 }
 
 void ContextManager::declareSymbol(int line, std::string identifier, Type* currentType) {

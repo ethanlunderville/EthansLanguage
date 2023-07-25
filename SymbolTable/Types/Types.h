@@ -5,36 +5,49 @@
 #include "SyntaxTree/AST.h"
 
 class ContextManager;
+class SymbolTable;
 
 class Type {
     public:
         virtual ~Type() = 0;
         virtual std::any getNullValue() = 0;
-        virtual bool checkType(std::any value) = 0;
+        virtual bool checkExpression(AST* node, int line, ContextManager* contextManager) = 0;
         virtual void printSymbol(std::string identifier, std::any symbol) = 0;
+        virtual void checkAssignment(Assignable* assign) = 0;
+        virtual bool checkType(std::any value) = 0;
+        virtual void printArrayOfType(std::any vector) = 0;
+        virtual std::any getBaseArray() = 0;
 };
 
 class PrimitiveType : public Type {
     public:
         virtual AST* getNewTreenode(std::string value) = 0;
-        virtual AST* getExpressionNode() = 0;
-        virtual bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) = 0;
 };
 
 class Struct : public Type {
-    std::any getNullValue() override;
-    bool checkType(std::any value) override;
-    void printSymbol(std::string identifier, std::any symbol) override;
+    public:
+        Struct(SymbolTable* baseStruct);
+        std::any getNullValue() override;
+        void printSymbol(std::string identifier, std::any symbol) override;
+        bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
+        void checkAssignment(Assignable* assign) override;
+        bool checkType(std::any type) override;
+        void printArrayOfType(std::any vector) override;
+        std::any getBaseArray() override;
+    private:
+        SymbolTable* baseStruct;
 };
 
 class Number : public PrimitiveType {
     public:
         std::any getNullValue() override;
         AST* getNewTreenode(std::string value) override;
-        AST* getExpressionNode() override;
-        bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) override;
+        bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
+        void checkAssignment(Assignable* assign) override;
+        bool checkType(std::any type) override;
+        std::any getBaseArray() override;
+        void printArrayOfType(std::any vector) override;
         static Number* getInstance() {
             static Number instance;
             return &instance;
@@ -46,13 +59,13 @@ class String : public PrimitiveType {
     public:
         std::any getNullValue() override;
         AST* getNewTreenode(std::string value) override;
-        AST* getExpressionNode() override;
-        bool checkType(std::any value) override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        bool changeExpressionToDeclaredTypeIfItIsLegal(AST* node, int line, ContextManager* contextManager) override;
-        void checkSubExpressionForString(AST* node);
+        bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
         bool numberCheck(AST* node, int line, ContextManager* contextManager);
-        bool checkTree(AST* node, int line, ContextManager* contextManager);
+        void checkAssignment(Assignable* assign) override;
+        bool checkType(std::any type) override;
+        std::any getBaseArray() override;
+        void printArrayOfType(std::any vector) override;
         static String* getInstance() {
             static String instance;
             return &instance;
@@ -67,7 +80,12 @@ class Function : public Type {
         ~Function();
         std::any getNullValue() override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        bool checkType(std::any value) override;
+        bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
+        void checkAssignment(Assignable* assign) override;
+        bool checkType(std::any type) override;
+        Type* getFunctionType();
+        std::any getBaseArray() override;
+        void printArrayOfType(std::any vector) override;
         Type* type;
 };
 
@@ -77,7 +95,12 @@ class Array : public Type {
         ~Array();
         std::any getNullValue() override;
         void printSymbol(std::string identifier, std::any symbol) override;
-        bool checkType(std::any value) override;
+        bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
+        void checkAssignment(Assignable* assign) override;
+        bool checkType(std::any type) override;
+        Type* getArrayType();
+        std::any getBaseArray() override;
+        void printArrayOfType(std::any vector) override;
         Type* type;
 };
 
