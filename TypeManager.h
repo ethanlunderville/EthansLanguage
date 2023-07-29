@@ -6,10 +6,10 @@ class TypeManager {
     public:
         TypeManager();
         ~TypeManager();
-        Type* getTypeHandler(std::string type);
+        Type* getTypeHandler(const std::string& type);
         Type* getTypeHandler(TokenType type);
-        void createType(std::string sString, Struct* typeHandle);
-        void addTypeDecl(std::string sString, TokenType token, Type* typeHandle);
+        void createType(const std::string& sString, Struct* typeHandle);
+        void addTypeDecl(const std::string& sString, TokenType token, Type* typeHandle);
         void addTypeRVal(TokenType token, Type* typeHandle); 
         bool tokenIsRValue(TokenType tokenType);
         std::vector<TokenType> Data;

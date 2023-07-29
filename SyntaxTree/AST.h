@@ -22,7 +22,7 @@ class String;
 class Array;
 class Number;
 class Struct;
-class ContextManager;
+class ASTChecker;
 
 class AST {
     public:
@@ -83,15 +83,26 @@ class Evaluatable : public AST {
         std::any value;
 };
 
+class ReturnTree : public AST {
+    public:
+        ReturnTree(std::string retval);
+        ReturnTree();
+        void accept(ASTVisitor* v) override;
+    private:
+        std::string name;
+};
+
 class Assignable : public Evaluatable {
     /*COMMENTED METHODS WILL BE IMPLEMENTED WHEN COMPLEX TYPES CAN CONTAIN OTHER COMPLEX TYPES*/
     public:
         Assignable();
         virtual ~Assignable();
+        Type* getType();
+        void setType(Type* type);
         int getLine();
-        void setLine(int line );
-        void setCheckerReference(ContextManager* checkerReference); 
-        ContextManager* getCheckerReference();
+        void setLine(int line);
+        void setCheckerReference(ASTChecker* checkerReference); 
+        ASTChecker* getCheckerReference();
         virtual void checkType(Struct* type) = 0;
         //virtual void checkFunction(Function* type) = 0;
         //virtual void checkArray(Array* arrayType) = 0;
@@ -104,7 +115,8 @@ class Assignable : public Evaluatable {
         virtual void assignType(String* arrayType) = 0;
     private:
         int line;
-        ContextManager* checkerReference;
+        ASTChecker* checkerReference;
+        Type* type;
 };
 
 class AssignTree : public Assignable {
@@ -185,15 +197,6 @@ class StructAssignTree : public Assignable {
         std::string typeName;
 };
 
-class ReturnTree : public AST {
-    public:
-        ReturnTree(std::string retval);
-        ReturnTree();
-        void accept(ASTVisitor* v) override;
-    private:
-        std::string name;
-};
-
 class DeclarationTree : public AST {
     public:
         DeclarationTree(std::string type, std::string identifier, int line);
@@ -266,26 +269,25 @@ class StringTree : public Evaluatable {
         std::string sString;
 };
 
-
-class FunctionCallTree : public Evaluatable {
+class Identifiable : public Evaluatable {
     public:
-        FunctionCallTree(std::string identifier);
-        void accept(ASTVisitor* v) override;
+        ~Identifiable();
         std::string getIdentifier();
+        void setIdentifier(const std::string& identifier);
     private:
         std::string identifier;
 };
 
-class IdentifierTree : public Evaluatable {
+class FunctionCallTree : public Identifiable {
+    public:
+        FunctionCallTree(std::string identifier);
+        void accept(ASTVisitor* v) override;
+};
+
+class IdentifierTree : public Identifiable {
     public:
         IdentifierTree(std::string identifier);
-        IdentifierTree(std::string identifier, AST* subScript);
         void accept(ASTVisitor* v) override;
-        std::string getIdentifier();
-        void setIdentifier(std::string identifier);
-    private:
-        std::string identifier;
-        AST* subScript;
 };
 
 class ExpressionTree : public Assignable {

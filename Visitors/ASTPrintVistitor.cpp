@@ -30,7 +30,7 @@ void ASTPrintVisitor::printIndent() {
     }
 }
 
-void ASTPrintVisitor::printer(std::string type, AST* node, std::string symbol) {
+void ASTPrintVisitor::printer(const std::string& type, AST* node, const std::string& symbol) {
     std::cout << this->lineNum << ".";
     printIndent();
     std::cout << type << ": " << symbol; 
@@ -44,7 +44,7 @@ void ASTPrintVisitor::printer(std::string type, AST* node, std::string symbol) {
     this->indent-=2;
 }
 
-void ASTPrintVisitor::printer(std::string type, AST* node) {
+void ASTPrintVisitor::printer(const std::string& type, AST* node) {
     std::cout << this->lineNum << ".";
     printIndent();
     std::cout << type;
@@ -58,7 +58,7 @@ void ASTPrintVisitor::printer(std::string type, AST* node) {
     this->indent-=2;
 }
 
-void ASTPrintVisitor::printer(std::string type, AST* node, const std::vector<std::string>& propList) {
+void ASTPrintVisitor::printer(const std::string& type, AST* node, const std::vector<std::string>& propList) {
     std::cout << this->lineNum << ".";
     printIndent();
     std::cout << type;

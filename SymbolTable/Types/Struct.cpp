@@ -24,8 +24,24 @@ bool Struct::checkExpression(AST* node, int line, ContextManager* contextManager
     return true;
 }
 
-std::any Struct::getNullValue() {return nullptr;}
-void Struct::printSymbol(std::string identifier, std::any symbol) {}
+std::any Struct::getNullValue() {
+    return new SymbolTable(*(this->baseStruct));
+}
+
+void Struct::printType() {
+    std::cout << "Struct";
+}
+
+void Struct::printSymbol(std::string identifier, std::any symbol) {
+    SymbolTable* structHold = std::any_cast<SymbolTable*>(symbol);
+    std::cout << "struct: " << identifier << "-> {" << std::endl;
+    for (int i = 0 ;i < structHold->intToStringVector.size();i++) {
+        SymbolInfo sInfo = structHold->stringToSymbolMap[structHold->intToStringVector[i]];
+        std::cout << "   " << structHold->intToStringVector[i] << " : ";
+        sInfo.type->printSymbol(structHold->intToStringVector[i], sInfo.value);
+    }
+    std::cout << "}" << std::endl;
+}
 void Struct::printArrayOfType(std::any vector) {
 
 }

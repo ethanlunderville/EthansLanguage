@@ -52,16 +52,16 @@ class Lexer {
 public:
     Lexer(std::istream& inStream, TypeManager* typeManager);
     std::vector<Token> scanTokens();
-    void printLexemes(std::vector<Token> tokens);
+    void printLexemes(const std::vector<Token>& tokens);
 private:
     std::istream& inStream;
     std::stringstream currentLexeme;
     std::vector<Token> tokens;
     TypeManager* typeManager;
-    void addToken(TokenType type, int line, std::string lexeme);
-    void string(std::vector<Token> tokens, int line);
-    void number(char* c, std::vector<Token> tokens, int line, bool isNegative);
-    void alphaProcessor(char* c, std::vector<Token> tokens, int line);
+    void addToken(TokenType type, int line, const std::string& lexeme);
+    void string(const std::vector<Token>& tokens, int line);
+    void number(char* c, const std::vector<Token>& tokens, int line, bool isNegative);
+    void alphaProcessor(char* c, const std::vector<Token>& tokens, int line);
     bool previousTokenTypeWas(TokenType t);
     bool previousTokenWasOperator();
 };

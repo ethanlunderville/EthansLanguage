@@ -117,7 +117,7 @@ std::vector<Token> Lexer::scanTokens() {
     }
     return tokens;
 }
-void Lexer::printLexemes(std::vector<Token> tokens) {
+void Lexer::printLexemes(const std::vector<Token>& tokens) {
     for (int i = 0 ; i < tokens.size() ; i++) {
         if (tokens[i].type == IDENTIFIER || this->typeManager->tokenIsRValue(tokens[i].type)) {
             std::cout << tokenToStringMap[tokens[i].type] << ": {" << tokens[i].lexeme << "}" << std::endl;
@@ -126,11 +126,11 @@ void Lexer::printLexemes(std::vector<Token> tokens) {
         }
     }
 }
-void Lexer::addToken(TokenType type, int line, std::string lexeme) {
+void Lexer::addToken(TokenType type, int line, const std::string& lexeme) {
     struct Token token = {type, line, lexeme};
     tokens.push_back(token);
 }
-void Lexer::string(std::vector<Token> tokens , int line) {
+void Lexer::string(const std::vector<Token>& tokens , int line) {
     std::string literal;
     literal.push_back('\"');
     while (!inStream.eof()) {
@@ -145,7 +145,7 @@ void Lexer::string(std::vector<Token> tokens , int line) {
     std::cerr << "Error: String was not closed starting on line: " << line << std::endl;
     exit(1);
 }
-void Lexer::number (char *c, std::vector<Token> tokens , int line, bool isNegative) {
+void Lexer::number (char *c, const std::vector<Token>& tokens , int line, bool isNegative) {
     std::string number; 
     while (isdigit(*c) || *c == '.') {
         number.push_back(*c);
@@ -157,7 +157,7 @@ void Lexer::number (char *c, std::vector<Token> tokens , int line, bool isNegati
     addToken(NUMBER, line, number);
     return;
 }
-void Lexer::alphaProcessor (char *c, std::vector<Token> tokens , int line) {
+void Lexer::alphaProcessor (char *c, const std::vector<Token>& tokens , int line) {
     std::string ident; 
     while (isalpha(*c)) {
         ident.push_back(*c);

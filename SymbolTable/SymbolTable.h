@@ -32,9 +32,11 @@ public:
     void printSymbolTable();
     bool variableTypeCheck(Type* typeHandler , std::any value);
     SymbolTable* tableReference;
-private:
-    std::stack<int> scopeStack;
+    
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;
+private:
+    std::stack<int> scopeStack;
     std::vector<Type*> deletableTypes; 
+    std::vector<SymbolTable*> structs; 
 };

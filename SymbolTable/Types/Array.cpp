@@ -36,6 +36,10 @@ void Array::printArrayOfType(std::any vector) {
 
 }
 
+void Array::printType() {
+    std::cout << "Array";
+}
+
 std::any Array::getNullValue() {
     return this->type->getBaseArray();
 }

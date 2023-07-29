@@ -11,6 +11,7 @@ class Type {
     public:
         virtual ~Type() = 0;
         virtual std::any getNullValue() = 0;
+        virtual void printType() = 0;
         virtual bool checkExpression(AST* node, int line, ContextManager* contextManager) = 0;
         virtual void printSymbol(std::string identifier, std::any symbol) = 0;
         virtual void checkAssignment(Assignable* assign) = 0;
@@ -34,6 +35,7 @@ class Struct : public Type {
         bool checkType(std::any type) override;
         void printArrayOfType(std::any vector) override;
         std::any getBaseArray() override;
+        void printType() override;
     private:
         SymbolTable* baseStruct;
 };
@@ -48,6 +50,7 @@ class Number : public PrimitiveType {
         bool checkType(std::any type) override;
         std::any getBaseArray() override;
         void printArrayOfType(std::any vector) override;
+        void printType() override;
         static Number* getInstance() {
             static Number instance;
             return &instance;
@@ -66,6 +69,7 @@ class String : public PrimitiveType {
         bool checkType(std::any type) override;
         std::any getBaseArray() override;
         void printArrayOfType(std::any vector) override;
+        void printType() override;
         static String* getInstance() {
             static String instance;
             return &instance;
@@ -86,6 +90,7 @@ class Function : public Type {
         Type* getFunctionType();
         std::any getBaseArray() override;
         void printArrayOfType(std::any vector) override;
+        void printType() override;
         Type* type;
 };
 
@@ -101,6 +106,7 @@ class Array : public Type {
         Type* getArrayType();
         std::any getBaseArray() override;
         void printArrayOfType(std::any vector) override;
+        void printType() override;
         Type* type;
 };
 

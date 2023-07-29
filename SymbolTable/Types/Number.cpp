@@ -22,7 +22,10 @@ void Number::checkAssignment(Assignable* assign) {
 }
 
 bool Number::checkType(std::any value) {
-    return true;
+    if (value.type() == typeid(double)) {
+        return true;
+    }
+    return false;
 }
 
 void Number::printSymbol(std::string identifier, std::any symbol) {
@@ -31,8 +34,12 @@ void Number::printSymbol(std::string identifier, std::any symbol) {
     << std::endl;
 }
 
+void Number::printType() {
+    std::cout << "Number";
+}
+
 void Number::printArrayOfType(std::any vector) {
-    std::cout << "Array of type [ Number ] -> ";
+    std::cout << "[ Number ] -> ";
     std::vector<double> arr = std::any_cast<std::vector<double>>(vector);
     int size = arr.size();
     std::cout << "[ ";

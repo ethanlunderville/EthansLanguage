@@ -7,6 +7,11 @@ SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableRefe
 SymbolTable::~SymbolTable() {
     for (int i = 0 ; i < this->deletableTypes.size() ; i++) {
         delete this->deletableTypes[i];
+        this->deletableTypes[i] = nullptr;
+    }
+    for (int i = 0 ; i < this->structs.size() ; i++) {
+        delete this->structs[i];
+        this->structs[i] = nullptr;
     }
 }
 
@@ -32,7 +37,9 @@ void SymbolTable::declareSymbol(int line, std::string identifier, Type* typeHand
         this->deletableTypes.push_back(typeHandler);
     }
     this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, typeHandler->getNullValue(), typeHandler};
-    return;
+    if (typeid(typeHandler) == typeid(Struct)) {
+        this->structs.push_back(std::any_cast<SymbolTable*>(this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]].value));
+    }
 }
 
 void SymbolTable::reassignSymbol(std::string identifier , std::any value) {  
@@ -68,7 +75,6 @@ bool SymbolTable::variableTypeCheck(Type* typeHandler , std::any value) {
 }
 
 void SymbolTable::printSymbolTable() {
-    std::cout << "---- ***Table*** ---" << std::endl;
     for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
         stringToSymbolMap[intToStringVector[i]].type
         ->printSymbol(intToStringVector[i], stringToSymbolMap[intToStringVector[i]].value);

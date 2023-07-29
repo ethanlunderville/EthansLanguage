@@ -59,7 +59,7 @@ void ASTInterpreter::visitStructAssignTree(AST* astree) {}
 void ASTInterpreter::visitExpressionTree (AST* astree) {
     ExpressionTree* t = ((ExpressionTree*)astree);
     this->visitChildren(t);
-    t->setVal( std::any_cast<double>((dynamic_cast<Evaluatable*>(t->getChildren()[0])->getVal())) );
+    t->setVal(dynamic_cast<Evaluatable*>(t->getChildren()[0])->getVal());
 }
 // Declaration of primitive type
 void ASTInterpreter::visitDeclarationTree (AST* astree) {

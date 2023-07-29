@@ -24,6 +24,10 @@ bool String::checkType(std::any value) {
     return true;
 }
 
+void String::printType() {
+    std::cout << "String";
+}
+
 void String::printSymbol(std::string identifier, std::any symbol) {
     std::cout << "Identifier: " << identifier 
     << "\tValue: " << std::any_cast<std::string>(symbol) 
@@ -31,17 +35,17 @@ void String::printSymbol(std::string identifier, std::any symbol) {
 }
 
 void String::printArrayOfType(std::any vector) {
-    std::cout << "Array of type String -> ";
+    std::cout << "[ String ] -> ";
     std::vector<std::string> arr = std::any_cast<std::vector<std::string>>(vector);
     int size = arr.size();
-    std::cout << "[ ";
+    std::cout << "[";
     for (int i = 0 ; i < size ; i++) {
         std::cout << arr[i];
         if (i != size - 1) {
             std::cout << ", ";
         } 
     }
-    std::cout << " ]\n";
+    std::cout << "]\n";
 }
 
 static int stringNumCounter = 0;

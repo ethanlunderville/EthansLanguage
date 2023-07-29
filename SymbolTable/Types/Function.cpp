@@ -33,9 +33,13 @@ void Function::printArrayOfType(std::any vector) {
 
 
 void Function::printSymbol(std::string identifier, std::any symbol) {
-    std::cout << "Identifier: " << identifier
-    << "\tValue: " << std::any_cast<double>(symbol) 
-    << std::endl;
+    std::cout << "function: " << identifier << " -> ";
+    this->type->printType();
+    std::cout << "" << std::endl;
+}
+
+void Function::printType() {
+    std::cout << "Function";
 }
 
 std::any Function::getNullValue() {

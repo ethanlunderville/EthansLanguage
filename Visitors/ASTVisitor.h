@@ -49,6 +49,7 @@
 #pragma once
 #include <iostream>
 #include "TypeManager.h"
+#include <stack>
 
 class AST;
 class ContextManager;
@@ -134,9 +135,9 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitPrintTree(AST* astree) override;
         //Visitor specific functions
         void printIndent();
-        void printer(std::string type, AST* node, std::string symbol);
-        void printer(std::string type, AST* node);
-        void printer(std::string type, AST* node, const std::vector<std::string>& propList);
+        void printer(const std::string& type, AST* node, const std::string& symbol);
+        void printer(const std::string& type, AST* node);
+        void printer(const std::string& type, AST* node, const std::vector<std::string>& propList);
     private:
         int indent;
         int lineNum;
@@ -278,7 +279,13 @@ class ASTChecker: public ASTVisitor {
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
         void visitPrintTree(AST* astree) override;
+
+        bool numberCheck(AST* astree);
+        void addCurrentFunctionReturnTree(ReturnTree* rTree);
+        void clearCurrentFunctionReturns();
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;
+        std::stack<SymbolTable*> structScoper;
+        std::vector<ReturnTree*> returnTrees;
 };
