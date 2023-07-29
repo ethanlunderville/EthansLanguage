@@ -21,6 +21,8 @@ public:
     void printSymbolTable();
     std::any getValueStoredInSymbol(std::string identifier);
     Type* getTypeOfSymbol(std::string identifier);
+    void setCurrentFunctionType(Type* t);
+    Type* getCurrentFunctionType();
 private:
     SymbolTable* globalContext;
     SymbolTable* globalScopeLinkedList;

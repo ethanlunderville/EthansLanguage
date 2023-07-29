@@ -18,6 +18,16 @@ void ASTChecker::visitChildren(AST* astree){
 
 void ASTChecker::visitExpressionTree (AST* astree) {
     this->visitChildren(astree);
+    Type* eType = dynamic_cast<ExpressionTree*>(astree)->getType();
+    if (eType != nullptr) {
+        if (!eType->checkType(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal())) {
+            std::cerr << "Attempted to assign incorrect value to variable of type: ";
+            eType->printType();
+            std::cerr << "" << std::endl;
+            exit(1);
+        }
+        return;
+    }
     ((ExpressionTree*)astree)->setVal(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal());
 }
 
@@ -65,7 +75,6 @@ void ASTChecker::visitStructDeclarationTree (AST* astree) {
     this->contextManager->pushScope();
     this->visitChildren(sDecTree->getChildren()[0]);
     typeManager->createType(sDecTree->getIdentifier(), new Struct(this->contextManager->popScope(true)));
-    //this->contextManager->declareSymbol(sDecTree->getLine(), sDecTree->getIdentifier(), typeManager->getTypeHandler(sDecTree->getIdentifier()));
 }
 void ASTChecker::visitAddTree (AST* astree) {
     this->visitChildren(astree);
@@ -168,11 +177,15 @@ void ASTChecker::visitArrowOpTree (AST* astree) {
 }
 void ASTChecker::visitAssignOpTree (AST* astree) {
     AssignOpTree* tree = ((AssignOpTree*)astree);
-    Type* type = contextManager->getTypeOfSymbol(dynamic_cast<IdentifierTree*>(tree->getChildren()[0])->getIdentifier());
+    IdentifierTree* iTree = dynamic_cast<IdentifierTree*>(tree->getChildren()[0]);
     Assignable* assignableType = dynamic_cast<Assignable*>(tree->getChildren()[1]);
-    assignableType->setType(this->contextManager->getTypeOfSymbol(dynamic_cast<IdentifierTree*>(tree->getChildren()[0])->getIdentifier()));
-    assignableType->setCheckerReference(this);
-    type->checkAssignment(assignableType);
+    Type* type = contextManager->getTypeOfSymbol(iTree->getIdentifier());
+    if (iTree->getChildren().size() > 0 && typeid(*(iTree->getChildren()[0])) == typeid(ExpressionTree)) {
+        type = dynamic_cast<Array*>(type)->getArrayType();
+    }
+    assignableType->setType(type);
+    //assignableType->setCheckerReference(this);
+    //type->checkAssignment(assignableType);
     this->visitChildren(astree);
 }
 
@@ -188,30 +201,59 @@ void ASTChecker::visitStringTree (AST* astree) {
 }
 
 /*HANDLED IN SPECIFIC CLASSES*/
-void ASTChecker::visitAssignTree(AST* astree) {}
-void ASTChecker::visitFunctionAssignTree(AST* astree) {
-    this->clearCurrentFunctionReturns();
+void ASTChecker::visitFunctionAssignTree(AST* astree) {/**/
+    FunctionAssignTree* fAssignTree = dynamic_cast<FunctionAssignTree*>(astree);
+    this->contextManager->pushContext();
+    this->contextManager->setCurrentFunctionType(fAssignTree->getType());
     this->visitChildren(astree);
-    Type* functionType = dynamic_cast<FunctionAssignTree*>(astree)->getType();
-    for (int i = 0 ; i < this->returnTrees.size() ; i++) {
-        if (this->returnTrees[i]->getChildren().size() > 0) {
-            ExpressionTree* eTree = dynamic_cast<ExpressionTree*>(this->returnTrees[i]->getChildren()[i]);
-            functionType->checkType(eTree->getVal());
+    this->contextManager->popContext();
+}
+
+void ASTChecker::visitReturnTree (AST* astree) {
+    if (astree->getChildren().size() > 0) {
+        dynamic_cast<ExpressionTree*>(astree->getChildren()[0])
+        ->setType(this->contextManager->getCurrentFunctionType());
+    }
+    std::cerr << "Functions must return at least one value" << std::endl;
+    exit(1);
+}
+
+void ASTChecker::visitBlockTree (AST* astree) {
+    this->contextManager->pushScope();
+    this->visitChildren(astree);
+    this->contextManager->popScope(false);
+}
+
+void ASTChecker::visitArrayAssignTree(AST* astree) {
+    Type* aType = dynamic_cast<ArrayAssignTree*>(astree)->getType(); 
+    if (typeid(*aType) != typeid(Array)) {
+        std::cerr << "Incorrect assignment, cannot assign array to non array type" << std::endl;
+        exit(1);
+    } else {
+        aType = dynamic_cast<Array*>(aType)->getArrayType();
+    }
+    std::vector<AST*> kids = astree->getChildren();
+    for (AST* potentiallyValidChild : kids) {
+        ExpressionTree* child = dynamic_cast<ExpressionTree*>(potentiallyValidChild);
+        if (child == nullptr) {
+            std::cerr << "COMPILER ERROR::ALL ELEMENTS IN AN ARRAY ASSIGNMENT MUST BE EXPRESSION NODES" << std::endl;
+        }
+        this->visitExpressionTree(child);
+        std::any val = child->getVal();
+        if (!aType->checkType(child->getVal())) {
+            std::cerr << "Invlaid array assignement due to attempting to assign an array with at least one element of an incorrect type " << std::endl;
         }
     }
-    this->clearCurrentFunctionReturns();
-
 }
-void ASTChecker::visitArrayAssignTree(AST* astree) {}
-void ASTChecker::visitStructAssignTree(AST* astree) {}
+void ASTChecker::visitStructAssignTree(AST* astree) {/*TO BE FILLED OUT WHEN CONSTRUCTORS ARE ADDED*/}
 /*****************************/
-void ASTChecker::visitReturnTree (AST* astree) {this->visitChildren(astree);}
+
 void ASTChecker::visitIfTree(AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitProgramTree (AST* astree) {this->visitChildren(astree);}
-void ASTChecker::visitBlockTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitWhileTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitElseTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitPrintTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitAssignTree(AST* astree) {/*REMOVE*/}
 
 bool ASTChecker::numberCheck(AST* astree) {
     int i = 0;
@@ -226,14 +268,4 @@ bool ASTChecker::numberCheck(AST* astree) {
         i++;
     }
     return true;
-}
-
-void ASTChecker::addCurrentFunctionReturnTree(ReturnTree* rTree) {
-    this->returnTrees.push_back(rTree);
-}
-
-void ASTChecker::clearCurrentFunctionReturns() {
-    if (this->returnTrees.size() > 0) {
-        this->returnTrees.clear();
-    }
 }

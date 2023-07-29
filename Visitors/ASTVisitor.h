@@ -281,8 +281,6 @@ class ASTChecker: public ASTVisitor {
         void visitPrintTree(AST* astree) override;
 
         bool numberCheck(AST* astree);
-        void addCurrentFunctionReturnTree(ReturnTree* rTree);
-        void clearCurrentFunctionReturns();
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;

@@ -31,8 +31,11 @@ public:
     int contains(std::string identifier);
     void printSymbolTable();
     bool variableTypeCheck(Type* typeHandler , std::any value);
+    void setCurrentFunctionType(Type* t);
+    Type* getCurrentFunctionType();
+
+    Type* functionType;
     SymbolTable* tableReference;
-    
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;
 private:

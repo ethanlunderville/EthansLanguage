@@ -152,7 +152,6 @@ void ContextManager::declareSymbol(int line, std::string identifier, Type* curre
     }
     return;
 }
-
 void ContextManager::declareSymbol(int line, std::string identifier, std::string type) {
     Type* currentType = this->typeManager->getTypeHandler(type);
     SymbolTable* pointer;
@@ -271,6 +270,20 @@ Type* ContextManager::getTypeOfSymbol(std::string identifier) {
     }
     std::cerr << "Unrecognized identifier: " << identifier <<std::endl;
     exit(1);
+}
+void ContextManager::setCurrentFunctionType(Type* t) {
+    if (this->contextStack.size() == 0) {
+        std::cerr << "COMPILER ERROR::There are no contexts so setting a type is not possible" << std::endl;
+        exit(1);
+    }
+    this->contextStack.top()->setCurrentFunctionType(t);
+}
+Type* ContextManager::getCurrentFunctionType() {
+    if (this->contextStack.size() == 0) {
+        std::cerr << "COMPILER ERROR::There are no contexts so getting a type is not possible" << std::endl;
+        exit(1);
+    }
+    return this->contextStack.top()->getCurrentFunctionType();
 }
 void ContextManager::printSymbolTable() {
     SymbolTable* pointer;

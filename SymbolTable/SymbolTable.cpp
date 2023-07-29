@@ -74,6 +74,13 @@ bool SymbolTable::variableTypeCheck(Type* typeHandler , std::any value) {
     return false;
 }
 
+void SymbolTable::setCurrentFunctionType(Type* t) {
+    this->functionType = t;
+}
+Type* SymbolTable::getCurrentFunctionType() {
+    return this->functionType;
+}
+
 void SymbolTable::printSymbolTable() {
     for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {
         stringToSymbolMap[intToStringVector[i]].type
