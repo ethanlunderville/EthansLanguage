@@ -2,8 +2,9 @@
 #include "SymbolTable/ContextManager.h"
 class SymbolTable;
 
-Struct::Struct(SymbolTable* baseStruct) {
+Struct::Struct(SymbolTable* baseStruct, const std::string& identifier) {
     this->baseStruct = baseStruct;
+    this->structIdentifier = identifier;
 }
 
 std::any Struct::getBaseArray() {
@@ -16,8 +17,10 @@ void Struct::checkAssignment(Assignable* assign) {
 }
 
 bool Struct::checkType(std::any value) {
-    return true;
-    //assign->checkType(this);
+    if (this->structIdentifier.compare(std::any_cast<SymbolTable*>(value)->getStructName()) == 0) {
+        return true;
+    }
+    return false;
 }
 
 bool Struct::checkExpression(AST* node, int line, ContextManager* contextManager) {
@@ -25,7 +28,13 @@ bool Struct::checkExpression(AST* node, int line, ContextManager* contextManager
 }
 
 std::any Struct::getNullValue() {
-    return new SymbolTable(*(this->baseStruct));
+    return nullptr;
+}
+
+SymbolTable* Struct::getDuplicateBase() {
+    SymbolTable* sTable = new SymbolTable(*(this->baseStruct));
+    sTable->setStructName(this->structIdentifier);
+    return sTable;
 }
 
 void Struct::printType() {
@@ -33,8 +42,12 @@ void Struct::printType() {
 }
 
 void Struct::printSymbol(std::string identifier, std::any symbol) {
+    if (symbol.type() == typeid(nullptr)) {
+        std::cout << "struct: " << identifier << " -> NULL" << std::endl;
+        return;
+    }
     SymbolTable* structHold = std::any_cast<SymbolTable*>(symbol);
-    std::cout << "struct: " << identifier << "-> {" << std::endl;
+    std::cout << "struct: " << identifier << " -> " << structHold << " {" << std::endl;
     for (int i = 0 ;i < structHold->intToStringVector.size();i++) {
         SymbolInfo sInfo = structHold->stringToSymbolMap[structHold->intToStringVector[i]];
         std::cout << "   " << structHold->intToStringVector[i] << " : ";

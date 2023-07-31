@@ -74,7 +74,7 @@ void ASTChecker::visitStructDeclarationTree (AST* astree) {
     StructDeclarationTree* sDecTree = ((StructDeclarationTree*)astree);
     this->contextManager->pushScope();
     this->visitChildren(sDecTree->getChildren()[0]);
-    typeManager->createType(sDecTree->getIdentifier(), new Struct(this->contextManager->popScope(true)));
+    typeManager->createType(sDecTree->getIdentifier(), new Struct(this->contextManager->popScope(true), sDecTree->getIdentifier()));
 }
 void ASTChecker::visitAddTree (AST* astree) {
     this->visitChildren(astree);
@@ -180,13 +180,35 @@ void ASTChecker::visitAssignOpTree (AST* astree) {
     IdentifierTree* iTree = dynamic_cast<IdentifierTree*>(tree->getChildren()[0]);
     Assignable* assignableType = dynamic_cast<Assignable*>(tree->getChildren()[1]);
     Type* type = contextManager->getTypeOfSymbol(iTree->getIdentifier());
-    if (iTree->getChildren().size() > 0 && typeid(*(iTree->getChildren()[0])) == typeid(ExpressionTree)) {
+    if (iTree->getChildren().size() > 0 
+    && typeid(*(iTree->getChildren()[0])) == typeid(ExpressionTree)) {
         type = dynamic_cast<Array*>(type)->getArrayType();
     }
     assignableType->setType(type);
-    //assignableType->setCheckerReference(this);
-    //type->checkAssignment(assignableType);
     this->visitChildren(astree);
+    /*Figure out if struct is copied or declared. If copied iterate the refcount*/
+    if (typeid(*type) == typeid(Struct)) {
+        if (typeid(*assignableType) == typeid(ExpressionTree)) {
+            SymbolTable* structRef = std::any_cast<SymbolTable*>(
+                                        dynamic_cast<Evaluatable*>(
+                                            assignableType->getChildren()[0]
+                                        )
+                                    ->getVal()); 
+            structRef->incrementReferenceCount();
+            this->contextManager->reassignSymbol(
+                iTree->getIdentifier(),
+                structRef,
+                assignableType->getLine()
+            );
+        } else if (typeid(*assignableType) == typeid(StructAssignTree)) {
+            this->contextManager->reassignSymbol(
+                iTree->getIdentifier(),
+                dynamic_cast<Struct*>(type)->getDuplicateBase(),
+                assignableType->getLine()
+            );
+        }
+    }
+    contextManager->printSymbolTable();
 }
 
 void ASTChecker::visitNumberTree (AST* astree) {
@@ -204,7 +226,7 @@ void ASTChecker::visitStringTree (AST* astree) {
 void ASTChecker::visitFunctionAssignTree(AST* astree) {/**/
     FunctionAssignTree* fAssignTree = dynamic_cast<FunctionAssignTree*>(astree);
     this->contextManager->pushContext();
-    this->contextManager->setCurrentFunctionType(fAssignTree->getType());
+    this->contextManager->setCurrentFunctionType(dynamic_cast<Function*>(fAssignTree->getType())->getFunctionType());
     this->visitChildren(astree);
     this->contextManager->popContext();
 }
@@ -213,6 +235,8 @@ void ASTChecker::visitReturnTree (AST* astree) {
     if (astree->getChildren().size() > 0) {
         dynamic_cast<ExpressionTree*>(astree->getChildren()[0])
         ->setType(this->contextManager->getCurrentFunctionType());
+        this->visitChildren(astree);
+        return;
     }
     std::cerr << "Functions must return at least one value" << std::endl;
     exit(1);
@@ -245,7 +269,14 @@ void ASTChecker::visitArrayAssignTree(AST* astree) {
         }
     }
 }
-void ASTChecker::visitStructAssignTree(AST* astree) {/*TO BE FILLED OUT WHEN CONSTRUCTORS ARE ADDED*/}
+void ASTChecker::visitStructAssignTree(AST* astree) {
+    StructAssignTree* sAssignTree = dynamic_cast<StructAssignTree*>(astree);
+    std::string typeName = sAssignTree->getTypeName();
+    if (sAssignTree->getType() != this->typeManager->getTypeHandler(typeName)) {
+        std::cerr << "Incorred type assignment for type " << typeName << std::endl;
+        exit(1);
+    }
+}
 /*****************************/
 
 void ASTChecker::visitIfTree(AST* astree) {this->visitChildren(astree);}

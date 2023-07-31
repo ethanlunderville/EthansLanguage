@@ -27,7 +27,7 @@ class PrimitiveType : public Type {
 
 class Struct : public Type {
     public:
-        Struct(SymbolTable* baseStruct);
+        Struct(SymbolTable* baseStruct, const std::string& identifier);
         std::any getNullValue() override;
         void printSymbol(std::string identifier, std::any symbol) override;
         bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
@@ -36,7 +36,9 @@ class Struct : public Type {
         void printArrayOfType(std::any vector) override;
         std::any getBaseArray() override;
         void printType() override;
+        SymbolTable* getDuplicateBase();
     private:
+        std::string structIdentifier;
         SymbolTable* baseStruct;
 };
 

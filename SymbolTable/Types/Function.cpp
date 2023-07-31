@@ -20,7 +20,7 @@ void Function::checkAssignment(Assignable* assign) {
 }
 
 bool Function::checkType(std::any value) {
-    return true;
+    return false;
     //assign->checkType(this);
 }
 Type* Function::getFunctionType() {

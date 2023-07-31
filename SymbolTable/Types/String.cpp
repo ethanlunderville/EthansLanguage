@@ -21,7 +21,10 @@ void String::checkAssignment(Assignable* assign) {
 }
 
 bool String::checkType(std::any value) {
-    return true;
+    if (value.type() == typeid(std::string)) {
+        return true;
+    }
+    return false;
 }
 
 void String::printType() {

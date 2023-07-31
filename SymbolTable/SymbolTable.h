@@ -34,10 +34,19 @@ public:
     void setCurrentFunctionType(Type* t);
     Type* getCurrentFunctionType();
 
+    std::string& getStructName();
+    void setStructName(const std::string& name);
+
+    int getReferenceCount();
+    void incrementReferenceCount();
+    void decrementReferenceCount();
+
     Type* functionType;
     SymbolTable* tableReference;
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;
+    std::string structName;
+    int referenceCount;
 private:
     std::stack<int> scopeStack;
     std::vector<Type*> deletableTypes; 

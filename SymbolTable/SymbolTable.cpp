@@ -2,6 +2,7 @@
 
 SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableReference) {
     pushScope();
+    this->referenceCount = 1;
 }
 
 SymbolTable::~SymbolTable() {
@@ -10,8 +11,12 @@ SymbolTable::~SymbolTable() {
         this->deletableTypes[i] = nullptr;
     }
     for (int i = 0 ; i < this->structs.size() ; i++) {
-        delete this->structs[i];
-        this->structs[i] = nullptr;
+        if (this->structs[i]->getReferenceCount() == 1) {
+            delete this->structs[i];
+            this->structs[i] = nullptr;
+        } else {
+            this->structs[i]->decrementReferenceCount();
+        }
     }
 }
 
@@ -68,9 +73,7 @@ int SymbolTable::contains(std::string identifier) {
 }
 
 bool SymbolTable::variableTypeCheck(Type* typeHandler , std::any value) {
-    if (typeHandler->checkType(value)) {
-        return true;
-    }
+    if (typeHandler->checkType(value)) { return true; }
     return false;
 }
 
@@ -80,6 +83,18 @@ void SymbolTable::setCurrentFunctionType(Type* t) {
 Type* SymbolTable::getCurrentFunctionType() {
     return this->functionType;
 }
+
+std::string& SymbolTable::getStructName() {
+    return this->structName;
+}
+
+void SymbolTable::setStructName(const std::string& name) { this->structName = name; }
+
+int SymbolTable::getReferenceCount() {return this->referenceCount;}
+
+void SymbolTable::incrementReferenceCount() {this->referenceCount++;}
+
+void SymbolTable::decrementReferenceCount() {this->referenceCount--;}
 
 void SymbolTable::printSymbolTable() {
     for (int i = (intToStringVector.size()-1) ; i > -1 ; i--) {

@@ -152,7 +152,14 @@ AST* Parser::sExpression() {
         operatorHold->addChild(operand2);
         operandStack.push(operatorHold);
     }
-    t->addChild(operandStack.top());
+    AST* expressionTop = dynamic_cast<Assignable*>(operandStack.top());
+    if (expressionTop != nullptr) {
+        t->addChild(operandStack.top());
+    } else {
+        ExpressionTree* exprTree = new ExpressionTree(getCurrentLine());
+        exprTree->addChild(operandStack.top());
+        t->addChild(exprTree);
+    }
     operatorStack.pop();
     operatorStack.pop();
     delete bottom;

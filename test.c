@@ -1,17 +1,24 @@
-int() b = (int k) {
-    int r;
-    return 1 + 1;
-}
+//string() b = (int[] r) {
+//    string[] k = ["2","3"];
+//    return "3";
+//}
 //int i =  1;
 //int[] r = [1+1,i];
 
-//int[] k = [ 1, 2, 3, 1 + "7"];
+int[] mas = [ 1, 2, 3, 1 ];
+
+mas[2] = 2;
+
 //struct tester = {
 //    int g;
-//    int() b = {
-//        int r;
-//        return 1 + 1;
-//    }
 //}
 
+//struct tRuct = {
+//    int r;
+//}
+
+//tRuct f = new tRuct();
+
 //tester t = new tester();
+
+//tester k = t;
