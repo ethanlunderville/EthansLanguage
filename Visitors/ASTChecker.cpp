@@ -20,7 +20,10 @@ void ASTChecker::visitExpressionTree (AST* astree) {
     this->visitChildren(astree);
     Type* eType = dynamic_cast<ExpressionTree*>(astree)->getType();
     if (eType != nullptr) {
-        if (!eType->checkType(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal())) {
+        if (
+            !eType->checkType(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal())
+            ) 
+            {
             std::cerr << "Attempted to assign incorrect value to variable of type: ";
             eType->printType();
             std::cerr << "" << std::endl;
@@ -169,44 +172,59 @@ void ASTChecker::visitArrowOpTree (AST* astree) {
         structAny = this->contextManager->getValueStoredInSymbol(eValType->getIdentifier());
     }  
     SymbolTable* structTable = std::any_cast<SymbolTable*>(structAny);
+
     this->structScoper.push(structTable);
     this->visitChildren(astree->getChildren()[1]);
     this->structScoper.pop();
+
     Identifiable* iDent = dynamic_cast<Identifiable*>(eValType->getChildren()[1]);
-    ((Evaluatable*)astree)->setVal(structTable->getValueStoredInSymbol(iDent->getIdentifier()));
+    ArrowOpTree* aTree = dynamic_cast<ArrowOpTree*>(astree);
+    aTree->setVal(structTable->getValueStoredInSymbol(iDent->getIdentifier()));
+    aTree->setType(structTable->getTypeOfSymbol(iDent->getIdentifier()));
 }
 void ASTChecker::visitAssignOpTree (AST* astree) {
     AssignOpTree* tree = ((AssignOpTree*)astree);
-    IdentifierTree* iTree = dynamic_cast<IdentifierTree*>(tree->getChildren()[0]);
     Assignable* assignableType = dynamic_cast<Assignable*>(tree->getChildren()[1]);
-    Type* type = contextManager->getTypeOfSymbol(iTree->getIdentifier());
-    if (iTree->getChildren().size() > 0 
-    && typeid(*(iTree->getChildren()[0])) == typeid(ExpressionTree)) {
-        type = dynamic_cast<Array*>(type)->getArrayType();
-    }
-    assignableType->setType(type);
-    this->visitChildren(astree);
-    /*Figure out if struct is copied or declared. If copied iterate the refcount*/
-    if (typeid(*type) == typeid(Struct)) {
-        if (typeid(*assignableType) == typeid(ExpressionTree)) {
-            SymbolTable* structRef = std::any_cast<SymbolTable*>(
-                                        dynamic_cast<Evaluatable*>(
-                                            assignableType->getChildren()[0]
-                                        )
-                                    ->getVal()); 
-            structRef->incrementReferenceCount();
-            this->contextManager->reassignSymbol(
-                iTree->getIdentifier(),
-                structRef,
-                assignableType->getLine()
-            );
-        } else if (typeid(*assignableType) == typeid(StructAssignTree)) {
-            this->contextManager->reassignSymbol(
-                iTree->getIdentifier(),
-                dynamic_cast<Struct*>(type)->getDuplicateBase(),
-                assignableType->getLine()
-            );
+    AST* lValTree = tree->getChildren()[0];
+    Type* type;
+    if (typeid(*lValTree) == typeid(IdentifierTree)) {
+        IdentifierTree* iTree = dynamic_cast<IdentifierTree*>(lValTree);
+        type = contextManager->getTypeOfSymbol(iTree->getIdentifier());
+        if (lValTree->getChildren().size() > 0 && typeid(*(lValTree->getChildren()[0])) == typeid(ExpressionTree)) {
+            type = dynamic_cast<Array*>(type)->getArrayType();
         }
+        assignableType->setType(type);
+        this->visitChildren(astree);
+        /* Figure out if struct is copied or declared. If copied iterate the refcount */
+        if (typeid(*type) == typeid(Struct)) {
+            if (typeid(*assignableType) == typeid(ExpressionTree)) {
+                SymbolTable* structRef = std::any_cast<SymbolTable*>(
+                    dynamic_cast<Evaluatable*>(
+                        assignableType->getChildren()[0]
+                    )->getVal()
+                ); 
+                structRef->incrementReferenceCount();
+                this->contextManager->reassignSymbol(
+                    iTree->getIdentifier(),
+                    structRef,
+                    assignableType->getLine()
+                );
+            } else if (typeid(*assignableType) == typeid(StructAssignTree)) {
+                Type* structType = dynamic_cast<Struct*>(type);
+                SymbolTable* baseSymbolTable = structType->getDuplicateBase();
+                this->contextManager->reassignSymbol(
+                    iTree->getIdentifier(),
+                    baseSymbolTable,
+                    assignableType->getLine()
+                );
+                /*THIS KEYWORD*/
+                baseSymbolTable->declareSymbol(assignableType->getLine(), "this", structType);
+                baseSymbolTable->reassignSymbol("this", baseSymbolTable);
+            }
+        }
+    } else if (typeid(*lValTree) == typeid(ArrowOpTree)) {
+        this->visitArrowOpTree(lValTree);
+        type = dynamic_cast<ArrowOpTree*>(lValTree)->getType();
     }
     contextManager->printSymbolTable();
 }
@@ -256,7 +274,7 @@ void ASTChecker::visitArrayAssignTree(AST* astree) {
     } else {
         aType = dynamic_cast<Array*>(aType)->getArrayType();
     }
-    std::vector<AST*> kids = astree->getChildren();
+    std::vector<AST*>& kids = astree->getChildren();
     for (AST* potentiallyValidChild : kids) {
         ExpressionTree* child = dynamic_cast<ExpressionTree*>(potentiallyValidChild);
         if (child == nullptr) {
@@ -264,8 +282,9 @@ void ASTChecker::visitArrayAssignTree(AST* astree) {
         }
         this->visitExpressionTree(child);
         std::any val = child->getVal();
-        if (!aType->checkType(child->getVal())) {
+        if (!aType->checkType(val)) {
             std::cerr << "Invlaid array assignement due to attempting to assign an array with at least one element of an incorrect type " << std::endl;
+            exit(1);
         }
     }
 }

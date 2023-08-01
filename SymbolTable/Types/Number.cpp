@@ -39,17 +39,14 @@ void Number::printType() {
 }
 
 void Number::printArrayOfType(std::any vector) {
-    std::cout << "[ Number ] -> ";
     std::vector<double> arr = std::any_cast<std::vector<double>>(vector);
     int size = arr.size();
-    std::cout << "[ ";
     for (int i = 0 ; i < size ; i++) {
         std::cout << arr[i];
         if (i != size - 1) {
             std::cout << ", ";
         } 
     }
-    std::cout << " ]\n";
 }
 
 bool Number::checkExpression(AST* node, int line, ContextManager* contextManager) {

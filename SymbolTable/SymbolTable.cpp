@@ -84,9 +84,15 @@ Type* SymbolTable::getCurrentFunctionType() {
     return this->functionType;
 }
 
+std::string& SymbolTable::getTypeName() {
+    return this->typeName;
+}
+
 std::string& SymbolTable::getStructName() {
     return this->structName;
 }
+
+void SymbolTable::setTypeName(const std::string& name) { this->typeName = name; }
 
 void SymbolTable::setStructName(const std::string& name) { this->structName = name; }
 

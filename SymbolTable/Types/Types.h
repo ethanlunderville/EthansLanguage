@@ -30,6 +30,7 @@ class Struct : public Type {
         Struct(SymbolTable* baseStruct, const std::string& identifier);
         std::any getNullValue() override;
         void printSymbol(std::string identifier, std::any symbol) override;
+        void printSymbol(std::any symbol);
         bool checkExpression(AST* node, int line, ContextManager* contextManager) override;
         void checkAssignment(Assignable* assign) override;
         bool checkType(std::any type) override;

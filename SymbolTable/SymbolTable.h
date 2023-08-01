@@ -34,6 +34,9 @@ public:
     void setCurrentFunctionType(Type* t);
     Type* getCurrentFunctionType();
 
+    std::string& getTypeName();
+    void setTypeName(const std::string& name);
+
     std::string& getStructName();
     void setStructName(const std::string& name);
 
@@ -45,6 +48,7 @@ public:
     SymbolTable* tableReference;
     std::vector<std::string> intToStringVector;
     std::map<std::string, SymbolInfo> stringToSymbolMap;
+    std::string typeName;
     std::string structName;
     int referenceCount;
 private:

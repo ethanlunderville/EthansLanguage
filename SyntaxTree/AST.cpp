@@ -9,7 +9,7 @@ void AST::addChild(AST* tree) {
     children.push_back(tree);
 }
 
-std::vector<AST*> AST::getChildren() {
+std::vector<AST*>& AST::getChildren() {
     return children;
 }
 

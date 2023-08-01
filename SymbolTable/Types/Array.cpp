@@ -28,8 +28,9 @@ Type* Array::getArrayType() {
 }
 
 void Array::printSymbol(std::string identifier, std::any symbol) {
-    std::cout << "Identifier: " << identifier << " = ";
+    std::cout << "Identifier: " << identifier << " = [";
     this->type->printArrayOfType(symbol);
+    std::cout << "]" << std::endl;
 }
 
 void Array::printArrayOfType(std::any vector) {

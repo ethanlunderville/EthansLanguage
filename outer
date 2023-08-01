@@ -1,6 +1,23 @@
-/usr/bin/ld: /tmp/cc4J31vi.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: multiple definition of `Operators'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: first defined here
-/usr/bin/ld: /tmp/cc4J31vi.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: multiple definition of `Operands'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: first defined here
-/usr/bin/ld: /tmp/ccPqHLqX.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: multiple definition of `Operators'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:25: first defined here
-/usr/bin/ld: /tmp/ccPqHLqX.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: multiple definition of `Operands'; /tmp/ccmztIuP.o:/home/ethan/Desktop/myprogramminglang/Keywords.h:41: first defined here
-collect2: error: ld returned 1 exit status
-make: *** [Makefile:21: program] Error 1
+1. ProgramTree
+2.   ArrayDeclarationTree: mas
+3.   ExpressionTree
+4.     AssignOpTree: =
+5.       Identifier: mas
+6.       ArrayAssignTree: [
+7.         ExpressionTree
+8.           NumberTree: 1.000000
+9.         ExpressionTree
+10.          NumberTree: 2.000000
+11.        ExpressionTree
+12.          NumberTree: 3.000000
+13.        ExpressionTree
+14.          NumberTree: 1.000000
+15.  ExpressionTree
+16.    AssignOpTree: =
+17.      Identifier: mas
+18.        ExpressionTree
+19.          NumberTree: 2.000000
+20.      ExpressionTree
+21.        AddTree: +
+22.          NumberTree: 2.000000
+23.          NumberTree: 1.000000

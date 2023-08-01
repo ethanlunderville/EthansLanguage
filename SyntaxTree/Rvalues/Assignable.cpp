@@ -2,7 +2,8 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
-Assignable::Assignable() {}
+Assignable::Assignable() : type(nullptr) {
+}
 Assignable::~Assignable() {}
 
 int Assignable::getLine() {

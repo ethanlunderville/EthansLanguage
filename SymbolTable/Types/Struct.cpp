@@ -17,8 +17,10 @@ void Struct::checkAssignment(Assignable* assign) {
 }
 
 bool Struct::checkType(std::any value) {
-    if (this->structIdentifier.compare(std::any_cast<SymbolTable*>(value)->getStructName()) == 0) {
-        return true;
+    if (value.type() == typeid(SymbolTable*)) {
+        if (this->structIdentifier.compare(std::any_cast<SymbolTable*>(value)->getTypeName()) == 0) {
+            return true;
+        }
     }
     return false;
 }
@@ -33,7 +35,7 @@ std::any Struct::getNullValue() {
 
 SymbolTable* Struct::getDuplicateBase() {
     SymbolTable* sTable = new SymbolTable(*(this->baseStruct));
-    sTable->setStructName(this->structIdentifier);
+    sTable->setTypeName(this->structIdentifier);
     return sTable;
 }
 
@@ -42,12 +44,13 @@ void Struct::printType() {
 }
 
 void Struct::printSymbol(std::string identifier, std::any symbol) {
+    std::cout << "\n";
     if (symbol.type() == typeid(nullptr)) {
-        std::cout << "struct: " << identifier << " -> NULL" << std::endl;
+        std::cout << identifier << " -> NULL" << std::endl;
         return;
     }
     SymbolTable* structHold = std::any_cast<SymbolTable*>(symbol);
-    std::cout << "struct: " << identifier << " -> " << structHold << " {" << std::endl;
+    std::cout << structHold->getTypeName()  << ": " << identifier << " -> " << structHold << " {" << std::endl;
     for (int i = 0 ;i < structHold->intToStringVector.size();i++) {
         SymbolInfo sInfo = structHold->stringToSymbolMap[structHold->intToStringVector[i]];
         std::cout << "   " << structHold->intToStringVector[i] << " : ";
@@ -55,6 +58,27 @@ void Struct::printSymbol(std::string identifier, std::any symbol) {
     }
     std::cout << "}" << std::endl;
 }
-void Struct::printArrayOfType(std::any vector) {
 
+void Struct::printSymbol(std::any symbol) {
+    std::cout << "\n";
+    if (symbol.type() == typeid(nullptr)) {
+        std::cout << "? -> NULL" << std::endl;
+        return;
+    }
+    SymbolTable* structHold = std::any_cast<SymbolTable*>(symbol);
+    std::cout << structHold->getTypeName()  << ": ? -> " << structHold << " {" << std::endl;
+    for (int i = 0 ;i < structHold->intToStringVector.size();i++) {
+        SymbolInfo sInfo = structHold->stringToSymbolMap[structHold->intToStringVector[i]];
+        std::cout << "   " << structHold->intToStringVector[i] << " : ";
+        sInfo.type->printSymbol(structHold->intToStringVector[i], sInfo.value);
+    }
+    std::cout << "}" << std::endl;
+}
+
+void Struct::printArrayOfType(std::any vector) {
+    std::vector<SymbolTable*> arr = std::any_cast<std::vector<SymbolTable*>>(vector);
+    for ( int i = 0 ; arr.size() ; i++ ) {
+        std::cout << "   ";
+        this->printSymbol(std::any(arr[i]));
+    }
 }

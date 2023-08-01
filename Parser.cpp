@@ -47,6 +47,7 @@ AST* Parser::sStatement() {
         return t;
     } else if (isCurrentToken(IDENTIFIER) && !onUserDefinedType()) {
         t = sExpression();
+        expect(SEMICOLON);
     } 
     return t;
 }          
@@ -152,14 +153,17 @@ AST* Parser::sExpression() {
         operatorHold->addChild(operand2);
         operandStack.push(operatorHold);
     }
-    AST* expressionTop = dynamic_cast<Assignable*>(operandStack.top());
-    if (expressionTop != nullptr) {
-        t->addChild(operandStack.top());
-    } else {
-        ExpressionTree* exprTree = new ExpressionTree(getCurrentLine());
-        exprTree->addChild(operandStack.top());
-        t->addChild(exprTree);
+    if (typeid(*(operandStack.top())) == typeid(AssignOpTree)) {
+        Assignable* expressionTop = dynamic_cast<Assignable*>(operandStack.top()->getChildren()[1]);
+        if (expressionTop == nullptr) {
+            AssignOpTree* aOpTree = dynamic_cast<AssignOpTree*>(operandStack.top());
+            ExpressionTree* exprTree = new ExpressionTree(getCurrentLine());
+            exprTree->addChild(aOpTree->getChildren()[1]);
+            std::vector<AST*>& assignOpKidRef = aOpTree->getChildren();
+            assignOpKidRef[1] = exprTree;
+        }
     }
+    t->addChild(operandStack.top());
     operatorStack.pop();
     operatorStack.pop();
     delete bottom;
@@ -179,7 +183,7 @@ AST* Parser::sContext(AST* pTree) {
     while (1) {
         if (onStatement()) {
             pTree->addChild(sStatement());
-        } else if ( isCurrentToken(STRUCT)|| onDeclaration()) {
+        } else if ( isCurrentToken(STRUCT) || onDeclaration()) {
             std::string type = getCurrentLexeme();
             scan();
             std::string name;

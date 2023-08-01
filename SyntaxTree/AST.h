@@ -29,7 +29,7 @@ class AST {
         AST();
         virtual ~AST();
         void addChild(AST* tree);
-        std::vector<AST*> getChildren();
+        std::vector<AST*>& getChildren();
         virtual void accept(ASTVisitor* v) = 0;
         void prependToChildren(AST* prependNode);
     private:
@@ -77,8 +77,8 @@ class Evaluatable : public AST {
     public:
         Evaluatable();
         virtual ~Evaluatable();
-        std::any getVal();
-        void setVal(std::any value);
+        virtual std::any getVal();
+        virtual void setVal(std::any value);
     private:
         std::any value;
 };
@@ -97,12 +97,12 @@ class Assignable : public Evaluatable {
     public:
         Assignable();
         virtual ~Assignable();
-        Type* getType();
-        void setType(Type* type);
-        int getLine();
-        void setLine(int line);
-        void setCheckerReference(ASTChecker* checkerReference); 
-        ASTChecker* getCheckerReference();
+        virtual Type* getType();
+        virtual void setType(Type* type);
+        virtual int getLine();
+        virtual void setLine(int line);
+        virtual void setCheckerReference(ASTChecker* checkerReference); 
+        virtual ASTChecker* getCheckerReference();
         virtual void checkType(Struct* type) = 0;
         //virtual void checkFunction(Function* type) = 0;
         //virtual void checkArray(Array* arrayType) = 0;
@@ -419,6 +419,8 @@ class ArrowOpTree : public Operator {
         ArrowOpTree();
         std::any getOp(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
+
+    
 };
 
 class AssignOpTree : public Operator {
@@ -426,4 +428,7 @@ class AssignOpTree : public Operator {
         AssignOpTree();
         std::any assign(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
+        Type* getType();
+        void setType(Type* type);
+        Type* type;
 };
