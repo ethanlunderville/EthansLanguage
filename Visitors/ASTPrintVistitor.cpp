@@ -1,7 +1,7 @@
 #include <cmath>
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
-//#define PRINTNODES (0x0)
+#define PRINTNODES (0x0)
 
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;

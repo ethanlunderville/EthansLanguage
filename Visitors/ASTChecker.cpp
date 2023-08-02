@@ -20,10 +20,7 @@ void ASTChecker::visitExpressionTree (AST* astree) {
     this->visitChildren(astree);
     Type* eType = dynamic_cast<ExpressionTree*>(astree)->getType();
     if (eType != nullptr) {
-        if (
-            !eType->checkType(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal())
-            ) 
-            {
+        if (!eType->checkType(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal())) {
             std::cerr << "Attempted to assign incorrect value to variable of type: ";
             eType->printType();
             std::cerr << "" << std::endl;
@@ -37,12 +34,22 @@ void ASTChecker::visitExpressionTree (AST* astree) {
 void ASTChecker::visitIdentifierTree (AST* astree) {
     this->visitChildren(astree);
     IdentifierTree* identer = ((IdentifierTree*)astree);
+    /*SPECIAL CASES*/
+    if (astree->getChildren().size() != 0) { // IF IDENT HAS SUBSRCIPT
+        Array* arrType = dynamic_cast<Array*>(this->contextManager->getTypeOfSymbol(identer->getIdentifier()));
+        identer->setVal(dynamic_cast<Type*>(arrType->getArrayType())->getNullValue());
+        return;
+    } else if ( typeid(*(this->contextManager->getTypeOfSymbol(identer->getIdentifier()))) == typeid(Struct) ) { // IF IDENT IS A STRUCT
+        Struct* sType = dynamic_cast<Struct*>(this->contextManager->getTypeOfSymbol(identer->getIdentifier()));
+        identer->setVal(sType->getBaseStructPointer());
+        return;
+    } 
     identer->setVal(this->contextManager->getValueStoredInSymbol(identer->getIdentifier()));
 }
 void ASTChecker::visitFunctionCallTree (AST* astree) {
     this->visitChildren(astree);
-    FunctionCallTree* identer = ((FunctionCallTree*)astree);
-    identer->setVal(this->contextManager->getValueStoredInSymbol(identer->getIdentifier()));
+    FunctionCallTree* fCall = dynamic_cast<FunctionCallTree*>(astree);
+    fCall->setVal(this->contextManager->getValueStoredInSymbol(fCall->getIdentifier()));
 }
 // Primitive declaration
 void ASTChecker::visitDeclarationTree (AST* astree) {
@@ -66,7 +73,6 @@ void ASTChecker::visitFunctionDeclarationTree (AST* astree) {
     Type* primTypeReference = this->typeManager->getTypeHandler(functionTree->getType());
     this->contextManager->declareSymbol(functionTree->getLine(), functionTree->getIdentifier(), new Function(primTypeReference));
     this->visitChildren(astree);
-    contextManager->printSymbolTable();
     if (functionTree->getChildren().size() != 0) {
         this->visitChildren(astree);
     }
@@ -76,8 +82,13 @@ void ASTChecker::visitFunctionDeclarationTree (AST* astree) {
 void ASTChecker::visitStructDeclarationTree (AST* astree) {
     StructDeclarationTree* sDecTree = ((StructDeclarationTree*)astree);
     this->contextManager->pushScope();
+    // BYPASS THE BLOCK TREE VISIT BY VISITING ITS CHILDREN DIRECTLY TO AVOID POPPING SCOPE
     this->visitChildren(sDecTree->getChildren()[0]);
-    typeManager->createType(sDecTree->getIdentifier(), new Struct(this->contextManager->popScope(true), sDecTree->getIdentifier()));
+    typeManager->createType(
+        sDecTree->getIdentifier(),
+        new Struct(this->contextManager->popScope(true),
+        sDecTree->getIdentifier())
+    );
 }
 void ASTChecker::visitAddTree (AST* astree) {
     this->visitChildren(astree);
@@ -153,78 +164,131 @@ void ASTChecker::visitOrTree (AST* astree) {
     this->numberCheck(astree);
     ((Evaluatable*)astree)->setVal(1.00);
 }
+/*BUBBLE BASE VALUE TO THE TOP*/
 void ASTChecker::visitArrowOpTree (AST* astree) {
+    /*IF SOMETHING IS ON THE LEFT OF AN ARROW IT MUST BE IDENTIFIABLE*/
     Identifiable* eValType = dynamic_cast<Identifiable*>(astree->getChildren()[0]);
     if (eValType == nullptr) {
         std::cerr << "Non struct identifier with arrow following it" << std::endl;
         exit(1);
-    } else if (
-        typeid(*eValType) == typeid(IdentifierTree) 
-        && eValType->getChildren().size() == 1 
-        && typeid(*(eValType->getChildren()[0])) == typeid(ExpressionTree)
-       ) {
-        this->visitIdentifierTree(dynamic_cast<IdentifierTree*>(eValType));
-    }
-    std::any structAny;
+    } 
+    /*GET THE CORRECT STRUCT (SYMTABL) FOR THE CURRENT VAR
+    SINCE THE STRUCTS HAVE NOT BEEN INITIALIZED THE BASE TABLE OF THEM WILL DO */
+    SymbolTable* structTable;
+    Type* type;
     if (this->structScoper.size() > 0) {
-        structAny = this->structScoper.top()->getValueStoredInSymbol(eValType->getIdentifier());
+        type = this->structScoper.top()->getTypeOfSymbol(eValType->getIdentifier());
     } else {
-        structAny = this->contextManager->getValueStoredInSymbol(eValType->getIdentifier());
-    }  
-    SymbolTable* structTable = std::any_cast<SymbolTable*>(structAny);
-
-    this->structScoper.push(structTable);
-    this->visitChildren(astree->getChildren()[1]);
-    this->structScoper.pop();
-
-    Identifiable* iDent = dynamic_cast<Identifiable*>(eValType->getChildren()[1]);
-    ArrowOpTree* aTree = dynamic_cast<ArrowOpTree*>(astree);
-    aTree->setVal(structTable->getValueStoredInSymbol(iDent->getIdentifier()));
-    aTree->setType(structTable->getTypeOfSymbol(iDent->getIdentifier()));
+        type = this->contextManager->getTypeOfSymbol(eValType->getIdentifier());
+    }
+    if (typeid(*type) == typeid(Array)) {
+        type = dynamic_cast<Array*>(type)->getArrayType();
+    } else if (typeid(*type) == typeid(Function)) {
+        type = dynamic_cast<Function*>(type)->getFunctionType();
+    }
+    Struct* structType = dynamic_cast<Struct*>(type);
+    if (structType == nullptr) {
+        std::cerr << "COMPILER::ERROR -> STRUCT SHOULD HAVE BEEN HERE";
+        exit(1);
+    }
+    structTable = structType->getBaseStructPointer();
+    /*LEFT CHILD OF THIS TREE MUST ALWAYS BE AN IDENTIFIER WITH A STRUCT*/
+    // IF IT IS ANOTHER ARROW RECURSIVELY CALL THIS METHOD ON IT
+    if (typeid(*(astree->getChildren()[1])) == typeid(ArrowOpTree) ) {
+        ArrowOpTree* arrowChild = dynamic_cast<ArrowOpTree*>(astree->getChildren()[1]);
+        this->structScoper.push(structTable);
+        this->visitLValArrowOpTree(arrowChild);
+        dynamic_cast<Evaluatable*>(astree)->setVal(arrowChild->getVal());
+        this->structScoper.pop();
+    } else {
+    // BASE CASE: IDENTIDIER HAS BEEN FOUND. PROCEED TO BUBBLE ITS TYPE TO THE TOP WITH RECURSION
+        Identifiable* iDent = dynamic_cast<Identifiable*>(astree->getChildren()[1]);
+        if (iDent != nullptr) { 
+            dynamic_cast<Evaluatable*>(astree)->setVal(structTable->getValueStoredInSymbol(iDent->getIdentifier()));
+            return;
+        } else {
+            std::cerr << "Incorrect arrow expression" << std::endl;
+        }
+    }
 }
+
+/*IF THE TYPE IS AN ARROW OP TREE THEN BUBBLE THE TYPE TO THE TOP*/
+void ASTChecker::visitLValArrowOpTree(AST* astree) {
+    /*IF SOMETHING IS ON THE LEFT OF AN ARROW IT MUST BE IDENTIFIABLE*/
+    Identifiable* eValType = dynamic_cast<Identifiable*>(astree->getChildren()[0]);
+    if (eValType == nullptr) {
+        std::cerr << "Non struct identifier with arrow following it" << std::endl;
+        exit(1);
+    } 
+    /*GET THE CORRECT STRUCT (SYMTABL) FOR THE CURRENT VAR
+    SINCE THE STRUCTS HAVE NOT BEEN INITIALIZED THE BASE TABLE OF THEM WILL DO */
+    Type* type;
+    if (this->structScoper.size() > 0) {
+        type = this->structScoper.top()->getTypeOfSymbol(eValType->getIdentifier());
+    } else {
+        type = this->contextManager->getTypeOfSymbol(eValType->getIdentifier());
+    }
+    if (typeid(*type) == typeid(Array)) {
+        if (eValType->getChildren().size() != 0 && typeid(*(eValType->getChildren()[0])) == typeid(ExpressionTree)) {
+            type = dynamic_cast<Array*>(type)->getArrayType();
+        } else {
+            std::cerr << "COMPILER ERROR:: ARRAY IDENT HAD NO SUBSCRIPT" << std::endl;
+            exit(1);
+        }
+    } else if (typeid(*type) == typeid(Function)) {
+        type = dynamic_cast<Function*>(type)->getFunctionType();
+    }
+    Struct* structType = dynamic_cast<Struct*>(type);
+    if (structType == nullptr) {
+        std::cerr << "COMPILER::ERROR -> STRUCT SHOULD HAVE BEEN HERE";
+        exit(1);
+    }
+    SymbolTable* structTable = structType->getBaseStructPointer();
+    /*LEFT CHILD OF THIS TREE MUST ALWAYS BE AN IDENTIFIER WITH A STRUCT*/
+    // IF IT IS ANOTHER ARROW RECURSIVELY CALL THIS METHOD ON IT
+    if (typeid(*(astree->getChildren()[1])) == typeid(ArrowOpTree) ) {
+        ArrowOpTree* arrowChild = dynamic_cast<ArrowOpTree*>(astree->getChildren()[1]);
+        this->structScoper.push(structTable);
+        this->visitLValArrowOpTree(arrowChild);
+        dynamic_cast<Evaluatable*>(astree)->setVal(arrowChild->getVal());
+        this->structScoper.pop();
+    } else {
+    // BASE CASE: IDENTIDIER HAS BEEN FOUND. PROCEED TO BUBBLE ITS TYPE TO THE TOP WITH RECURSION
+        Identifiable* iDent = dynamic_cast<Identifiable*>(astree->getChildren()[1]);
+        if (iDent != nullptr) { 
+            Type* temp = structTable->getTypeOfSymbol(iDent->getIdentifier());
+            if (temp == nullptr) {
+                std::cerr << "Unrecognized identifier :: " << iDent->getIdentifier() << std::endl;
+                exit(1);
+            }
+            dynamic_cast<Evaluatable*>(astree)->setVal(temp);
+            return;
+        } else {
+            std::cerr << "Incorrect arrow expression" << std::endl;
+            exit(1);
+        }
+    }
+}
+
 void ASTChecker::visitAssignOpTree (AST* astree) {
     AssignOpTree* tree = ((AssignOpTree*)astree);
     Assignable* assignableType = dynamic_cast<Assignable*>(tree->getChildren()[1]);
     AST* lValTree = tree->getChildren()[0];
     Type* type;
-    if (typeid(*lValTree) == typeid(IdentifierTree)) {
-        IdentifierTree* iTree = dynamic_cast<IdentifierTree*>(lValTree);
-        type = contextManager->getTypeOfSymbol(iTree->getIdentifier());
-        if (lValTree->getChildren().size() > 0 && typeid(*(lValTree->getChildren()[0])) == typeid(ExpressionTree)) {
+    if (typeid(*lValTree) == typeid(IdentifierTree)) { //BASIC L-VAL IDENTIFIER
+        type = contextManager->getTypeOfSymbol(dynamic_cast<IdentifierTree*>(lValTree)->getIdentifier());
+        if (lValTree->getChildren().size() > 0 && typeid(*(lValTree->getChildren()[0])) == typeid(ExpressionTree)) { //ARRAY SUBSCRIPT L-VAL IDENTIFIER
             type = dynamic_cast<Array*>(type)->getArrayType();
         }
-        assignableType->setType(type);
-        this->visitChildren(astree);
-        /* Figure out if struct is copied or declared. If copied iterate the refcount */
-        if (typeid(*type) == typeid(Struct)) {
-            if (typeid(*assignableType) == typeid(ExpressionTree)) {
-                SymbolTable* structRef = std::any_cast<SymbolTable*>(
-                    dynamic_cast<Evaluatable*>(
-                        assignableType->getChildren()[0]
-                    )->getVal()
-                ); 
-                structRef->incrementReferenceCount();
-                this->contextManager->reassignSymbol(
-                    iTree->getIdentifier(),
-                    structRef,
-                    assignableType->getLine()
-                );
-            } else if (typeid(*assignableType) == typeid(StructAssignTree)) {
-                Type* structType = dynamic_cast<Struct*>(type);
-                SymbolTable* baseSymbolTable = structType->getDuplicateBase();
-                this->contextManager->reassignSymbol(
-                    iTree->getIdentifier(),
-                    baseSymbolTable,
-                    assignableType->getLine()
-                );
-                /*THIS KEYWORD*/
-                baseSymbolTable->declareSymbol(assignableType->getLine(), "this", structType);
-                baseSymbolTable->reassignSymbol("this", baseSymbolTable);
-            }
-        }
-    } else if (typeid(*lValTree) == typeid(ArrowOpTree)) {
-        this->visitArrowOpTree(lValTree);
-        type = dynamic_cast<ArrowOpTree*>(lValTree)->getType();
+    } else if (typeid(*lValTree) == typeid(ArrowOpTree)) { // ARROW L-VAL
+        this->visitLValArrowOpTree(lValTree);
+        type = std::any_cast<Type*>(dynamic_cast<ArrowOpTree*>(lValTree)->getVal());
+    }
+    assignableType->setType(type);
+    this->visitChildren(astree);
+    /*SPECIAL CASE::FUNCTIONS ARE ASSIGNED DURING THE CHECKING STAGE*/
+    if (typeid(FunctionAssignTree) == typeid(*assignableType)) { 
+        
     }
     contextManager->printSymbolTable();
 }

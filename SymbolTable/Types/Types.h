@@ -38,6 +38,7 @@ class Struct : public Type {
         std::any getBaseArray() override;
         void printType() override;
         SymbolTable* getDuplicateBase();
+        SymbolTable* getBaseStructPointer();
     private:
         std::string structIdentifier;
         SymbolTable* baseStruct;

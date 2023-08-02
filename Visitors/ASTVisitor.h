@@ -232,10 +232,15 @@ class ASTInterpreter: public ASTVisitor {
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
         void visitPrintTree(AST* astree) override;
+
+        void visitLValArrowOpTree(AST* astree);
+        void visitFunctionChildren(AST* astree);
+
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;
-        std::map<std::string, void*> functionBinder;
+        bool returned;
+        FunctionCallTree* currentFuncPtr;
 };
 
 class ASTChecker: public ASTVisitor {
@@ -279,6 +284,8 @@ class ASTChecker: public ASTVisitor {
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
         void visitPrintTree(AST* astree) override;
+
+        void visitLValArrowOpTree(AST* astree);
 
         bool numberCheck(AST* astree);
     private:

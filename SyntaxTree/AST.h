@@ -419,8 +419,6 @@ class ArrowOpTree : public Operator {
         ArrowOpTree();
         std::any getOp(std::any x, std::any y);
         void accept(ASTVisitor* v) override;
-
-    
 };
 
 class AssignOpTree : public Operator {

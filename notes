@@ -192,3 +192,30 @@ i = 11+5*7;
 
 1 + 6 * 8 - 11 ^ 3
 
+/* Figure out if struct is copied or declared. If copied iterate the refcount */
+        if (typeid(*type) == typeid(Struct)) {
+            if (typeid(*assignableType) == typeid(ExpressionTree)) {
+                SymbolTable* structRef = std::any_cast<SymbolTable*>(
+                    dynamic_cast<Evaluatable*>(
+                        assignableType->getChildren()[0]
+                    )->getVal()
+                ); 
+                structRef->incrementReferenceCount();
+                this->contextManager->reassignSymbol(
+                    iTree->getIdentifier(),
+                    structRef,
+                    assignableType->getLine()
+                );
+            } else if (typeid(*assignableType) == typeid(StructAssignTree)) {
+                Type* structType = dynamic_cast<Struct*>(type);
+                SymbolTable* baseSymbolTable = structType->getDuplicateBase();
+                this->contextManager->reassignSymbol(
+                    iTree->getIdentifier(),
+                    baseSymbolTable,
+                    assignableType->getLine()
+                );
+                /*THIS KEYWORD*/
+                baseSymbolTable->declareSymbol(assignableType->getLine(), "this", structType);
+                baseSymbolTable->reassignSymbol("this", baseSymbolTable);
+            }
+        }

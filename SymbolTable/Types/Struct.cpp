@@ -5,6 +5,7 @@ class SymbolTable;
 Struct::Struct(SymbolTable* baseStruct, const std::string& identifier) {
     this->baseStruct = baseStruct;
     this->structIdentifier = identifier;
+    this->baseStruct->setTypeName(this->structIdentifier);
 }
 
 std::any Struct::getBaseArray() {
@@ -31,6 +32,10 @@ bool Struct::checkExpression(AST* node, int line, ContextManager* contextManager
 
 std::any Struct::getNullValue() {
     return nullptr;
+}
+
+SymbolTable* Struct::getBaseStructPointer() {
+    return this->baseStruct;
 }
 
 SymbolTable* Struct::getDuplicateBase() {
