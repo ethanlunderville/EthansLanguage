@@ -6,6 +6,7 @@ SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableRefe
 }
 
 SymbolTable::~SymbolTable() {
+    
     for (int i = 0 ; i < this->deletableTypes.size() ; i++) {
         delete this->deletableTypes[i];
         this->deletableTypes[i] = nullptr;
@@ -18,6 +19,7 @@ SymbolTable::~SymbolTable() {
             this->structs[i]->decrementReferenceCount();
         }
     }
+    
 }
 
 void SymbolTable::pushScope() {
@@ -38,7 +40,7 @@ void SymbolTable::popScope(){
 
 void SymbolTable::declareSymbol(int line, std::string identifier, Type* typeHandler) {
     this->intToStringVector.push_back(identifier);
-    if (dynamic_cast<PrimitiveType*>(typeHandler) == nullptr) { // If the type is not primitve then it must be manually deallocated
+    if (dynamic_cast<PrimitiveType*>(typeHandler) == nullptr && typeid(*typeHandler) != typeid(Struct)) { // If the type is not primitve then it must be manually deallocated
         this->deletableTypes.push_back(typeHandler);
     }
     this->stringToSymbolMap[this->intToStringVector[this->getCurrentSize() - 1]] = {line, typeHandler->getNullValue(), typeHandler};
@@ -59,6 +61,20 @@ std::any SymbolTable::getValueStoredInSymbol(std::string identifier) {
     return this->stringToSymbolMap[identifier].value;
 }
 
+std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier) {
+    return &(this->stringToSymbolMap[identifier].value);
+}
+
+std::any SymbolTable::getValueStoredInSymbol(std::string identifier, int subscript) {
+    std::vector<std::any> anyVec = std::any_cast<std::vector<std::any>>(this->stringToSymbolMap[identifier].value);
+    return anyVec[subscript];
+} 
+
+std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier, int subscript) {
+    std::vector<std::any> anyVec = std::any_cast<std::vector<std::any>>(this->stringToSymbolMap[identifier].value);
+    return &(anyVec[subscript]);
+}
+
 int SymbolTable::getCurrentSize() {
     return this->intToStringVector.size();
 }
@@ -73,7 +89,9 @@ int SymbolTable::contains(std::string identifier) {
 }
 
 bool SymbolTable::variableTypeCheck(Type* typeHandler , std::any value) {
-    if (typeHandler->checkType(value)) { return true; }
+    if (typeHandler->checkType(value)) { 
+        return true;
+    }
     return false;
 }
 

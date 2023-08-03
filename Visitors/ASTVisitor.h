@@ -56,7 +56,7 @@ class ContextManager;
 /*Abstract*/ class ASTVisitor {
     public:
         virtual void visitChildren(AST* astree)=0;
-        virtual void visitAssignTree(AST* astree)=0;
+        virtual void visitArrayAccessTree(AST* astree)=0;
         virtual void visitFunctionAssignTree(AST* astree)=0;
         virtual void visitArrayAssignTree(AST* astree)=0;
         virtual void visitStructAssignTree(AST* astree)=0;
@@ -98,7 +98,7 @@ class ASTPrintVisitor: public ASTVisitor {
         ASTPrintVisitor();
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
-        void visitAssignTree (AST* astree) override;
+        void visitArrayAccessTree (AST* astree) override;
         void visitFunctionAssignTree (AST* astree) override;
         void visitArrayAssignTree (AST* astree) override;
         void visitStructAssignTree (AST* astree) override;
@@ -148,7 +148,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         ASTDeallocationVisitor();
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
-        void visitAssignTree (AST* astree) override;
+        void visitArrayAccessTree (AST* astree) override;
         void visitFunctionAssignTree (AST* astree) override;
         void visitArrayAssignTree (AST* astree) override;
         void visitStructAssignTree (AST* astree) override;
@@ -197,7 +197,7 @@ class ASTInterpreter: public ASTVisitor {
         ASTInterpreter(ContextManager* cm);
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
-        void visitAssignTree (AST* astree) override;
+        void visitArrayAccessTree (AST* astree) override;
         void visitFunctionAssignTree (AST* astree) override;
         void visitArrayAssignTree (AST* astree) override;
         void visitStructAssignTree (AST* astree) override;
@@ -234,6 +234,8 @@ class ASTInterpreter: public ASTVisitor {
         void visitPrintTree(AST* astree) override;
 
         void visitLValArrowOpTree(AST* astree);
+        void visitLValArrayAccessTree(AST* astree);
+        void visitLValIdentifierTree(AST* astree);
         void visitFunctionChildren(AST* astree);
 
     private:
@@ -241,6 +243,7 @@ class ASTInterpreter: public ASTVisitor {
         TypeManager* typeManager;
         bool returned;
         FunctionCallTree* currentFuncPtr;
+        std::stack<SymbolTable*> structScoper;
 };
 
 class ASTChecker: public ASTVisitor {
@@ -249,7 +252,7 @@ class ASTChecker: public ASTVisitor {
         ~ASTChecker();
         //INHERITED FUNCTIONS
         void visitChildren(AST* astree) override;
-        void visitAssignTree (AST* astree) override;
+        void visitArrayAccessTree (AST* astree) override;
         void visitFunctionAssignTree (AST* astree) override;
         void visitArrayAssignTree (AST* astree) override;
         void visitStructAssignTree (AST* astree) override;
@@ -286,6 +289,8 @@ class ASTChecker: public ASTVisitor {
         void visitPrintTree(AST* astree) override;
 
         void visitLValArrowOpTree(AST* astree);
+        void visitLValArrayAccessTree(AST* astree);
+        void visitLValIdentifierTree(AST* astree);
 
         bool numberCheck(AST* astree);
     private:

@@ -20,6 +20,9 @@ public:
     void contextPopRecurse(SymbolTable* sym);
     void printSymbolTable();
     std::any getValueStoredInSymbol(std::string identifier);
+    std::any* getReferenceOfValueStoredInSymbol(std::string identifier);
+    std::any getValueStoredInSymbol(std::string identifier, int subscript);
+    std::any* getReferenceOfValueStoredInSymbol(std::string identifier, int subscript);
     Type* getTypeOfSymbol(std::string identifier);
     void setCurrentFunctionType(Type* t);
     Type* getCurrentFunctionType();

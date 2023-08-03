@@ -76,7 +76,7 @@ AST* Parser::sExpression() {
                 std::string identifier = getCurrentLexeme();
                 scan();
                 if (isCurrentToken(LEFT_BRACKET)) {
-                    identTree = new IdentifierTree(identifier);
+                    identTree = new ArrayAccessTree(identifier);
                     scan();
                     identTree->addChild(sExpression());
                     expect(RIGHT_BRACKET);
@@ -293,6 +293,7 @@ AST* Parser::sAssignment(std::string identifier) {
             scan();
         }
         expect(RIGHT_PAREN);
+        expect(ARROW);
         functionAssignTree->addChild(sBlock());
         aTree->addChild(functionAssignTree);
         return aTree;

@@ -1,29 +1,37 @@
+int i = 44+55;
 
-struct tester = { int g; }
-struct other = {
-    tester r = new tester(); 
-    tester[] testerArray = [r];
-    tester() jr = () {
-        tester ff = new tester();
-        return ff;
-    }
-}
-other b = new other();
-b->jr()->g = 1;
 
+//int() r = (int a , string c) -> {
+//    return 1;
+//}
+//r(22,"s");
+//
+//int[] v = [1,2,3];
+//v[0] = 1;
+
+//struct tester = { string iii; int g; }
+//struct other = {
+//    tester r = new tester(); 
+//    tester[] testerArray = [r];
+//    tester() jr = () -> {
+//        tester ff = new tester();
+//        return ff;
+//    }
+//}
+//other b = new other();
+//tester t = new tester();
+//b->jr()->g = t->iii;
 
 //int() i = () {
 //    if (1) {
-//        return 1;
+//        return 1.99;
 //    } else {
 //        if (0) {
 //            return 0;
 //        }
 //    }
 //}
-
-
-//int() k = (int v, int() b, int[] r) {
+//int() k = (int v, int() t, int[] r) {
 //    return v;
 //}
 //k(4);

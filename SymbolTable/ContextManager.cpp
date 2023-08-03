@@ -250,6 +250,75 @@ std::any ContextManager::getValueStoredInSymbol(std::string identifier) {
     std::cerr << "Unrecognized identifier: " << identifier <<std::endl;
     exit(1);
 }
+
+
+std::any* ContextManager::getReferenceOfValueStoredInSymbol(std::string identifier) {
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            return this->globalContext->getReferenceOfValueStoredInSymbol(identifier);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
+    while (pointer != nullptr) {
+        if (pointer->contains(identifier) != -1) {
+            return pointer->getReferenceOfValueStoredInSymbol(identifier);
+        }
+        pointer = pointer->tableReference;
+    }
+    std::cerr << "Unrecognized identifier: " << identifier <<std::endl;
+    exit(1);
+}
+
+std::any ContextManager::getValueStoredInSymbol(std::string identifier, int subscript) {
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            return this->globalContext->getValueStoredInSymbol(identifier, subscript);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
+    while (pointer != nullptr) {
+        if (pointer->contains(identifier) != -1) {
+            return pointer->getValueStoredInSymbol(identifier, subscript);
+        }
+        pointer = pointer->tableReference;
+    }
+    std::cerr << "Unrecognized identifier: " << identifier <<std::endl;
+    exit(1);
+} 
+
+std::any* ContextManager::getReferenceOfValueStoredInSymbol(std::string identifier, int subscript) {
+    SymbolTable* pointer;
+    if (this->contextStack.size() > 0) {
+        pointer = this->globalContext;
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = globalScopeLinkedList;
+        if (this->globalContext->contains(identifier) != -1) {
+            return this->globalContext->getReferenceOfValueStoredInSymbol(identifier, subscript);
+        }
+    } else {
+        pointer = this->globalContext;
+    }
+    while (pointer != nullptr) {
+        if (pointer->contains(identifier) != -1) {
+            return pointer->getReferenceOfValueStoredInSymbol(identifier, subscript);
+        }
+        pointer = pointer->tableReference;
+    }
+    std::cerr << "Unrecognized identifier: " << identifier <<std::endl;
+    exit(1);
+}
+
+
 Type* ContextManager::getTypeOfSymbol(std::string identifier) {
     SymbolTable* pointer;
     if (this->contextStack.size() > 0) {

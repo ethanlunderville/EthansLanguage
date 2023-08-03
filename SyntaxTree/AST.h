@@ -79,6 +79,7 @@ class Evaluatable : public AST {
         virtual ~Evaluatable();
         virtual std::any getVal();
         virtual void setVal(std::any value);
+        bool LVal;
     private:
         std::any value;
 };
@@ -117,25 +118,6 @@ class Assignable : public Evaluatable {
         int line;
         ASTChecker* checkerReference;
         Type* type;
-};
-
-class AssignTree : public Assignable {
-    public:
-        AssignTree(std::string identifier, int line);
-        std::string getIdentifier();
-        void accept(ASTVisitor* v) override;
-        void checkType(Struct* type) override;
-        //void checkFunction(Function* type) override;
-        //void checkArray(Array* arrayType) override;
-        void checkType(Number* arrayType) override;
-        void checkType(String* arrayType) override;
-        void assignType(Struct* type) override;
-        //void assignFunction(Function* type) override;
-        //void assignArray(Array* arrayType) override;
-        void assignType(Number* arrayType) override;
-        void assignType(String* arrayType) override;
-    private:
-        std::string identifier;
 };
 
 class FunctionAssignTree : public Assignable {
@@ -276,6 +258,12 @@ class Identifiable : public Evaluatable {
         void setIdentifier(const std::string& identifier);
     private:
         std::string identifier;
+};
+
+class ArrayAccessTree : public Identifiable {
+    public:
+        ArrayAccessTree(std::string identifier);
+        void accept(ASTVisitor* v) override;
 };
 
 class FunctionCallTree : public Identifiable {
@@ -424,7 +412,7 @@ class ArrowOpTree : public Operator {
 class AssignOpTree : public Operator {
     public:
         AssignOpTree();
-        std::any assign(std::any x, std::any y);
+        void assign(std::any* x, std::any y);
         void accept(ASTVisitor* v) override;
         Type* getType();
         void setType(Type* type);

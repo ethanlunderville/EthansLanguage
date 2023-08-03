@@ -1,7 +1,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
-Evaluatable::Evaluatable() : AST() {}
+Evaluatable::Evaluatable() : AST() , LVal(false) {}
 
 Evaluatable::~Evaluatable() {}
 

@@ -20,7 +20,7 @@ void ASTDeallocationVisitor::deallocate(AST* node) {
     this->currentNodeNum++;
 }
 
-void ASTDeallocationVisitor::visitAssignTree (AST* astree) {deallocate(astree);}
+void ASTDeallocationVisitor::visitArrayAccessTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitFunctionAssignTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitStructAssignTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitArrayAssignTree (AST* astree) {deallocate(astree);}

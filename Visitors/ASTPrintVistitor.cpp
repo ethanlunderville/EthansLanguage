@@ -75,7 +75,7 @@ void ASTPrintVisitor::printer(const std::string& type, AST* node, const std::vec
     this->indent-=2;
 }
 
-void ASTPrintVisitor::visitAssignTree (AST* astree) { printer("AssignTree", astree, ((AssignTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitArrayAccessTree (AST* astree) { printer("ArrayAccessTree", astree, ((ArrayAccessTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitFunctionAssignTree (AST* astree) { printer("FunctionAssignTree", astree, ((FunctionAssignTree *)astree)->getIdentifier());}
 void ASTPrintVisitor::visitArrayAssignTree (AST* astree) { printer("ArrayAssignTree", astree, ((ArrayAssignTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitStructAssignTree (AST* astree) { printer("StructAssignTree", astree, ((StructAssignTree*)astree)->getTypeName());}

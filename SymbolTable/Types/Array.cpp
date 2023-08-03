@@ -42,5 +42,6 @@ void Array::printType() {
 }
 
 std::any Array::getNullValue() {
-    return this->type->getBaseArray();
+    std::vector<std::any> anyVec;
+    return anyVec;
 }

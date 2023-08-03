@@ -67,12 +67,11 @@ int main () {
     abstractSyntaxTree->accept(pVisit);
     std::cout << "***CHECKING AST***" << std::endl;
     abstractSyntaxTree->accept(checker);
-    //std::cout << "***PRINTING AST***" << std::endl;
-    //abstractSyntaxTree->accept(pVisit);
-    //std::cout << "***INTERPRETING AST***" << std::endl;
-    //ASTInterpreter* interpreter = new ASTInterpreter(typeManager);
-    //LET THE FUN BEGIN
-    //abstractSyntaxTree->accept(interpreter);
+    std::cout << "***PRINTING AST***" << std::endl;
+    abstractSyntaxTree->accept(pVisit);
+    std::cout << "***INTERPRETING AST***" << std::endl;
+    ASTInterpreter* interpreter = new ASTInterpreter(typeManager);
+    abstractSyntaxTree->accept(interpreter);
     //std::cout << "***DEALLOCATING AST***" << std::endl;
     ASTDeallocationVisitor* dVisit = new ASTDeallocationVisitor();
     //abstractSyntaxTree->accept(dVisit);

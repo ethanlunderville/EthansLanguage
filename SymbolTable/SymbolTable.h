@@ -27,23 +27,22 @@ public:
     void reassignSymbol(std::string identifier, std::any value);
     Type* getTypeOfSymbol(std::string identifier);
     std::any getValueStoredInSymbol(std::string identifier);
+    std::any* getReferenceOfValueStoredInSymbol(std::string identifier);
+    std::any getValueStoredInSymbol(std::string identifier, int subscript);
+    std::any* getReferenceOfValueStoredInSymbol(std::string identifier, int subscript);
     int getCurrentSize();
     int contains(std::string identifier);
     void printSymbolTable();
     bool variableTypeCheck(Type* typeHandler , std::any value);
     void setCurrentFunctionType(Type* t);
     Type* getCurrentFunctionType();
-
     std::string& getTypeName();
     void setTypeName(const std::string& name);
-
     std::string& getStructName();
     void setStructName(const std::string& name);
-
     int getReferenceCount();
     void incrementReferenceCount();
     void decrementReferenceCount();
-
     Type* functionType;
     SymbolTable* tableReference;
     std::vector<std::string> intToStringVector;
