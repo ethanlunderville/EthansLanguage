@@ -26,6 +26,8 @@ public:
     Type* getTypeOfSymbol(std::string identifier);
     void setCurrentFunctionType(Type* t);
     Type* getCurrentFunctionType();
+    bool isFunctionReturned();
+    void setFunctionIsReturned(bool isReturned);
 private:
     SymbolTable* globalContext;
     SymbolTable* globalScopeLinkedList;

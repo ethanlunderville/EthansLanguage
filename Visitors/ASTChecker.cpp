@@ -170,7 +170,7 @@ void ASTChecker::visitArrowOpTree (AST* astree) {
         type = this->contextManager->getTypeOfSymbol(eValType->getIdentifier());
     }
     if (typeid(*type) == typeid(Array) && typeid(*(eValType)) == typeid(ArrayAccessTree)) {
-            type = dynamic_cast<Array*>(type)->getArrayType();
+        type = dynamic_cast<Array*>(type)->getArrayType();
     } else if (typeid(*type) == typeid(Function)) {
         type = dynamic_cast<Function*>(type)->getFunctionType();
     }

@@ -1,6 +1,6 @@
 #include "SymbolTable.h"
 
-SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableReference) {
+SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableReference) , returned(false) {
     pushScope();
     this->referenceCount = 1;
 }

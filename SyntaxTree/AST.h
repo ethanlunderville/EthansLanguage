@@ -179,56 +179,41 @@ class StructAssignTree : public Assignable {
         std::string typeName;
 };
 
-class DeclarationTree : public AST {
+class Declarable : public AST {
+    public:
+        virtual ~Declarable();
+        virtual std::string getIdentifier();
+        virtual void setIdentifier(std::string& identifier);
+        virtual std::string getType();
+        virtual void setType(std::string& identifier);
+        virtual int getLine();
+        std::string identifier;
+        std::string type;
+        int line;
+};
+
+class DeclarationTree : public Declarable {
     public:
         DeclarationTree(std::string type, std::string identifier, int line);
         void accept(ASTVisitor* v) override;
-        std::string getIdentifier();
-        std::string getType();
-        int getLine();
-    private:
-        std::string identifier;
-        std::string type;
-        int line;
 };
 
-class FunctionDeclarationTree : public AST {
+class FunctionDeclarationTree : public Declarable {
     public:
         FunctionDeclarationTree(std::string type, std::string identifier, int line);
         void accept(ASTVisitor* v) override;
-        std::string getIdentifier();
-        std::string getType();
-        int getLine();
-    private:
-        std::string identifier;
-        std::string type;
-        int line;
 };
 
-class ArrayDeclarationTree : public AST {
+class ArrayDeclarationTree : public Declarable {
     public:
         ArrayDeclarationTree(std::string type, std::string identifier, int line);
         void accept(ASTVisitor* v) override;
-        std::string getIdentifier();
-        std::string getType();
-        int getLine();
-    private:
-        std::string identifier;
-        std::string type;
-        int line;
 };
 
-class StructDeclarationTree : public AST {
+class StructDeclarationTree : public Declarable {
     public:
         StructDeclarationTree(std::string type, std::string identifier, int line);
         void accept(ASTVisitor* v) override;
-        std::string getIdentifier();
-        std::string getType();
-        int getLine();
-    private:
-        std::string identifier;
-        std::string type;
-        int line;
 };
 
 //EVALUATABLES
@@ -270,6 +255,7 @@ class FunctionCallTree : public Identifiable {
     public:
         FunctionCallTree(std::string identifier);
         void accept(ASTVisitor* v) override;
+        bool returned;
 };
 
 class IdentifierTree : public Identifiable {

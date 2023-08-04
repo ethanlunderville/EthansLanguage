@@ -43,5 +43,5 @@ void Function::printType() {
 }
 
 std::any Function::getNullValue() {
-    return this->type->getBaseArray();
+    return this->type->getNullValue();
 };

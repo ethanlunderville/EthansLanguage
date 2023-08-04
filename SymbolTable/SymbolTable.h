@@ -50,6 +50,7 @@ public:
     std::string typeName;
     std::string structName;
     int referenceCount;
+    bool returned;
 private:
     std::stack<int> scopeStack;
     std::vector<Type*> deletableTypes; 

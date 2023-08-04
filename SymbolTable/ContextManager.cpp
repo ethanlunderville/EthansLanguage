@@ -354,6 +354,22 @@ Type* ContextManager::getCurrentFunctionType() {
     }
     return this->contextStack.top()->getCurrentFunctionType();
 }
+
+bool ContextManager::isFunctionReturned() {
+    if (this->contextStack.size() > 0) {
+        if (this->contextStack.top()->returned) {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+void ContextManager::setFunctionIsReturned(bool isReturned) {
+    if (this->contextStack.size() > 0) {
+        this->contextStack.top()->returned = isReturned;
+    }
+}
+
 void ContextManager::printSymbolTable() {
     SymbolTable* pointer;
     std::cout << "---- ***Table*** ---" << std::endl;

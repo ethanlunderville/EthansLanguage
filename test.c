@@ -1,4 +1,4 @@
-int i = 44+55;
+//int i = 44+55;
 
 
 //int() r = (int a , string c) -> {
@@ -20,7 +20,7 @@ int i = 44+55;
 //}
 //other b = new other();
 //tester t = new tester();
-//b->jr()->g = t->iii;
+///b->jr()->g = t->iii;
 
 //int() i = () {
 //    if (1) {
@@ -36,5 +36,20 @@ int i = 44+55;
 //}
 //k(4);
 
+//int() k = (int r, string v) -> { 
+//   if (0) {
+//      int i = 1;
+//      return i;
+//   } 
+//   int b = 44;
+//   return b;
+//}
 
+int() k = (int i) -> {
+   if (i > 55) {
+      return i;
+   }
+   return 5555;
+}
 
+int ll = k(56);
