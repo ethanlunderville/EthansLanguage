@@ -181,7 +181,17 @@ AST* Parser::sBlock() {
 
 AST* Parser::sContext(AST* pTree) {
     while (1) {
-        if (onStatement()) {
+        if (tokens.size() == currentTokenIndex) {
+            break;
+        } else if (getCurrentLexeme().compare("print") == 0) {
+            PrintTree* printTree = new PrintTree();
+            scan();
+            expect(LEFT_PAREN);
+            printTree->addChild(sExpression());
+            expect(RIGHT_PAREN);
+            expect(SEMICOLON);
+            pTree->addChild(printTree);
+        } else if (onStatement()) {
             pTree->addChild(sStatement());
         } else if ( isCurrentToken(STRUCT) || onDeclaration()) {
             std::string type = getCurrentLexeme();
@@ -326,7 +336,7 @@ TokenType Parser::getCurrentToken() {
     return tokens[currentTokenIndex].type;
 }
 std::string& Parser::getCurrentLexeme() {
-        return tokens[currentTokenIndex].lexeme;
+    return tokens[currentTokenIndex].lexeme;
 }
 int Parser::getCurrentLine() {
     return tokens[currentTokenIndex].line;

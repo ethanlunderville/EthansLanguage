@@ -39,10 +39,10 @@ void Number::printType() {
 }
 
 void Number::printArrayOfType(std::any vector) {
-    std::vector<double> arr = std::any_cast<std::vector<double>>(vector);
+    std::vector<std::any> arr = std::any_cast<std::vector<std::any>>(vector);
     int size = arr.size();
     for (int i = 0 ; i < size ; i++) {
-        std::cout << arr[i];
+        std::cout << std::any_cast<double>(arr[i]);
         if (i != size - 1) {
             std::cout << ", ";
         } 

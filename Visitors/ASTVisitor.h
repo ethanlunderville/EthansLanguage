@@ -244,6 +244,7 @@ class ASTInterpreter: public ASTVisitor {
         bool returned;
         FunctionCallTree* currentFuncPtr;
         std::stack<SymbolTable*> structScoper;
+        std::stack<FunctionCallTree*> callStack;
 };
 
 class ASTChecker: public ASTVisitor {

@@ -8,8 +8,6 @@
 //
 //int[] v = [1,2,3];
 //v[0] = 1;
-
-//struct tester = { string iii; int g; }
 //struct other = {
 //    tester r = new tester(); 
 //    tester[] testerArray = [r];
@@ -45,11 +43,28 @@
 //   return b;
 //}
 
-int() k = (int i) -> {
-   if (i > 55) {
-      return i;
-   }
-   return 5555;
+//int() k = (int foe) -> {return foe;}
+//
+//int() b = (int() i) -> { 
+//   if (0) {
+//      return 33;
+//   } else {
+//      print(104);
+//   }
+//   return i(2); 
+//}
+
+struct tester = {
+   int s = 3;
 }
 
-int ll = k(56);
+tester nn = new tester();
+tester gg = new tester();  
+
+tester[] sd = [nn, gg];
+
+int i = 0;
+while (i < 2) {
+   print(sd[i]->s);
+   i = i + 1;
+}

@@ -326,14 +326,13 @@ void ASTChecker::visitAssignOpTree (AST* astree) {
 }
 
 void ASTChecker::visitNumberTree (AST* astree) {
-    this->visitChildren(astree);
-    double temp = 0.00;
-    ((NumberTree*)astree)->setVal(temp);
+    NumberTree* nTree = dynamic_cast<NumberTree*>(astree);
+    nTree->setVal(nTree->getNumber());
 }
 
 void ASTChecker::visitStringTree (AST* astree) {
-    this->visitChildren(astree);
-    ((StringTree*)astree)->setVal(std::string(""));
+    StringTree* sTree = dynamic_cast<StringTree*>(astree);
+    sTree->setVal(sTree->getString());
 }
 
 /*HANDLED IN SPECIFIC CLASSES*/

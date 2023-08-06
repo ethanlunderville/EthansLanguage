@@ -66,7 +66,7 @@ void Struct::printSymbol(std::string identifier, std::any symbol) {
 
 void Struct::printSymbol(std::any symbol) {
     std::cout << "\n";
-    if (symbol.type() == typeid(nullptr)) {
+    if (symbol.type() == typeid(nullptr) || !symbol.has_value()) {
         std::cout << "? -> NULL" << std::endl;
         return;
     }
@@ -81,8 +81,8 @@ void Struct::printSymbol(std::any symbol) {
 }
 
 void Struct::printArrayOfType(std::any vector) {
-    std::vector<SymbolTable*> arr = std::any_cast<std::vector<SymbolTable*>>(vector);
-    for ( int i = 0 ; arr.size() ; i++ ) {
+    std::vector<std::any> arr = std::any_cast<std::vector<std::any>>(vector);
+    for ( int i = 0 ; i < arr.size() ; i++ ) {
         std::cout << "   ";
         this->printSymbol(std::any(arr[i]));
     }
