@@ -2,7 +2,7 @@
 #include "Visitors/ASTVisitor.h"
 
 ASTDeallocationVisitor::ASTDeallocationVisitor(){
-    this->currentNodeNum = 1; // TO SHOW HOW MANY NODES ARE DELETED
+    this->currentNodeNum = 1;
 }
 
 void ASTDeallocationVisitor::visitChildren(AST* astree){
@@ -13,8 +13,9 @@ void ASTDeallocationVisitor::visitChildren(AST* astree){
 
 void ASTDeallocationVisitor::deallocate(AST* node) {
     this->visitChildren(node);
-    //NOTE: node is not deleted until all of its children have been deleted
-    std::cout << this->currentNodeNum << ". deleting node: " << node << std::endl;
+    #ifdef PRINTDEALLOCATIONADDRESSES
+        std::cout << this->currentNodeNum << ". deleting node: " << node << std::endl;
+    #endif
     delete node;
     node = nullptr;
     this->currentNodeNum++;

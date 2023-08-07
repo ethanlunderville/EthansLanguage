@@ -1,7 +1,7 @@
 #include "ContextManager.h"
 /* This code is kind of insane so be warned */
 ContextManager::ContextManager(TypeManager* typeManager) {
-    this->globalContext = new SymbolTable(nullptr);
+    this->globalContext = new SymbolTable();
     this->globalScopeLinkedList = nullptr;
     this->typeManager = typeManager;
 }
@@ -14,11 +14,9 @@ ContextManager::~ContextManager() {
     contextPopRecurse(this->globalScopeLinkedList);
     delete this->globalContext;
     this->globalContext = nullptr; 
-    delete this->typeManager;
-    this->typeManager = nullptr;
 }
 void ContextManager::pushContext() {
-    SymbolTable* sTable = new SymbolTable(nullptr);
+    SymbolTable* sTable = new SymbolTable();
     this->globalContext->tableReference = sTable;
     this->contextStack.push(sTable);
 }
@@ -58,13 +56,13 @@ void ContextManager::pushScope() {
     } else if (this->globalScopeLinkedList != nullptr) {
         pointer = this->globalScopeLinkedList;
     } else {
-        this->globalScopeLinkedList = new SymbolTable(nullptr);
+        this->globalScopeLinkedList = new SymbolTable();
         return;
     }
     while (pointer->tableReference != nullptr) {
         pointer = pointer->tableReference;
     }
-    pointer->tableReference = new SymbolTable(nullptr);
+    pointer->tableReference = new SymbolTable();
     return;
 }
 

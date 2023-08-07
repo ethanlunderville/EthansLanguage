@@ -6,31 +6,32 @@
 
     A recursive decent parser that takes the tokens from
     the Lexer and uses them to output an abstract syntax
-    tree representing the source program based on the CFG
-    defined in [].
+    tree representing the source program.
 
     Notes:
 
-    The Parser holds a reference to the Lexer.
+    The Parser holds a pointer to the Lexer.
     
 */
 #pragma once
 #include "SyntaxTree/AST.h"
 #include "TypeManager.h"
 #include "Lexer.h"
+#include "SwitchPrint.h"
 #include <stack>
 #include <typeinfo>
 #include <map>
 #include <functional>
+
 class TypeManager;
 class Parser {
     public:
         Parser(Lexer* lexer, TypeManager* typeManager);
-        AST* parse(); // ONLY PUBLIC FUNCTION IS PARSE (ENCAPSULATION, ABSTRACTION)
+        AST* parse();
     private:
         int currentTokenIndex;
         Lexer* lexer;
-        std::vector<Token> tokens;
+        std::vector<Token>& tokens;
         TypeManager* typeManager;
         std::vector<std::string> userDefinedTypes;
         //PARSER FUNCTIONS
@@ -55,9 +56,9 @@ class Parser {
         //NO RETURN
         void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
         void scan();
-        void goBack();
         void expect(TokenType tokenType);
 };
+
 
 static std::map< TokenType, std::function<Operator*()>> OperatorMap = {
     { KARAT, []() { return new ExponentTree(); } },

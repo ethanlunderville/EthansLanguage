@@ -1,8 +1,9 @@
 #include "SymbolTable.h"
 
-SymbolTable::SymbolTable(SymbolTable* tableReference) : tableReference(tableReference) , returned(false) {
-    pushScope();
-    this->referenceCount = 1;
+SymbolTable::SymbolTable() : tableReference(tableReference) , returned(false), referenceCount(1) {}
+
+SymbolTable::SymbolTable(SymbolTable* copyable) { /*COPY CONSTRUCTOR*/
+    
 }
 
 SymbolTable::~SymbolTable() {

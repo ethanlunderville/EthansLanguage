@@ -3,11 +3,10 @@
 
 Lexer::Lexer(std::istream& inStream, TypeManager* typeManager) : inStream(inStream), typeManager(typeManager) {}
 
-std::vector<Token> Lexer::scanTokens() {
+std::vector<Token>& Lexer::scanTokens() {
     int line = 1;
     while (inStream) {
         char c = inStream.get();
-        //PLEASE TAKE NOTE OF THE SKIP LABEL
         SKIP:
         switch (c) {
             // Single-character lexemes
@@ -117,19 +116,22 @@ std::vector<Token> Lexer::scanTokens() {
     }
     return tokens;
 }
+
 void Lexer::printLexemes(const std::vector<Token>& tokens) {
     for (int i = 0 ; i < tokens.size() ; i++) {
         if (tokens[i].type == IDENTIFIER || this->typeManager->tokenIsRValue(tokens[i].type)) {
-            std::cout << tokenToStringMap[tokens[i].type] << ": {" << tokens[i].lexeme << "}" << std::endl;
+            std::cout << tokenToStringMap[tokens[i].type] << ": [" << tokens[i].lexeme << "]" << std::endl;
         } else {
             std::cout << tokenToStringMap[tokens[i].type] << std::endl;        
         }
     }
 }
+
 void Lexer::addToken(TokenType type, int line, const std::string& lexeme) {
     struct Token token = {type, line, lexeme};
     tokens.push_back(token);
 }
+
 void Lexer::string(const std::vector<Token>& tokens , int line) {
     std::string literal;
     literal.push_back('\"');
@@ -145,6 +147,7 @@ void Lexer::string(const std::vector<Token>& tokens , int line) {
     std::cerr << "Error: String was not closed starting on line: " << line << std::endl;
     exit(1);
 }
+
 void Lexer::number (char *c, const std::vector<Token>& tokens , int line, bool isNegative) {
     std::string number; 
     while (isdigit(*c) || *c == '.') {
@@ -157,6 +160,7 @@ void Lexer::number (char *c, const std::vector<Token>& tokens , int line, bool i
     addToken(NUMBER, line, number);
     return;
 }
+
 void Lexer::alphaProcessor (char *c, const std::vector<Token>& tokens , int line) {
     std::string ident; 
     while (isalpha(*c)) {
@@ -169,12 +173,14 @@ void Lexer::alphaProcessor (char *c, const std::vector<Token>& tokens , int line
     }
     addToken(IDENTIFIER, line, ident);
 }
+
 bool Lexer::previousTokenTypeWas(TokenType t) {
     if (this->tokens[this->tokens.size()-1].type == t) {
         return true;
     }
     return false;
 }
+
 bool Lexer::previousTokenWasOperator() {
     for (int i = 0 ; i < (sizeof(OperatorArray)/sizeof(OperatorArray[0])) ; i++) {
         if (previousTokenTypeWas(OperatorArray[i])) {

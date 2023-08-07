@@ -1,6 +1,7 @@
 #include "TypeManager.h"
 
 TypeManager::TypeManager(){}
+
 TypeManager::~TypeManager(){
     for (int i = 0 ; i < this->holderForStructTypeDestructor.size() ; i++) {
         delete this->holderForStructTypeDestructor[i];
@@ -9,7 +10,9 @@ TypeManager::~TypeManager(){
 
 Type* TypeManager::getTypeHandler(const std::string& type){
     Type* t = this->stringToTypeHandler[type];
-    if (t!=nullptr) {return t;}
+    if (t != nullptr) {
+        return t;
+    }
     std::cerr << "Unrecognized type: " << type << std::endl;
     exit(1);
 }

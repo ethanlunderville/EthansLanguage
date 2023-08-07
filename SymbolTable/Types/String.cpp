@@ -38,17 +38,14 @@ void String::printSymbol(std::string identifier, std::any symbol) {
 }
 
 void String::printArrayOfType(std::any vector) {
-    std::cout << "[ String ] -> ";
-    std::vector<std::string> arr = std::any_cast<std::vector<std::string>>(vector);
+    std::vector<std::any> arr = std::any_cast<std::vector<std::any>>(vector);
     int size = arr.size();
-    std::cout << "[";
     for (int i = 0 ; i < size ; i++) {
-        std::cout << arr[i];
+        std::cout << std::any_cast<std::string>(arr[i]);
         if (i != size - 1) {
             std::cout << ", ";
         } 
     }
-    std::cout << "]\n";
 }
 
 static int stringNumCounter = 0;

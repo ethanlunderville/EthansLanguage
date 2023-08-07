@@ -19,7 +19,8 @@ struct SymbolInfo {
 */
 class SymbolTable {
 public:
-    SymbolTable(SymbolTable* tableReference);
+    SymbolTable();
+    SymbolTable(SymbolTable* copyable);
     ~SymbolTable();
     void pushScope();
     void popScope();

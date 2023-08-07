@@ -28,6 +28,7 @@ class PrimitiveType : public Type {
 class Struct : public Type {
     public:
         Struct(SymbolTable* baseStruct, const std::string& identifier);
+        Struct(const std::string& identifier);
         std::any getNullValue() override;
         void printSymbol(std::string identifier, std::any symbol) override;
         void printSymbol(std::any symbol);
@@ -39,6 +40,7 @@ class Struct : public Type {
         void printType() override;
         SymbolTable* getDuplicateBase();
         SymbolTable* getBaseStructPointer();
+        void setBaseStructPointer(SymbolTable* base);
     private:
         std::string structIdentifier;
         SymbolTable* baseStruct;

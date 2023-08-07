@@ -8,6 +8,10 @@ Struct::Struct(SymbolTable* baseStruct, const std::string& identifier) {
     this->baseStruct->setTypeName(this->structIdentifier);
 }
 
+Struct::Struct(const std::string& identifier) {
+    this->structIdentifier = identifier;
+}
+
 std::any Struct::getBaseArray() {
     std::vector<SymbolTable*> structArray;
     return structArray;
@@ -38,8 +42,14 @@ SymbolTable* Struct::getBaseStructPointer() {
     return this->baseStruct;
 }
 
+void Struct::setBaseStructPointer(SymbolTable* base) {
+    this->baseStruct = base;
+    this->baseStruct->setTypeName(this->structIdentifier);
+}
+
 SymbolTable* Struct::getDuplicateBase() {
     SymbolTable* sTable = new SymbolTable(*(this->baseStruct));
+    //SymbolTable* sTable = new SymbolTable(this->baseStruct);
     sTable->setTypeName(this->structIdentifier);
     return sTable;
 }

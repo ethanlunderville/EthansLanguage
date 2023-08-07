@@ -1,14 +1,11 @@
 #include "Parser.h"
 
-Parser::Parser(Lexer* lexer, TypeManager* typeManager) {
-    this->tokens = lexer->scanTokens();
-    this->typeManager = typeManager;
-}
-//WRAPPER FOR ABSTRACTION
+Parser::Parser(Lexer* lexer, TypeManager* typeManager) : tokens(lexer->scanTokens()) , typeManager(typeManager) {}
+
 AST* Parser::parse() {
     return sProgram();
 }
-  
+
 AST* Parser::sProgram() {
     ProgramTree* pTree = new ProgramTree();
     sContext(pTree);
@@ -58,7 +55,6 @@ AST* Parser::sExpression() {
     std::stack<AST*> operandStack;
     Operator* bottom = new Operator();
     operatorStack.push(bottom);
-    #define PRINTEXPRESSION (0x1)
     #ifdef PRINTEXPRESSION
         std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
     #endif
@@ -153,6 +149,7 @@ AST* Parser::sExpression() {
         operatorHold->addChild(operand2);
         operandStack.push(operatorHold);
     }
+    // ENSURE THAT R-VALUE NODES ARE ASSIGNABLE  
     if (typeid(*(operandStack.top())) == typeid(AssignOpTree)) {
         Assignable* expressionTop = dynamic_cast<Assignable*>(operandStack.top()->getChildren()[1]);
         if (expressionTop == nullptr) {
@@ -412,10 +409,6 @@ bool Parser::isCurrentToken(int tokenType) {
 
 void Parser::scan() {
     this->currentTokenIndex++;
-}
-
-void Parser::goBack() {
-    this->currentTokenIndex--;
 }
 
 void Parser::nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence) {

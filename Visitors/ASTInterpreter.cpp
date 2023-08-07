@@ -2,16 +2,27 @@
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
 
+/*
+    IMPORTANT: READ THE ASTChecker 
+    
+
+*/
+
 ASTInterpreter::ASTInterpreter(TypeManager* typeManager) {
     this->contextManager = new ContextManager(typeManager);
     this->typeManager = typeManager;
 }
-
-ASTInterpreter::~ASTInterpreter() {
-    delete this->contextManager;
-    this->contextManager = nullptr;
+ASTInterpreter::ASTInterpreter(TypeManager* typeManager, ContextManager* contextManager) {
+    this->typeManager = typeManager;
+    this->contextManager = contextManager;
 }
 
+ASTInterpreter::~ASTInterpreter() {
+    if (!this->temporary) {
+        delete this->contextManager;
+        this->contextManager = nullptr;
+    }
+}
 void ASTInterpreter::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {
         if (this->contextManager->isFunctionReturned()) {
@@ -41,7 +52,9 @@ void ASTInterpreter::visitDeclarationTree (AST* astree) {
     Type* type = this->typeManager->getTypeHandler(t->getType());
     this->contextManager->declareSymbol(t->getLine(), t->getIdentifier(), type);
     this->visitChildren(astree);
-    contextManager->printSymbolTable();
+    #ifdef PRINTSYMBOLS
+        contextManager->printSymbolTable();
+    #endif
     return;
 }
 void ASTInterpreter::visitStructDeclarationTree (AST* astree) {
@@ -51,7 +64,9 @@ void ASTInterpreter::visitArrayDeclarationTree (AST* astree) {
     ArrayDeclarationTree* arrayTree = ((ArrayDeclarationTree*)astree);
     Type* primTypeReference = this->typeManager->getTypeHandler(arrayTree->getType());
     this->contextManager->declareSymbol(arrayTree->getLine(), arrayTree->getIdentifier(), new Array(primTypeReference));
-    contextManager->printSymbolTable();
+    #ifdef PRINTSYMBOLS
+        contextManager->printSymbolTable();
+    #endif
     this->visitChildren(astree);
     return;
 }
@@ -59,8 +74,9 @@ void ASTInterpreter::visitFunctionDeclarationTree (AST* astree) {
     FunctionDeclarationTree* functionTree = ((FunctionDeclarationTree*)astree);
     Type* primTypeReference = this->typeManager->getTypeHandler(functionTree->getType());
     this->contextManager->declareSymbol(functionTree->getLine(), functionTree->getIdentifier(), new Function(primTypeReference));
-    this->visitChildren(astree);
-    contextManager->printSymbolTable();
+    #ifdef PRINTSYMBOLS
+        contextManager->printSymbolTable();
+    #endif
     return;
 }
 
@@ -84,13 +100,6 @@ void ASTInterpreter::visitFunctionCallTree (AST* astree) {
     AssignOpTree* aOp = new AssignOpTree();
     for (int i = 0 ; i < argumentVector.size() ; i++) {
         Declarable* declarer = dynamic_cast<Declarable*>(parameterVector[i]);
-        /*
-        this->contextManager->declareSymbol(
-            declarer->getLine(),
-            declarer->getIdentifier(),
-            this->typeManager->getTypeHandler(declarer->getType())
-        );
-        */
         declarer->accept(this);
         aOp->assign( 
             this->contextManager->getReferenceOfValueStoredInSymbol(declarer->getIdentifier()),
@@ -158,10 +167,25 @@ void ASTInterpreter::visitLValIdentifierTree(AST* astree){
 void ASTInterpreter::visitLValArrayAccessTree(AST* astree){
     ArrayAccessTree* aAccessTree = dynamic_cast<ArrayAccessTree*>(astree);
     ExpressionTree* subTree = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0]);
-    subTree->accept(this);
-    int subscript = std::any_cast<int>(subTree->getVal());
-    aAccessTree->setVal(this->contextManager->getReferenceOfValueStoredInSymbol(aAccessTree->getIdentifier(), subscript));
+    this->visitChildren(aAccessTree);
+    std::any subAny = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0])->getVal();
+    int subscript = std::any_cast<double>(subAny);
+    std::any address = this->contextManager->getReferenceOfValueStoredInSymbol(aAccessTree->getIdentifier(),subscript);
+    aAccessTree->setVal(address);
 }
+
+void ASTInterpreter::visitArrayAccessTree(AST* astree) {
+    ArrayAccessTree* aAccessTree = dynamic_cast<ArrayAccessTree*>(astree);
+    if (aAccessTree->LVal) {
+        this->visitLValArrayAccessTree(aAccessTree);
+        return;
+    }
+    this->visitChildren(aAccessTree);
+    std::any subAny = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0])->getVal();
+    int subscript = std::any_cast<double>(subAny);
+    aAccessTree->setVal(this->contextManager->getValueStoredInSymbol(aAccessTree->getIdentifier(),subscript));
+}
+
 void ASTInterpreter::visitAssignOpTree (AST* astree) {
     AssignOpTree* aOpTree = dynamic_cast<AssignOpTree*>(astree);
     Evaluatable* lValTree = dynamic_cast<Evaluatable*>(astree->getChildren()[0]);
@@ -171,7 +195,9 @@ void ASTInterpreter::visitAssignOpTree (AST* astree) {
         std::any_cast<std::any*>(lValTree->getVal()),
         dynamic_cast<Evaluatable*>(astree->getChildren()[1])->getVal()
     );
-    this->contextManager->printSymbolTable();
+    #ifdef PRINTSYMBOLS
+        contextManager->printSymbolTable();
+    #endif
 }
 
 void ASTInterpreter::visitIdentifierTree (AST* astree) {
@@ -197,6 +223,7 @@ void ASTInterpreter::visitArrayAssignTree(AST* astree) {
     }
     aTree->setVal(array);
 }
+
 void ASTInterpreter::visitStructAssignTree(AST* astree) {
     StructAssignTree* sAssignTree = dynamic_cast<StructAssignTree*>(astree);
     sAssignTree->setVal(dynamic_cast<Struct*>(
@@ -243,20 +270,20 @@ void ASTInterpreter::visitArrowOpTree (AST* astree) {
         Type* rType;
         Identifiable* iDent = dynamic_cast<Identifiable*>(astree->getChildren()[1]);
         if (iDent != nullptr) { 
+            if (typeid(*iDent) == typeid(FunctionCallTree)) {
+                this->contextManager->pushScope();
+                this->contextManager->declareSymbol(0, std::string("this"), this->typeManager->getTypeHandler(structTable->getStructName()));
+                this->contextManager->reassignSymbol(std::string("this"), structTable, 0);
+                iDent->accept(this);
+                this->contextManager->popScope(false);
+            }
             dynamic_cast<ArrowOpTree*>(astree)->setVal(structTable->getValueStoredInSymbol(iDent->getIdentifier()));
         } else {
-            std::cerr << "Incorrect arrow expression" << std::endl;
+            std::cerr << "Incorrect arrow expression, expectes the left most element to be identifiable" << std::endl;
             exit(1);
         }
     }
 
-}
-void ASTInterpreter::visitArrayAccessTree(AST* astree) {
-    ArrayAccessTree* aAccessTree = dynamic_cast<ArrayAccessTree*>(astree);
-    this->visitChildren(aAccessTree);
-    std::any subAny = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0])->getVal();
-    int subscript = std::any_cast<double>(subAny);
-    aAccessTree->setVal(this->contextManager->getValueStoredInSymbol(aAccessTree->getIdentifier(),subscript));
 }
 
 void ASTInterpreter::visitIfTree (AST* astree) {
@@ -268,7 +295,6 @@ void ASTInterpreter::visitIfTree (AST* astree) {
     } else if (children.size() == 3) {
         this->visitElseTree((ElseTree*)(children[2]));
     }
-    contextManager->printSymbolTable();
 }
 void ASTInterpreter::visitElseTree (AST* astree) {
     this->visitChildren(astree);

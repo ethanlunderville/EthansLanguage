@@ -6,7 +6,7 @@ AssignOpTree::AssignOpTree() : Operator() {
 }
 
 void AssignOpTree::assign(std::any* x, std::any y) {
-    (*x) =y ;
+    (*x) = y;
 }
 
 void AssignOpTree::accept(ASTVisitor* v) { v->visitAssignOpTree(this); }
