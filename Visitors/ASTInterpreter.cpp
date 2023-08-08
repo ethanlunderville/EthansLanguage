@@ -4,8 +4,6 @@
 
 /*
     IMPORTANT: READ THE ASTChecker 
-    
-
 */
 
 ASTInterpreter::ASTInterpreter(TypeManager* typeManager) {
@@ -42,8 +40,6 @@ void ASTInterpreter::visitPrintTree (AST* astree) {
         std::cout << std::any_cast<std::string>(val) << std::endl;
     } else if (val.type() == typeid(double)) {
         std::cout << std::any_cast<double>(val) << std::endl;
-    } else {
-
     }
 }
 
@@ -160,16 +156,17 @@ void ASTInterpreter::visitLValArrowOpTree(AST* astree){
         dynamic_cast<ArrowOpTree*>(astree)->setVal(structTable->getReferenceOfValueStoredInSymbol(iDent->getIdentifier()));
     }
 }
+
 void ASTInterpreter::visitLValIdentifierTree(AST* astree){
     IdentifierTree* iTree = dynamic_cast<IdentifierTree*>(astree);
     iTree->setVal(this->contextManager->getReferenceOfValueStoredInSymbol(iTree->getIdentifier()));
 }
+
 void ASTInterpreter::visitLValArrayAccessTree(AST* astree){
     ArrayAccessTree* aAccessTree = dynamic_cast<ArrayAccessTree*>(astree);
     ExpressionTree* subTree = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0]);
     this->visitChildren(aAccessTree);
-    std::any subAny = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0])->getVal();
-    int subscript = std::any_cast<double>(subAny);
+    int subscript = std::any_cast<double>(subTree->getVal());
     std::any address = this->contextManager->getReferenceOfValueStoredInSymbol(aAccessTree->getIdentifier(),subscript);
     aAccessTree->setVal(address);
 }
@@ -177,8 +174,7 @@ void ASTInterpreter::visitLValArrayAccessTree(AST* astree){
 void ASTInterpreter::visitArrayAccessTree(AST* astree) {
     ArrayAccessTree* aAccessTree = dynamic_cast<ArrayAccessTree*>(astree);
     if (aAccessTree->LVal) {
-        this->visitLValArrayAccessTree(aAccessTree);
-        return;
+        return this->visitLValArrayAccessTree(aAccessTree);
     }
     this->visitChildren(aAccessTree);
     std::any subAny = dynamic_cast<ExpressionTree*>(aAccessTree->getChildren()[0])->getVal();
@@ -192,7 +188,7 @@ void ASTInterpreter::visitAssignOpTree (AST* astree) {
     lValTree->LVal = true;
     this->visitChildren(aOpTree);
     aOpTree->assign(
-        std::any_cast<std::any*>(lValTree->getVal()),
+        std::any_cast<std::any*>(lValTree->getVal()), 
         dynamic_cast<Evaluatable*>(astree->getChildren()[1])->getVal()
     );
     #ifdef PRINTSYMBOLS

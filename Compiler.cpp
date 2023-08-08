@@ -53,25 +53,31 @@ int main () {
     Lexer* lexer = new Lexer(file, typeManager);
     Parser* parser = new Parser(lexer, typeManager);
     #ifdef INTERPRETEROUTPUT
-        std::cout << "***PRINTING LEXEMES***" << std::endl;  
-        lexer->printLexemes(lexer->scanTokens());
+        #ifdef PRINTTOKENS
+            std::cout << "***PRINTING LEXEMES***" << std::endl;  
+            lexer->printLexemes(lexer->scanTokens());
+        #endif
     #endif
     AST* abstractSyntaxTree = parser->parse();
     ASTChecker* checker = new ASTChecker(typeManager);
     #ifdef INTERPRETEROUTPUT
-        std::cout << "***PRINTING AST***" << std::endl;
-        abstractSyntaxTree->accept(pVisit);
-        std::cout << "***CHECKING AST***" << std::endl;
+        #ifdef PRINTTREE
+            std::cout << "***PRINTING AST***" << std::endl;
+            abstractSyntaxTree->accept(pVisit);
+            std::cout << "***CHECKING AST***" << std::endl;
+        #endif
     #endif
     abstractSyntaxTree->accept(checker);
     #ifdef INTERPRETEROUTPUT
-        std::cout << "***PRINTING AST***" << std::endl;
-        abstractSyntaxTree->accept(pVisit);
-        std::cout << "***INTERPRETING AST***" << std::endl;
+        #ifdef PRINTTREE
+            std::cout << "***PRINTING AST***" << std::endl;
+            abstractSyntaxTree->accept(pVisit);
+            std::cout << "***INTERPRETING AST***" << std::endl;
+        #endif    
     #endif
     ASTInterpreter* interpreter = new ASTInterpreter(typeManager);
     abstractSyntaxTree->accept(interpreter);
-    #ifdef INTERPRETEROUTPUT
+    #ifdef PRINTDEALLOCATIONADDRESSES
         std::cout << "***DEALLOCATING AST***" << std::endl;
     #endif
     ASTDeallocationVisitor* dVisit = new ASTDeallocationVisitor();

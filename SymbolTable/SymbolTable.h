@@ -57,3 +57,4 @@ private:
     std::vector<Type*> deletableTypes; 
     std::vector<SymbolTable*> structs; 
 };
+

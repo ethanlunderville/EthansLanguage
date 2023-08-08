@@ -45,6 +45,9 @@ std::vector<Token>& Lexer::scanTokens() {
                 if (inStream.peek() == '=') { 
                     addToken(EQUAL_EQUAL  , line, "==");
                     c = inStream.get(); 
+                } else if (inStream.peek() == '>') {
+                    addToken(EQUALARROW , line, "=>");
+                    c = inStream.get();
                 } else {
                     addToken(EQUAL, line, "=");
                 }

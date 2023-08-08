@@ -2,9 +2,7 @@
 
 SymbolTable::SymbolTable() : tableReference(tableReference) , returned(false), referenceCount(1) {}
 
-SymbolTable::SymbolTable(SymbolTable* copyable) { /*COPY CONSTRUCTOR*/
-    
-}
+SymbolTable::SymbolTable(SymbolTable* copyable) { /*COPY CONSTRUCTOR*/ }
 
 SymbolTable::~SymbolTable() {
     
@@ -72,8 +70,10 @@ std::any SymbolTable::getValueStoredInSymbol(std::string identifier, int subscri
 } 
 
 std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier, int subscript) {
-    std::vector<std::any> anyVec = std::any_cast<std::vector<std::any>>(this->stringToSymbolMap[identifier].value);
-    return &(anyVec[subscript]);
+    std::any actualValue = std::move(this->stringToSymbolMap[identifier].value);
+    std::any* returnPointer = &(std::any_cast<std::vector<std::any>>(actualValue)[subscript]);
+    this->stringToSymbolMap[identifier].value = actualValue;
+    return returnPointer;
 }
 
 int SymbolTable::getCurrentSize() {

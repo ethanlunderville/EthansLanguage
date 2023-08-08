@@ -300,7 +300,7 @@ AST* Parser::sAssignment(std::string identifier) {
             scan();
         }
         expect(RIGHT_PAREN);
-        expect(ARROW);
+        expect(EQUALARROW);
         functionAssignTree->addChild(sBlock());
         aTree->addChild(functionAssignTree);
         return aTree;
