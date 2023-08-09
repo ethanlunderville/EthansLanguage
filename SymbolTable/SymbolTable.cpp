@@ -65,11 +65,28 @@ std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier)
 }
 
 std::any SymbolTable::getValueStoredInSymbol(std::string identifier, int subscript) {
+    if (this->stringToSymbolMap[identifier].value.type() == typeid(std::string)) {
+        std::string anyString = std::any_cast<std::string>(this->stringToSymbolMap[identifier].value);
+        return std::string(1,anyString[subscript]);
+    }
     std::vector<std::any> anyVec = std::any_cast<std::vector<std::any>>(this->stringToSymbolMap[identifier].value);
     return anyVec[subscript];
 } 
 
 std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier, int subscript) {
+    if (this->stringToSymbolMap[identifier].value.type() == typeid(std::string)) {
+        std::cerr << "Unable to assign string subscripts" << std::endl;
+        exit(1);
+        std::any actualValue = std::move(this->stringToSymbolMap[identifier].value);
+        std::string local = (std::any_cast<std::string>(std::move(actualValue)));
+        char r = std::move(local[subscript]);
+        char* cPoint = &r;
+        std::any retVal = std::any(cPoint);
+        std::any* returnPointer = &retVal;
+        this->stringToSymbolMap[identifier].value = std::move(actualValue);
+        local[subscript] = std::move(r);
+        return returnPointer;
+    }
     std::any actualValue = std::move(this->stringToSymbolMap[identifier].value);
     std::any* returnPointer = &(std::any_cast<std::vector<std::any>>(actualValue)[subscript]);
     this->stringToSymbolMap[identifier].value = actualValue;

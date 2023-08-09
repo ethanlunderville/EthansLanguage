@@ -8,6 +8,7 @@
 
 ASTInterpreter::ASTInterpreter(TypeManager* typeManager) {
     this->contextManager = new ContextManager(typeManager);
+    this->lValBubbler = new ASTChecker(typeManager);
     this->typeManager = typeManager;
 }
 ASTInterpreter::ASTInterpreter(TypeManager* typeManager, ContextManager* contextManager) {
@@ -16,6 +17,8 @@ ASTInterpreter::ASTInterpreter(TypeManager* typeManager, ContextManager* context
 }
 
 ASTInterpreter::~ASTInterpreter() {
+    delete this->lValBubbler;
+    this->lValBubbler = nullptr;
     if (!this->temporary) {
         delete this->contextManager;
         this->contextManager = nullptr;
@@ -85,7 +88,12 @@ void ASTInterpreter::visitReturnTree (AST* astree) {
 
 void ASTInterpreter::visitFunctionCallTree (AST* astree) {
     FunctionCallTree* fCallTree = dynamic_cast<FunctionCallTree*>(astree);
-    //this->currentFuncPtr = fCallTree;
+    if (Builtins::builtInFunctions[fCallTree->getIdentifier()] != nullptr) {
+        fCallTree->setVal( /* Interface to another realm */
+            Builtins::builtInFunctions[fCallTree->getIdentifier()](fCallTree->getChildren(),lValBubbler,this)
+        );
+        return;
+    }
     this->callStack.push(fCallTree);
     this->visitChildren(fCallTree); /*PREPARE THE FUNCTION ARGS BEFORE NEW CONTEXT GETS PUSHED*/
     std::any functionHold = this->contextManager->getValueStoredInSymbol(fCallTree->getIdentifier());

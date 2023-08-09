@@ -1,0 +1,3 @@
+I need a pointer to an std::any that contains a pointer to a char
+
+the pointer is found with a string that is moved into my local scope

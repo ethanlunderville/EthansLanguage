@@ -296,10 +296,6 @@ class Operator : public Evaluatable {
 class AddTree : public Operator {
     public:
         AddTree();
-        std::string add(double x, std::string y);
-        std::string add(std::string x, double y);
-        std::string add(std::string x, std::string y);
-        double add(double x, double y);
         std::any add(std::any operand1, std::any operand2);
         void accept(ASTVisitor* v) override;
 };

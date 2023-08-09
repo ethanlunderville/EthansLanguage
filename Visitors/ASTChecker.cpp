@@ -157,16 +157,30 @@ void ASTChecker::visitStructDeclarationTree (AST* astree) {
 void ASTChecker::visitAddTree (AST* astree) {
     this->visitChildren(astree);
     int i = 0;
-    while (i<2) {
+    std::any setVal;
+    while (i < 2) {
         std::any current = dynamic_cast<Evaluatable*>(astree->getChildren()[i])->getVal();
-        if (current.type() == typeid(std::string)) {
-            ((AddTree*)astree)->setVal(current);
+        if (current.type() == typeid(std::vector<std::any>)) {
+            dynamic_cast<AddTree*>(astree)->setVal(current);
             return;
+        } else if (current.type() == typeid(std::string)) {
+            if (setVal.type() != typeid(std::vector<std::any>)) {
+                dynamic_cast<AddTree*>(astree)->setVal(current);
+                setVal = current;
+            }
         } else if (current.type() == typeid(double)) {
-            ((AddTree*)astree)->setVal(current);
+            if (setVal.type() != typeid(std::string) && setVal.type() != typeid(std::vector<std::any>)) {
+                dynamic_cast<AddTree*>(astree)->setVal(current);
+                setVal = current;
+            }
         }
         i++;
     }
+    if (!setVal.has_value()) {
+        std::cerr << "Incorrect addition value" << std::endl;
+        exit(1);
+    }
+    dynamic_cast<AddTree*>(astree)->setVal(setVal);
 }
 
 /*BUBBLE BASE VALUE TO THE TOP*/
@@ -316,6 +330,10 @@ void ASTChecker::visitIdentifierTree (AST* astree) {
 void ASTChecker::visitLValArrayAccessTree(AST* astree) {
     ArrayAccessTree* aAccess = dynamic_cast<ArrayAccessTree*>(astree);
     Type* aType = this->contextManager->getTypeOfSymbol(aAccess->getIdentifier());
+    if (typeid(*aType) == typeid(String)) {
+        aAccess->setVal(aType);
+        return;
+    }
     aAccess->setVal(dynamic_cast<Array*>(aType)->getArrayType());
 }
 
@@ -323,13 +341,18 @@ void ASTChecker::visitArrayAccessTree(AST* astree) {
     ArrayAccessTree* aAccess = dynamic_cast<ArrayAccessTree*>(astree);
     if (aAccess->LVal) { return this->visitLValArrayAccessTree(aAccess); }
     Type* t = this->contextManager->getTypeOfSymbol(aAccess->getIdentifier());
-    Array* aType = dynamic_cast<Array*>(t);
-    if (typeid(*(aType->getArrayType())) == typeid(Struct) ) {
-        Struct* sType = dynamic_cast<Struct*>(aType->getArrayType());
-        aAccess->setVal(sType->getBaseStructPointer());
+    if (typeid(*t) == typeid(Array)) {
+        Array* aType = dynamic_cast<Array*>(t);
+        if (typeid(*(aType->getArrayType())) == typeid(Struct) ) {
+            Struct* sType = dynamic_cast<Struct*>(aType->getArrayType());
+            aAccess->setVal(sType->getBaseStructPointer());
+            return;
+        }
+        aAccess->setVal(aType->getArrayType()->getNullValue());
+    } else if (typeid(*t) == typeid(String)) {
+        aAccess->setVal(std::any(""));
         return;
     }
-    aAccess->setVal(aType->getArrayType()->getNullValue());
 }
 
 void ASTChecker::visitAssignOpTree (AST* astree) {
@@ -458,12 +481,12 @@ void ASTChecker::visitLessEqualTree (AST* astree) {
 }
 void ASTChecker::visitEqualTree (AST* astree) {
     this->visitChildren(astree);
-    this->numberCheck(astree);
+    //this->numberCheck(astree);
     ((Evaluatable*)astree)->setVal(1.00);    
 }
 void ASTChecker::visitNotEqualTree (AST* astree) {
     this->visitChildren(astree);
-    this->numberCheck(astree);
+    //this->numberCheck(astree);
     ((Evaluatable*)astree)->setVal(1.00);
 }
 void ASTChecker::visitAndTree (AST* astree) {

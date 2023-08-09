@@ -12,10 +12,12 @@
 #pragma once
 #include "TypeManager.h"
 #include "SwitchPrint.h"
+#include "Library/Builtins.h"
 #include <stack>
 #include <iostream>
 
 class AST;
+
 class ContextManager;
 /*Abstract*/ class ASTVisitor {
     public:
@@ -207,6 +209,7 @@ class ASTInterpreter: public ASTVisitor {
     private:
         ContextManager* contextManager;
         TypeManager* typeManager;
+        ASTChecker* lValBubbler;
         bool returned;
         FunctionCallTree* currentFuncPtr;
         std::stack<SymbolTable*> structScoper;
