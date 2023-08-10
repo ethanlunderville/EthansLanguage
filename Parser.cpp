@@ -22,9 +22,13 @@ AST* Parser::sStatement() {
         expect(RIGHT_PAREN);
         t->addChild(sBlock());
         if (isCurrentToken(ELSE)) {
-            scan();
+            scan(); 
             ElseTree* eTree = new ElseTree();
-            eTree->addChild(sBlock());
+            if (isCurrentToken(IF)) {
+                eTree->addChild(sStatement());
+            } else {
+                eTree->addChild(sBlock());
+            }
             t->addChild(eTree);
         }
     } else if (isCurrentToken(WHILE)) {
@@ -34,6 +38,57 @@ AST* Parser::sStatement() {
         t->addChild(sExpression());
         expect(RIGHT_PAREN);
         t->addChild(sBlock());
+    } else if (isCurrentToken(FOR)) {
+
+        BlockTree* outerEnclosure = new BlockTree();
+        scan();
+        expect(LEFT_PAREN);
+        if (!isCurrentToken(IDENTIFIER)) { std::cerr << "Iterator must be a single identifier" << std::endl; }
+        outerEnclosure->addChild(
+            new DeclarationTree(std::string("int"),
+            getCurrentLexeme(),
+            getCurrentLine())
+        );
+        ExpressionTree* eTree = new ExpressionTree(getCurrentLine());
+        AssignOpTree* aOpTree = new AssignOpTree();
+        eTree->addChild(aOpTree);
+        std::string ident = getCurrentLexeme();
+        aOpTree->addChild(new IdentifierTree(ident));
+        ExpressionTree* rValExpression = new ExpressionTree(getCurrentLine());
+        rValExpression->addChild(new NumberTree(std::string("0.00")));
+        aOpTree->addChild(rValExpression);
+        outerEnclosure->addChild(eTree);
+        scan();
+        expect(COLON);
+        t = new WhileTree();
+        outerEnclosure->addChild(t);
+        //
+        AST* exprCopy = sExpression();
+        LessTree* lTree = new LessTree();
+        lTree->addChild(new IdentifierTree(ident));
+        lTree->addChild(exprCopy);
+        ExpressionTree* whileExpr = new ExpressionTree(getCurrentLine());
+        whileExpr->addChild(lTree);
+        t->addChild(whileExpr);
+        expect(RIGHT_PAREN);
+        //
+        AST* subBlock = sBlock();
+        ExpressionTree* iterator = new ExpressionTree(getCurrentLine());
+        AssignOpTree* iterAssign = new AssignOpTree();
+        iterator->addChild(iterAssign);
+        iterAssign->addChild(new IdentifierTree(ident));
+        ExpressionTree* addExpr = new ExpressionTree(getCurrentLine());
+        AddTree* adderTree = new AddTree();
+        addExpr->addChild(adderTree);
+        adderTree->addChild(new IdentifierTree(ident));
+        adderTree->addChild(new NumberTree("1.00"));
+        ExpressionTree* padderExpression = new ExpressionTree(getCurrentLine());
+        padderExpression->addChild(adderTree);
+        iterAssign->addChild(padderExpression);
+        subBlock->addChild(iterator);
+        t->addChild(subBlock);
+        return outerEnclosure;
+
     } else if (isCurrentToken(RETURN)) {
         scan();
         t = new ReturnTree();
@@ -178,17 +233,7 @@ AST* Parser::sBlock() {
 
 AST* Parser::sContext(AST* pTree) {
     while (1) {
-        if (tokens.size() == currentTokenIndex) {
-            break;
-        } else if (getCurrentLexeme().compare("print") == 0) {
-            PrintTree* printTree = new PrintTree();
-            scan();
-            expect(LEFT_PAREN);
-            printTree->addChild(sExpression());
-            expect(RIGHT_PAREN);
-            expect(SEMICOLON);
-            pTree->addChild(printTree);
-        } else if (onStatement()) {
+        if (onStatement()) {
             pTree->addChild(sStatement());
         } else if ( isCurrentToken(STRUCT) || onDeclaration()) {
             std::string type = getCurrentLexeme();

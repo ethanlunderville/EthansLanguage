@@ -64,16 +64,16 @@ int main () {
         #ifdef PRINTTREE
             std::cout << "***PRINTING AST***" << std::endl;
             abstractSyntaxTree->accept(pVisit);
-            std::cout << "***CHECKING AST***" << std::endl;
         #endif
+        std::cout << "***CHECKING AST***" << std::endl;
     #endif
     abstractSyntaxTree->accept(checker);
     #ifdef INTERPRETEROUTPUT
         #ifdef PRINTTREE
             std::cout << "***PRINTING AST***" << std::endl;
             abstractSyntaxTree->accept(pVisit);
-            std::cout << "***INTERPRETING AST***" << std::endl;
-        #endif    
+        #endif   
+        std::cout << "***INTERPRETING AST***" << std::endl; 
     #endif
     ASTInterpreter* interpreter = new ASTInterpreter(typeManager);
     abstractSyntaxTree->accept(interpreter);

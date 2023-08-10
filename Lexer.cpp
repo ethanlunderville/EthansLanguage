@@ -17,7 +17,6 @@ std::vector<Token>& Lexer::scanTokens() {
             case '{': addToken(LEFT_BRACE, line, "{"); break;
             case '}': addToken(RIGHT_BRACE, line, "}"); break;
             case ',': addToken(COMMA, line, ","); break;
-            case '+': addToken(PLUS, line, "+"); break;
             case ';': addToken(SEMICOLON, line, ";"); break;
             case ':': addToken(COLON, line, ":"); break;
             case '*': addToken(STAR, line, "*"); break;
@@ -35,8 +34,7 @@ std::vector<Token>& Lexer::scanTokens() {
             */
             case '!': 
                 if (inStream.peek() == '=') { 
-                    addToken(BANG_EQUAL , line, "!=");
-                    c = inStream.get(); 
+                    addToken(BANG_EQUAL , line, "!="); 
                 } else {
                     addToken(BANG, line, "!");
                 }
@@ -70,15 +68,18 @@ std::vector<Token>& Lexer::scanTokens() {
             break;
             // Negatives numbers, Comments and Slashes
             case '-': 
-                if (previousTokenWasOperator()) {
-                    if (isdigit(inStream.peek())) {
-                        c = inStream.get();
-                        number(&c,tokens, line, true);
-                        goto SKIP;
-                    } else {
-                        std::cerr << "Error at line " << line << ": unexpected character '" << c << "'\n";
-                        exit(1);
-                    } 
+                if (tokens[tokens.size() - 1].type == IDENTIFIER && inStream.peek() == '-') { // ++ operator
+                    addToken(EQUAL, line, "=");
+                    addToken(IDENTIFIER, line, tokens[tokens.size() - 2].lexeme);
+                    addToken(MINUS, line, "-");
+                    addToken(NUMBER, line, "1.0");
+                    c = inStream.get();
+                    c = inStream.get();
+                    goto SKIP;                                       
+                } else if (isdigit(inStream.peek())) {
+                    c = inStream.get();
+                    number(&c,tokens, line, true);
+                    goto SKIP;
                 } else if (inStream.peek() == '>'){
                     addToken(ARROW , line, "->");
                     c = inStream.get(); 
@@ -95,6 +96,19 @@ std::vector<Token>& Lexer::scanTokens() {
                     addToken(SLASH, line, "/");
                 }
                 break;
+            case '+': 
+            //  ++ operator
+                if (tokens[tokens.size() - 1].type == IDENTIFIER && inStream.peek() == '+') { // ++ operator
+                    addToken(EQUAL, line, "=");
+                    addToken(IDENTIFIER, line, tokens[tokens.size() - 2].lexeme);
+                    addToken(PLUS, line, "+");
+                    addToken(NUMBER, line, "1.0");
+                    c = inStream.get();
+                    c = inStream.get();
+                    goto SKIP;
+                }
+                addToken(PLUS, line, "+"); 
+            break;
             //White space
             case ' ':
             case '\r':

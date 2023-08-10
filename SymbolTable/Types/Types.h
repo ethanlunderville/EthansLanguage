@@ -9,15 +9,15 @@ class SymbolTable;
 
 class Type {
     public:
-        virtual ~Type() = 0;
-        virtual std::any getNullValue() = 0;
-        virtual void printType() = 0;
-        virtual bool checkExpression(AST* node, int line, ContextManager* contextManager) = 0;
-        virtual void printSymbol(std::string identifier, std::any symbol) = 0;
-        virtual void checkAssignment(Assignable* assign) = 0;
+        virtual ~Type() {}
+        virtual std::any getNullValue()= 0;
+        virtual void printType()= 0;
+        virtual bool checkExpression(AST* node, int line, ContextManager* contextManager)= 0;
+        virtual void printSymbol(std::string identifier, std::any symbol)= 0;
+        virtual void checkAssignment(Assignable* assign)= 0;
+        virtual void printArrayOfType(std::any vector)= 0;
+        virtual std::any getBaseArray()= 0;
         virtual bool checkType(std::any value) = 0;
-        virtual void printArrayOfType(std::any vector) = 0;
-        virtual std::any getBaseArray() = 0;
 };
 
 class PrimitiveType : public Type {

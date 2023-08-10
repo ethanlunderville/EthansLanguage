@@ -83,8 +83,12 @@ void ASTChecker::visitExpressionTree (AST* astree) {
 }
 
 void ASTChecker::visitFunctionCallTree (AST* astree) {
-    this->visitChildren(astree);
+    this->visitChildren(astree); 
     FunctionCallTree* fCall = dynamic_cast<FunctionCallTree*>(astree);
+    if (Builtins::builtInFunctions[fCall->getIdentifier()] != nullptr) {
+        fCall->setVal(Builtins::baseValues[fCall->getIdentifier()]);
+        return;
+    }
     fCall->setVal(this->contextManager->getValueStoredInSymbol(fCall->getIdentifier()));
 }
 

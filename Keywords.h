@@ -44,6 +44,7 @@ static const TokenType Statement[] = {
     IF,
     WHILE,
     RETURN,
+    FOR,
     IDENTIFIER
 };
 
@@ -89,6 +90,7 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {RIGHT_BRACKET,"RIGHT_BRACKET"},
     {STRUCT,"STRUCT"},
     {NEW, "NEW"},
+    {FOR, "FOR"},
     {EQUALARROW, "EQUALARROW"}
 };
 
@@ -98,6 +100,7 @@ static std::map<std::string, TokenType> stringToTokenMap = {
     {"NULL", NULLTYPE},
     {"return", RETURN},
     {"while", WHILE},
+    {"for", FOR},
     {"EOF", EOF_TOKEN},
     {"int", INT},
     {"string", STRINGTYPE},
