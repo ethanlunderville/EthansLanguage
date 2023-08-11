@@ -1,7 +1,11 @@
 #include "Lexer.h"
 #include <iostream>
 
-Lexer::Lexer(std::istream& inStream, TypeManager* typeManager) : inStream(inStream), typeManager(typeManager) {}
+Lexer::Lexer(std::istream& inStream, TypeManager* typeManager) 
+: inStream(inStream), 
+  tokens({}),
+  typeManager(typeManager)
+  {}
 
 std::vector<Token>& Lexer::scanTokens() {
     int line = 1;
@@ -78,7 +82,7 @@ std::vector<Token>& Lexer::scanTokens() {
                     goto SKIP;                                       
                 } else if (isdigit(inStream.peek())) {
                     c = inStream.get();
-                    number(&c,tokens, line, true);
+                    number(&c, line, true);
                     goto SKIP;
                 } else if (inStream.peek() == '>'){
                     addToken(ARROW , line, "->");
@@ -118,14 +122,14 @@ std::vector<Token>& Lexer::scanTokens() {
                 line++;
                 break;
             // String literals
-            case '"': string(tokens, line); break;
+            case '"': string(line); break;
             // Numbers
             default:
                 if (isdigit(c)) {
-                    number(&c,tokens, line, false);
+                    number(&c, line, false);
                     goto SKIP;
                 } else if (isalpha(c)) {
-                    alphaProcessor(&c, tokens, line);
+                    alphaProcessor(&c, line);
                     goto SKIP;
                 }
                 break;
@@ -149,7 +153,7 @@ void Lexer::addToken(TokenType type, int line, const std::string& lexeme) {
     tokens.push_back(token);
 }
 
-void Lexer::string(const std::vector<Token>& tokens , int line) {
+void Lexer::string(int line) {
     std::string literal;
     literal.push_back('\"');
     while (!inStream.eof()) {
@@ -165,7 +169,7 @@ void Lexer::string(const std::vector<Token>& tokens , int line) {
     exit(1);
 }
 
-void Lexer::number (char *c, const std::vector<Token>& tokens , int line, bool isNegative) {
+void Lexer::number (char *c, int line, bool isNegative) {
     std::string number; 
     while (isdigit(*c) || *c == '.') {
         number.push_back(*c);
@@ -178,7 +182,7 @@ void Lexer::number (char *c, const std::vector<Token>& tokens , int line, bool i
     return;
 }
 
-void Lexer::alphaProcessor (char *c, const std::vector<Token>& tokens , int line) {
+void Lexer::alphaProcessor (char *c , int line) {
     std::string ident; 
     while (isalpha(*c)) {
         ident.push_back(*c);

@@ -21,6 +21,7 @@ class AST;
 class ContextManager;
 /*Abstract*/ class ASTVisitor {
     public:
+        virtual ~ASTVisitor() {}
         virtual void visitChildren(AST* astree)=0;
         virtual void visitArrayAccessTree(AST* astree)=0;
         virtual void visitFunctionAssignTree(AST* astree)=0;
@@ -203,6 +204,7 @@ class ASTInterpreter: public ASTVisitor {
         void visitLValArrayAccessTree(AST* astree);
         void visitLValIdentifierTree(AST* astree);
         void visitFunctionChildren(AST* astree);
+        void printCallIndent();
 
         bool temporary;
 

@@ -218,7 +218,6 @@ void ASTChecker::visitArrowOpTree (AST* astree) {
         dynamic_cast<Evaluatable*>(astree)->setVal(arrowChild->getVal());
         this->structScoper.pop();
     } else { /* BASE CASE: END OF ARROW EXPRESSION. RETURN THE VALUE OF THE RIGHTMOST VALUE */
-        Type* rType;
         Identifiable* iDent = dynamic_cast<Identifiable*>(astree->getChildren()[1]);
         if (iDent != nullptr) { 
             if (typeid(*iDent) == typeid(ArrayAccessTree)) { /*ARRAY ACCESS IDENT*/

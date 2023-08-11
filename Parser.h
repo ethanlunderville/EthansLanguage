@@ -31,7 +31,7 @@ class Parser {
     private:
         int currentTokenIndex;
         Lexer* lexer;
-        std::vector<Token>& tokens;
+        std::vector<Token> tokens;
         TypeManager* typeManager;
         std::vector<std::string> userDefinedTypes;
         //PARSER FUNCTIONS

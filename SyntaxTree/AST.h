@@ -86,7 +86,6 @@ class Evaluatable : public AST {
 
 class ReturnTree : public AST {
     public:
-        ReturnTree(std::string retval);
         ReturnTree();
         void accept(ASTVisitor* v) override;
     private:

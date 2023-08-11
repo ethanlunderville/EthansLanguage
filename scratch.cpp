@@ -23,7 +23,6 @@ std::any fLs(std::vector<std::string>& args){
         recursiveList(retVec,path,std::filesystem::absolute(path));
     } else {
         for (const auto& entry : std::filesystem::directory_iterator(path)) {
-            //std::cout << entry.path().filename() << std::endl;
             retVec.push_back(path+entry.path().filename().string());
         }
     }

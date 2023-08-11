@@ -17,6 +17,7 @@
     CheckedAbstractSyntaxTree -> ASTINTERPRETER -> ProgramOutput
     
 */
+
 #include "Lexer.h"
 #include "Parser.h"
 #include "SymbolTable/ContextManager.h"
@@ -95,5 +96,8 @@ int main () {
     lexer = nullptr;
     delete dVisit;
     dVisit = nullptr;
+    delete interpreter;
+    interpreter = nullptr;
+
     return 0;
 }

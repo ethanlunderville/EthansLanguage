@@ -15,11 +15,11 @@ std::any EqualTree::equal(std::any x, std::any y) {
         this->setVal(0.00);
         return 0;
     } else if (x.type() == typeid(char) && y.type() == typeid(char)) {
-        double res = std::any_cast<char>(x) == std::any_cast<char>(y);
-        this->setVal(res);
+        bool res = std::any_cast<char>(x) == std::any_cast<char>(y);
+        this->setVal((double)res);
     } else {  
-        double res = std::any_cast<double>(x) == std::any_cast<double>(y);
-        this->setVal(res);
+        bool res = std::any_cast<double>(x) == std::any_cast<double>(y);
+        this->setVal((double)res);
     }
     return res; 
 }

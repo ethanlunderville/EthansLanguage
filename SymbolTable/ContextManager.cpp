@@ -1,6 +1,6 @@
 #include "ContextManager.h"
 /* This code is kind of insane so be warned */
-ContextManager::ContextManager(TypeManager* typeManager) {
+ContextManager::ContextManager(TypeManager* typeManager)  {
     this->globalContext = new SymbolTable();
     this->globalScopeLinkedList = nullptr;
     this->typeManager = typeManager;
@@ -251,17 +251,15 @@ std::any ContextManager::getValueStoredInSymbol(std::string identifier) {
 
 
 std::any* ContextManager::getReferenceOfValueStoredInSymbol(std::string identifier) {
-    SymbolTable* pointer;
-    if (this->contextStack.size() > 0) {
-        pointer = this->globalContext;
-    } else if (this->globalScopeLinkedList != nullptr) {
-        pointer = globalScopeLinkedList;
-        if (this->globalContext->contains(identifier) != -1) {
-            return this->globalContext->getReferenceOfValueStoredInSymbol(identifier);
-        }
-    } else {
-        pointer = this->globalContext;
+    if (this->globalContext->contains(identifier) != -1) {
+        return this->globalContext->getReferenceOfValueStoredInSymbol(identifier);
     }
+    SymbolTable* pointer = nullptr;
+    if (this->contextStack.size() > 0) {
+        pointer = this->contextStack.top();
+    } else if (this->globalScopeLinkedList != nullptr) {
+        pointer = this->globalScopeLinkedList;
+    } 
     while (pointer != nullptr) {
         if (pointer->contains(identifier) != -1) {
             return pointer->getReferenceOfValueStoredInSymbol(identifier);
@@ -366,6 +364,38 @@ void ContextManager::setFunctionIsReturned(bool isReturned) {
     if (this->contextStack.size() > 0) {
         this->contextStack.top()->returned = isReturned;
     }
+}
+
+void ContextManager::dumpState() {
+    std::cout << "------ PRINTING GLOBAL SCOPE ------" << std::endl;
+    this->globalContext->printSymbolTable();
+    std::cout << "------ PRINTING GLOBAL SCOPES LINKED LIST ------" << std::endl;
+    SymbolTable* pointer;
+    if (globalScopeLinkedList != nullptr) {
+        this->globalScopeLinkedList->printSymbolTable();
+        pointer = this->globalScopeLinkedList->tableReference;
+        while (pointer != nullptr) {
+            pointer->printSymbolTable();
+            pointer = pointer->tableReference;
+        }
+    } 
+    std::cout << "------ PRINTING ALL STACKFRAMES ------" << std::endl;
+    std::stack<SymbolTable*> temp = this->contextStack;
+    int i = temp.size();
+    while (!temp.empty()) {
+        std::cout << "*******************************" << std::endl;
+        std::cout << "                "<< i <<"               " << std::endl;
+        std::cout << "*******************************" << std::endl;
+        temp.top()->printSymbolTable();
+        pointer = temp.top()->tableReference;
+        while (pointer != nullptr) {
+            pointer->printSymbolTable();
+            pointer = pointer->tableReference;
+        }
+        temp.pop();
+        i--;
+    }
+    return;
 }
 
 void ContextManager::printSymbolTable() {

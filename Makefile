@@ -1,6 +1,6 @@
 # Compiler and linker flags
-CC = g++ -g
-CFLAGS = -std=c11 -Wall -Wextra -pedantic
+CC = g++ -g -std=c++17 -Wall -Wextra -pedantic
+CFLAGS = 
 LDFLAGS = -I$(shell pwd) 
 
 # Object files directory

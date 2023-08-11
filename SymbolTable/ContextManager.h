@@ -28,6 +28,7 @@ public:
     Type* getCurrentFunctionType();
     bool isFunctionReturned();
     void setFunctionIsReturned(bool isReturned);
+    void dumpState();
 private:
     SymbolTable* globalContext;
     SymbolTable* globalScopeLinkedList;

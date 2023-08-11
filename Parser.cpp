@@ -1,6 +1,11 @@
 #include "Parser.h"
 
-Parser::Parser(Lexer* lexer, TypeManager* typeManager) : tokens(lexer->scanTokens()) , typeManager(typeManager) {}
+Parser::Parser(Lexer* lexer, TypeManager* typeManager) 
+: 
+  currentTokenIndex(0),
+  userDefinedTypes({""}),  
+  tokens(std::move(lexer->scanTokens())), 
+  typeManager(typeManager) {}
 
 AST* Parser::parse() {
     return sProgram();
@@ -446,7 +451,9 @@ bool Parser::onData() {
     return false;
 }
 bool Parser::isCurrentToken(int tokenType) {
-    if (tokens[currentTokenIndex].type != tokenType) {
+    TokenType type = TokenType::PLACEHOLDER;
+    type = tokens[currentTokenIndex].type;
+    if (type != tokenType) {
         return false;
     }
     return true;

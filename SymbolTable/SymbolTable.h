@@ -20,7 +20,6 @@ struct SymbolInfo {
 class SymbolTable {
 public:
     SymbolTable();
-    SymbolTable(SymbolTable* copyable);
     ~SymbolTable();
     void pushScope();
     void popScope();

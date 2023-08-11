@@ -1,8 +1,8 @@
 #include "SymbolTable.h"
 
-SymbolTable::SymbolTable() : tableReference(tableReference) , returned(false), referenceCount(1) {}
-
-SymbolTable::SymbolTable(SymbolTable* copyable) { /*COPY CONSTRUCTOR*/ }
+SymbolTable::SymbolTable() :  referenceCount(1), returned(false) {
+    this->tableReference = nullptr;
+}
 
 SymbolTable::~SymbolTable() {
     
@@ -77,15 +77,6 @@ std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier,
     if (this->stringToSymbolMap[identifier].value.type() == typeid(std::string)) {
         std::cerr << "Unable to assign string subscripts" << std::endl;
         exit(1);
-        std::any actualValue = std::move(this->stringToSymbolMap[identifier].value);
-        std::string local = (std::any_cast<std::string>(std::move(actualValue)));
-        char r = std::move(local[subscript]);
-        char* cPoint = &r;
-        std::any retVal = std::any(cPoint);
-        std::any* returnPointer = &retVal;
-        this->stringToSymbolMap[identifier].value = std::move(actualValue);
-        local[subscript] = std::move(r);
-        return returnPointer;
     }
     std::any actualValue = std::move(this->stringToSymbolMap[identifier].value);
     std::any* returnPointer = &(std::any_cast<std::vector<std::any>>(actualValue)[subscript]);

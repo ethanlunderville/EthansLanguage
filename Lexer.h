@@ -52,13 +52,12 @@ public:
     void printLexemes(const std::vector<Token>& tokens);
 private:
     std::istream& inStream;
-    std::stringstream currentLexeme;
     std::vector<Token> tokens;
     TypeManager* typeManager;
     void addToken(TokenType type, int line, const std::string& lexeme);
-    void string(const std::vector<Token>& tokens, int line);
-    void number(char* c, const std::vector<Token>& tokens, int line, bool isNegative);
-    void alphaProcessor(char* c, const std::vector<Token>& tokens, int line);
+    void string(int line);
+    void number(char* c, int line, bool isNegative);
+    void alphaProcessor(char* c, int line);
     bool previousTokenTypeWas(TokenType t);
     bool previousTokenWasOperator();
 };
