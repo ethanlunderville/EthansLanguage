@@ -1,9 +1,9 @@
-int() fib = ( int n ) => {
-    if ( n <= 0 ) {
-        return 0;
-    } else if ( n == 1 ) {
-        return 1;
-    } else {
-        return fib(n - 1) + fib(n - 2);
+string test = "r0cgf r0 this r0is a r0 testr0";
+string[] splTest = split(test, "");
+string[] other = split(test, "");
+println(size(splTest));
+for ( i : size(splTest) ) {
+    if (other[i] == splTest[i]) {
+        println("ERROR " + other[i] + " " + splTest[i] );
     }
-} println(fib(10)); 
+}

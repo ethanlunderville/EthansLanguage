@@ -5,7 +5,7 @@
 StringTree::StringTree(std::string sString) : Evaluatable() {
     char quote = '\"'; 
     sString.erase(std::remove(sString.begin(), sString.end(), quote), sString.end());
-    this->sString = sString;
+    this->sString = sString.substr(0, sString.size() - 1);
     this->setVal(this->sString);
 }
 

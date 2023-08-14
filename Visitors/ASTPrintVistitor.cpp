@@ -2,6 +2,12 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
+/*
+
+    Prints Syntax Tree nodes recursively.
+
+*/
+
 ASTPrintVisitor::ASTPrintVisitor(){
     this->indent = 1;
     this->lineNum = 1;
@@ -85,12 +91,6 @@ void ASTPrintVisitor::visitMultiplyTree (AST* astree) {printer("MultiplyTree", a
 void ASTPrintVisitor::visitAddTree (AST* astree) {printer("AddTree", astree, "+");}
 void ASTPrintVisitor::visitSubtractTree (AST* astree) {printer("SubtractTree", astree, "-");}
 void ASTPrintVisitor::visitExponentTree (AST* astree) {printer("ExponentTree", astree, "^");}
-void ASTPrintVisitor::visitDeclarationTree (AST* astree) {
-    std::vector<std::string> info;
-    info.push_back(((DeclarationTree*)astree)->getType());    
-    info.push_back(((DeclarationTree*)astree)->getIdentifier()); 
-    printer("DeclarationTree", astree, info);
-}
 void ASTPrintVisitor::visitBlockTree (AST* astree) {printer("BlockTree", astree);}
 void ASTPrintVisitor::visitReturnTree (AST* astree) {printer("ReturnTree", astree);}
 void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree); this->lineNum = 1;}
@@ -102,13 +102,6 @@ void ASTPrintVisitor::visitWhileTree (AST* astree) {printer("WhileTree", astree)
 void ASTPrintVisitor::visitElseTree (AST* astree) {printer("ElseTree", astree);}
 void ASTPrintVisitor::visitNumberTree (AST* astree) {printer("NumberTree", astree, std::to_string(std::any_cast<double>(((NumberTree*)astree)->getVal())));}
 void ASTPrintVisitor::visitStringTree (AST* astree) {printer("StringTree", astree, std::any_cast<std::string>(((StringTree*)astree)->getVal()));}
-void ASTPrintVisitor::visitIdentifierTree (AST* astree) {
-    IdentifierTree* t = ((IdentifierTree*)astree);
-    printer("Identifier",astree, t->getIdentifier());
-    //if (t->getSubscript() != nullptr) {
-   //     printIndent();
-   // }
-}
 void ASTPrintVisitor::visitGreaterTree (AST* astree) {printer("GreaterTree", astree, ">");}
 void ASTPrintVisitor::visitGreaterEqualTree (AST* astree) {printer("GreaterEqualTree", astree, ">=");}
 void ASTPrintVisitor::visitLessTree (AST* astree) {printer("LessTree", astree, "<");}
@@ -119,5 +112,14 @@ void ASTPrintVisitor::visitAndTree (AST* astree) {printer("AndTree", astree, "&&
 void ASTPrintVisitor::visitOrTree (AST* astree) {printer("OrTree", astree, "||");}
 void ASTPrintVisitor::visitAssignOpTree (AST* astree) {printer("AssignOpTree", astree, "=");}
 void ASTPrintVisitor::visitArrowOpTree (AST* astree) {printer("ArrowOpTree", astree, "->");}
-void ASTPrintVisitor::visitPrintTree (AST* astree) {printer("PrintTree", astree, "***PRINTER***");}
+void ASTPrintVisitor::visitIdentifierTree (AST* astree) {
+    IdentifierTree* t = ((IdentifierTree*)astree);
+    printer("Identifier",astree, t->getIdentifier());
+}
+void ASTPrintVisitor::visitDeclarationTree (AST* astree) {
+    std::vector<std::string> info;
+    info.push_back(((DeclarationTree*)astree)->getType());    
+    info.push_back(((DeclarationTree*)astree)->getIdentifier()); 
+    printer("DeclarationTree", astree, info);
+}
 

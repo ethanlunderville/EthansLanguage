@@ -1,5 +1,5 @@
 # Compiler and linker flags
-CC = g++ -g -std=c++17 -Wall -Wextra -pedantic
+CC = g++ -g #-std=c++17 -Wall -Wextra -pedantic
 CFLAGS = 
 LDFLAGS = -I$(shell pwd) 
 
@@ -10,7 +10,7 @@ OBJDIR = obj
 TARGET = program
 
 # Source files and object files
-SRCS = Library/*.cpp Visitors/*.cpp TypeManager.cpp ./SymbolTable/*.cpp ./SymbolTable/Types/*.cpp Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp   SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp SyntaxTree/Lvalues/*.cpp SyntaxTree/Declarations/*.cpp Lexer.cpp Parser.cpp    
+SRCS = ./SymbolTable/*.cpp  Library/*.cpp Visitors/*.cpp TypeManager.cpp ./SymbolTable/Types/*.cpp Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp   SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp SyntaxTree/Lvalues/*.cpp SyntaxTree/Declarations/*.cpp Lexer.cpp Parser.cpp    
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
 # Default target

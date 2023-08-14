@@ -1,6 +1,12 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 
+/*
+
+    Deallocates Syntax Tree nodes recursively.
+
+*/
+
 ASTDeallocationVisitor::ASTDeallocationVisitor(){
     this->currentNodeNum = 1;
 }
@@ -55,4 +61,3 @@ void ASTDeallocationVisitor::visitAndTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitOrTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitAssignOpTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitArrowOpTree (AST* astree) {deallocate(astree);}
-void ASTDeallocationVisitor::visitPrintTree (AST* astree) {deallocate(astree);}

@@ -7,7 +7,7 @@ Lexer::Lexer(std::istream& inStream, TypeManager* typeManager)
   typeManager(typeManager)
   {}
 
-std::vector<Token>& Lexer::scanTokens() {
+std::vector<Token> Lexer::scanTokens() {
     int line = 1;
     while (inStream) {
         char c = inStream.get();
@@ -38,9 +38,10 @@ std::vector<Token>& Lexer::scanTokens() {
             */
             case '!': 
                 if (inStream.peek() == '=') { 
-                    addToken(BANG_EQUAL , line, "!="); 
+                    addToken(EXCLAIM_EQUAL , line, "!="); 
+                    c = inStream.get();
                 } else {
-                    addToken(BANG, line, "!");
+                    addToken(EXCLAIM, line, "!");
                 }
             break;
             case '=': 

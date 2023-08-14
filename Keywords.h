@@ -1,13 +1,10 @@
 /*
-
-    File: Keywords.h
-
-    Description:
     
     This file contains several data structures pertaining 
     to the tokens of the langauge.
     
 */
+
 #pragma once
 #include <map>
 #include <string>
@@ -15,7 +12,7 @@
 enum TokenType {
     PLACEHOLDER, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
     COMMA, ARROW, MINUS, PLUS, SEMICOLON, SLASH, STAR,
-    KARAT, BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
+    KARAT, EXCLAIM, EXCLAIM_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
     GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
     NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
     WHILE, INT, STRINGTYPE, COLON ,EOF_TOKEN, LEFT_BRACKET,
@@ -28,7 +25,7 @@ static const TokenType OperatorArray[] = {
     LESS_EQUAL,
     GREATER_EQUAL,
     EQUAL_EQUAL,
-    BANG_EQUAL,
+    EXCLAIM_EQUAL,
     KARAT,
     PLUS,
     STAR,
@@ -62,8 +59,8 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {COLON, "COLON"},
     {SLASH, "SLASH"},
     {STAR, "STAR"},
-    {BANG, "BANG"},
-    {BANG_EQUAL, "BANG_EQUAL"},
+    {EXCLAIM, "EXCLAIM"},
+    {EXCLAIM_EQUAL, "EXCLAIM_EQUAL"},
     {EQUAL, "EQUAL"},
     {EQUAL_EQUAL, "EQUAL_EQUAL"},
     {GREATER, "GREATER"},

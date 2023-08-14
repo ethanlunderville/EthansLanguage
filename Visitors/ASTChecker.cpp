@@ -36,10 +36,12 @@ ASTChecker::ASTChecker(TypeManager* typeManager) {
     this->contextManager = new ContextManager(typeManager);
     this->typeManager = typeManager;
 }
+
 ASTChecker::~ASTChecker() {
     delete this->contextManager;
     this->contextManager = nullptr;
 }
+
 void ASTChecker::visitChildren(AST* astree){
     for (AST* child : astree->getChildren()) {
         (child)->accept(this);
@@ -79,7 +81,9 @@ void ASTChecker::visitExpressionTree (AST* astree) {
         }
         return;
     }
-    dynamic_cast<ExpressionTree*>(astree)->setVal(dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal());
+    dynamic_cast<ExpressionTree*>(astree)->setVal(
+        dynamic_cast<Evaluatable*>(astree->getChildren()[0])->getVal()
+    );
 }
 
 void ASTChecker::visitFunctionCallTree (AST* astree) {
@@ -106,7 +110,11 @@ void ASTChecker::visitDeclarationTree (AST* astree) {
 void ASTChecker::visitArrayDeclarationTree (AST* astree) {
     ArrayDeclarationTree* arrayTree = ((ArrayDeclarationTree*)astree);
     Type* primTypeReference = this->typeManager->getTypeHandler(arrayTree->getType());
-    this->contextManager->declareSymbol(arrayTree->getLine(), arrayTree->getIdentifier(), new Array(primTypeReference));
+    this->contextManager->declareSymbol(
+        arrayTree->getLine(),
+        arrayTree->getIdentifier(), 
+        new Array(primTypeReference)
+    );
     this->visitChildren(astree);
     #ifdef PRINTSYMBOLS
         contextManager->printSymbolTable();
@@ -117,7 +125,11 @@ void ASTChecker::visitArrayDeclarationTree (AST* astree) {
 void ASTChecker::visitFunctionDeclarationTree (AST* astree) {
     FunctionDeclarationTree* functionTree = ((FunctionDeclarationTree*)astree);
     Type* primTypeReference = this->typeManager->getTypeHandler(functionTree->getType());
-    this->contextManager->declareSymbol(functionTree->getLine(), functionTree->getIdentifier(), new Function(primTypeReference));
+    this->contextManager->declareSymbol(
+        functionTree->getLine(), 
+        functionTree->getIdentifier(), 
+        new Function(primTypeReference)
+    );
     this->visitChildren(astree);
     if (functionTree->getChildren().size() != 0) {
         this->visitChildren(astree);
@@ -160,8 +172,8 @@ void ASTChecker::visitStructDeclarationTree (AST* astree) {
 
 void ASTChecker::visitAddTree (AST* astree) {
     this->visitChildren(astree);
-    int i = 0;
     std::any setVal;
+    int i = 0;
     while (i < 2) {
         std::any current = dynamic_cast<Evaluatable*>(astree->getChildren()[i])->getVal();
         if (current.type() == typeid(std::vector<std::any>)) {
@@ -189,7 +201,7 @@ void ASTChecker::visitAddTree (AST* astree) {
 
 /*BUBBLE BASE VALUE TO THE TOP*/
 void ASTChecker::visitArrowOpTree (AST* astree) {
-    if (dynamic_cast<ArrowOpTree*>(astree)->LVal) { return this->visitLValArrowOpTree(astree); }
+    if (dynamic_cast<ArrowOpTree*>(astree)->getIsLVal()) { return this->visitLValArrowOpTree(astree); }
     Identifiable* eValType = dynamic_cast<Identifiable*>(astree->getChildren()[0]);
     if (eValType == nullptr) {
         std::cerr << "Non struct identifier with arrow following it" << std::endl;
@@ -321,9 +333,11 @@ void ASTChecker::visitLValIdentifierTree (AST* astree) {
 void ASTChecker::visitIdentifierTree (AST* astree) {
     this->visitChildren(astree);
     IdentifierTree* identer = ((IdentifierTree*)astree);
-    if (identer->LVal) { return this->visitLValIdentifierTree(astree); }
+    if (identer->getIsLVal()) { return this->visitLValIdentifierTree(astree); }
     if ( typeid(*(this->contextManager->getTypeOfSymbol(identer->getIdentifier()))) == typeid(Struct) ) { // IF IDENT IS A STRUCT
-        Struct* sType = dynamic_cast<Struct*>(this->contextManager->getTypeOfSymbol(identer->getIdentifier()));
+        Struct* sType = dynamic_cast<Struct*>(
+            this->contextManager->getTypeOfSymbol(identer->getIdentifier())
+        );
         identer->setVal(sType->getBaseStructPointer());
         return;
     } 
@@ -342,7 +356,7 @@ void ASTChecker::visitLValArrayAccessTree(AST* astree) {
 
 void ASTChecker::visitArrayAccessTree(AST* astree) {
     ArrayAccessTree* aAccess = dynamic_cast<ArrayAccessTree*>(astree);
-    if (aAccess->LVal) { return this->visitLValArrayAccessTree(aAccess); }
+    if (aAccess->getIsLVal()) { return this->visitLValArrayAccessTree(aAccess); }
     Type* t = this->contextManager->getTypeOfSymbol(aAccess->getIdentifier());
     if (typeid(*t) == typeid(Array)) {
         Array* aType = dynamic_cast<Array*>(t);
@@ -362,7 +376,7 @@ void ASTChecker::visitAssignOpTree (AST* astree) {
     AssignOpTree* tree = ((AssignOpTree*)astree);
     Assignable* assignableType = dynamic_cast<Assignable*>(tree->getChildren()[1]);
     Evaluatable* lValTree = dynamic_cast<Evaluatable*>(tree->getChildren()[0]);
-    lValTree->LVal = true;
+    lValTree->setIsLVal(true);
     lValTree->accept(this);
     assignableType->setType(std::any_cast<Type*>(lValTree->getVal()));
     assignableType->accept(this);
@@ -371,30 +385,20 @@ void ASTChecker::visitAssignOpTree (AST* astree) {
         aI->temporary = true;
         astree->accept(aI);
         delete aI;
-        aI = nullptr;
     }
     #ifdef PRINTSYMBOLS
         contextManager->printSymbolTable();
     #endif
 }
 
-void ASTChecker::visitNumberTree (AST* astree) {
-    NumberTree* nTree = dynamic_cast<NumberTree*>(astree);
-    nTree->setVal(nTree->getNumber());
-}
-
-void ASTChecker::visitStringTree (AST* astree) {
-    StringTree* sTree = dynamic_cast<StringTree*>(astree);
-    sTree->setVal(sTree->getString());
-}
-
 void ASTChecker::visitFunctionAssignTree(AST* astree) {/**/
     FunctionAssignTree* fAssignTree = dynamic_cast<FunctionAssignTree*>(astree);
     this->contextManager->pushContext();
-    this->contextManager->setCurrentFunctionType(dynamic_cast<Function*>(fAssignTree->getType())->getFunctionType());
+    this->contextManager->setCurrentFunctionType(
+        dynamic_cast<Function*>(fAssignTree->getType())->getFunctionType()
+    );
     this->visitChildren(astree);
-    this->contextManager->popContext();
-    
+    this->contextManager->popContext(); 
 }
 
 void ASTChecker::visitReturnTree (AST* astree) {
@@ -407,7 +411,6 @@ void ASTChecker::visitReturnTree (AST* astree) {
     std::cerr << "Functions must return at least one value" << std::endl;
     exit(1);
 }
-
 
 void ASTChecker::visitArrayAssignTree(AST* astree) {
     Type* aType = dynamic_cast<ArrayAssignTree*>(astree)->getType(); 
@@ -484,12 +487,10 @@ void ASTChecker::visitLessEqualTree (AST* astree) {
 }
 void ASTChecker::visitEqualTree (AST* astree) {
     this->visitChildren(astree);
-    //this->numberCheck(astree);
     ((Evaluatable*)astree)->setVal(1.00);    
 }
 void ASTChecker::visitNotEqualTree (AST* astree) {
     this->visitChildren(astree);
-    //this->numberCheck(astree);
     ((Evaluatable*)astree)->setVal(1.00);
 }
 void ASTChecker::visitAndTree (AST* astree) {
@@ -503,8 +504,18 @@ void ASTChecker::visitOrTree (AST* astree) {
     ((Evaluatable*)astree)->setVal(1.00);
 }
 
+void ASTChecker::visitNumberTree (AST* astree) {
+    NumberTree* nTree = dynamic_cast<NumberTree*>(astree);
+    nTree->setVal(nTree->getNumber());
+}
+
+void ASTChecker::visitStringTree (AST* astree) {
+    StringTree* sTree = dynamic_cast<StringTree*>(astree);
+    sTree->setVal(sTree->getString());
+}
+
+
 void ASTChecker::visitIfTree(AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitProgramTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitWhileTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitElseTree (AST* astree) {this->visitChildren(astree);}
-void ASTChecker::visitPrintTree (AST* astree) {this->visitChildren(astree);}

@@ -3,10 +3,6 @@
 
 String::String() {}
 
-std::any String::getBaseArray() {
-    std::vector<std::string> stringVector;
-    return stringVector;
-}
 
 std::any String::getNullValue() {
     return std::string("");
@@ -14,10 +10,6 @@ std::any String::getNullValue() {
 
 AST* String::getNewTreenode(std::string value) {
     return new StringTree(value);
-}
-
-void String::checkAssignment(Assignable* assign) {
-    assign->checkType(this);
 }
 
 bool String::checkType(std::any value) {
@@ -46,53 +38,4 @@ void String::printArrayOfType(std::any vector) {
             std::cout << ", ";
         } 
     }
-}
-
-static int stringNumCounter = 0;
-
-bool String::numberCheck(AST* node, int line, ContextManager* contextManager) {
-    for (AST* child : node->getChildren()) {
-        if (typeid(*child) == typeid(StringTree)) {
-            std::cerr << "Invlalid string found on line " << line <<  std::endl;
-            std::cerr << "Cannot create subexpressions with strings" <<  std::endl;
-            exit(1);
-        } else if (typeid(*child) == typeid(IdentifierTree)) {
-            IdentifierTree* ident = dynamic_cast<IdentifierTree*>(child);
-            if (typeid(*(contextManager->getTypeOfSymbol(ident->getIdentifier()))) == typeid(String)) {
-                std::cerr << "Invlalid string found on line " << line <<  std::endl;
-                std::cerr << "Cannot create subexpressions with strings" <<  std::endl;
-                exit(1);
-            } 
-        }
-        if (!numberCheck(child, line, contextManager)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-bool String::checkExpression(AST* node, int line, ContextManager* contextManager) {
-    for (AST* stringExpressionNode : node->getChildren()) {
-        bool nodeTypeIsExpressionTree = typeid(*stringExpressionNode) == typeid(ExpressionTree);
-        if (typeid(*stringExpressionNode) != typeid(NumberTree) &&
-            typeid(*stringExpressionNode) != typeid(AddTree) &&
-            typeid(*stringExpressionNode) != typeid(StringTree) && 
-            !nodeTypeIsExpressionTree) {
-            return false;
-        }
-        if (nodeTypeIsExpressionTree) {
-            if (!this->numberCheck(stringExpressionNode, line, contextManager)) {
-                return false;
-            }
-            continue;
-        }
-        if (!checkExpression(stringExpressionNode, line , contextManager)) {
-            return false;
-        }
-        if (typeid(*node) == typeid(StringTree)) {
-            stringNumCounter++;
-        }
-    }
-    return true;
 }

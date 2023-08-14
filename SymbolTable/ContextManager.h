@@ -4,6 +4,23 @@
 #include <stack>
 #include <string>
 
+/*
+    Manages symbol tables. (Structs/Function Contexts)
+
+    Scope is managed by a context stack for function calls 
+    and a global context. these contexts each have a linked 
+    list every node in this list is a scope in that context.
+    for instance, the globalScopeLinkedList is for all
+    scopes in the global context (if/while blocks). That
+    being said, each function context has its own linked list
+    for its own subscopes. 
+
+    This class manages these linked lists and delegates what
+    symbols should be declared where so that scoping is 
+    maintained. 
+
+*/
+
 class Type;
 class ContextManager {
 public:

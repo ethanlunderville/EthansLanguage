@@ -1,11 +1,10 @@
 #include "Parser.h"
 
-Parser::Parser(Lexer* lexer, TypeManager* typeManager) 
-: 
-  currentTokenIndex(0),
-  userDefinedTypes({""}),  
-  tokens(std::move(lexer->scanTokens())), 
-  typeManager(typeManager) {}
+Parser::Parser(Lexer* lexer, TypeManager* typeManager) : 
+currentTokenIndex(0),
+userDefinedTypes({""}),  
+tokens(std::move(lexer->scanTokens())), 
+typeManager(typeManager) {}
 
 AST* Parser::parse() {
     return sProgram();
@@ -43,12 +42,15 @@ AST* Parser::sStatement() {
         t->addChild(sExpression());
         expect(RIGHT_PAREN);
         t->addChild(sBlock());
-    } else if (isCurrentToken(FOR)) {
-
+    } else if (isCurrentToken(FOR)) { /* CONSTRUCTS FOR LOOP TREE*/
         BlockTree* outerEnclosure = new BlockTree();
         scan();
         expect(LEFT_PAREN);
-        if (!isCurrentToken(IDENTIFIER)) { std::cerr << "Iterator must be a single identifier" << std::endl; }
+        if (!isCurrentToken(IDENTIFIER)) { 
+            std::cerr 
+            << "Iterator must be a single identifier" 
+            << std::endl; 
+        }
         outerEnclosure->addChild(
             new DeclarationTree(std::string("int"),
             getCurrentLexeme(),
@@ -93,7 +95,6 @@ AST* Parser::sStatement() {
         subBlock->addChild(iterator);
         t->addChild(subBlock);
         return outerEnclosure;
-
     } else if (isCurrentToken(RETURN)) {
         scan();
         t = new ReturnTree();
@@ -109,6 +110,7 @@ AST* Parser::sStatement() {
     return t;
 }          
 
+/*EXPRESSIONS ARE FULLY PARSED HERE. NO PASSES IN THIS LANGUAGE*/
 AST* Parser::sExpression() {
     AST* t = new ExpressionTree(getCurrentLine());
     std::stack<Operator*> operatorStack;
@@ -116,7 +118,11 @@ AST* Parser::sExpression() {
     Operator* bottom = new Operator();
     operatorStack.push(bottom);
     #ifdef PRINTEXPRESSION
-        std::cout << "*** PRINTING EXPRESSION -> LINE: " << getCurrentLine() << " ***" << std::endl;
+        std::cout 
+        << "*** PRINTING EXPRESSION -> LINE: " 
+        << getCurrentLine() 
+        << " ***" 
+        << std::endl;
     #endif
     while (1) {
         #ifdef PRINTEXPRESSION
@@ -151,14 +157,19 @@ AST* Parser::sExpression() {
                 }
                 operandStack.push(identTree);
             } else if (onData()) {
-                AST* nTree = dynamic_cast<PrimitiveType*>(this->typeManager->getTypeHandler(getCurrentToken()))->getNewTreenode(getCurrentLexeme());
+                AST* nTree = dynamic_cast<PrimitiveType*>(
+                    this->typeManager->getTypeHandler(getCurrentToken())
+                )->getNewTreenode(getCurrentLexeme());
                 operandStack.push(nTree);
                 scan();
-            } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA) || isCurrentToken(RIGHT_BRACKET)){
+            } else if (onExpressionBreaker()){
                 break;
             }
         } else {
-            std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
+            std::cerr 
+            << "Malformed expression on line " 
+            << getCurrentLine() 
+            << std::endl;
             exit(1);
         }
         if (onOperator()) {
@@ -174,7 +185,11 @@ AST* Parser::sExpression() {
                     AST* operatorHold = dynamic_cast<AST*>(operatorStack.top());
                     operatorStack.pop();
                     /* EDGE CASE */
-                    nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
+                    nonAssociativeTypeFlipper(
+                        operatorHold, 
+                        operatorStack.top(), 
+                        savePrecedence
+                    );
                     operatorHold->addChild(operand1);
                     operatorHold->addChild(operand2); 
                     operandStack.push(operatorHold);
@@ -182,7 +197,7 @@ AST* Parser::sExpression() {
             }
             operatorStack.push(opTree);
             scan();
-        } else if (isCurrentToken(RIGHT_PAREN) || isCurrentToken(SEMICOLON) || isCurrentToken(COMMA) || isCurrentToken(RIGHT_BRACKET)){
+        } else if (onExpressionBreaker()){
             break;
         } else { 
             std::cerr << "Malformed expression on line " << getCurrentLine() << std::endl;
@@ -204,12 +219,22 @@ AST* Parser::sExpression() {
         int savePrecedence = operatorStack.top()->getPrecendence();
         AST* operatorHold = dynamic_cast<AST*>(operatorStack.top());
         operatorStack.pop();
-        nonAssociativeTypeFlipper(operatorHold, operatorStack.top(), savePrecedence);
+        nonAssociativeTypeFlipper(
+            operatorHold, 
+            operatorStack.top(), 
+            savePrecedence
+        );
         operatorHold->addChild(operand1);
         operatorHold->addChild(operand2);
         operandStack.push(operatorHold);
     }
-    // ENSURE THAT R-VALUE NODES ARE ASSIGNABLE  
+    /* 
+       THIS PREVENTS NON ASSIGNABLE NODES 
+       FROM BEING ON THE RIGHT OF AN ASSIGNMENT 
+       OPERATOR BY INSURING THAT THERE IS AN 
+       EXPRESSION TREE INSTEAD OF JUST A RAW
+       NUMBER TREE
+    */
     if (typeid(*(operandStack.top())) == typeid(AssignOpTree)) {
         Assignable* expressionTop = dynamic_cast<Assignable*>(operandStack.top()->getChildren()[1]);
         if (expressionTop == nullptr) {
@@ -276,7 +301,12 @@ AST* Parser::sContext(AST* pTree) {
                 pTree->addChild(declaration);
                 scan();
             } else {
-                std::cerr << "Expected an identifier after the type on line: " << getCurrentLine() << " Instead got: " << getCurrentLexeme() << std::endl;
+                std::cerr 
+                << "Expected an identifier after the type on line: " 
+                << getCurrentLine() 
+                << " Instead got: " 
+                << getCurrentLexeme() 
+                << std::endl;
                 exit(1);
             }
             if (isCurrentToken(EQUAL)) {
@@ -309,7 +339,11 @@ AST* Parser::sAssignment(std::string identifier) {
             expect(SEMICOLON);
             return aTree;
         } else {
-            std::cerr << "Unrecognized struct name: " << getCurrentLexeme() << "on line: " << getCurrentLine();
+            std::cerr 
+            << "Unrecognized struct name: " 
+            << getCurrentLexeme() 
+            << "on line: " 
+            << getCurrentLine();
             exit(1);
         }
     } else if (isCurrentToken(LEFT_BRACE)) {
@@ -341,7 +375,12 @@ AST* Parser::sAssignment(std::string identifier) {
                 functionAssignTree->addChild(new DeclarationTree(type,name,1));
                 scan();
             } else {
-                std::cerr << "Expected an identifier after the type on line: " << getCurrentLine() << "Instead got: " << getCurrentLexeme() << std::endl;
+                std::cerr 
+                << "Expected an identifier after the type on line: " 
+                << getCurrentLine() 
+                << "Instead got: " 
+                << getCurrentLexeme() 
+                << std::endl;
                 exit(1);
             }
             if (!isCurrentToken(COMMA) || isCurrentToken(RIGHT_PAREN)) {
@@ -373,7 +412,10 @@ AST* Parser::sAssignment(std::string identifier) {
         expect(SEMICOLON);
         return aTree;
     } else {
-        std::cerr << "Invalid assignment on line: " << getCurrentLine() << std::endl;
+        std::cerr 
+        << "Invalid assignment on line: " 
+        << getCurrentLine() 
+        << std::endl;
         exit(1);
     }
 
@@ -457,6 +499,17 @@ bool Parser::isCurrentToken(int tokenType) {
         return false;
     }
     return true;
+}
+
+bool Parser::onExpressionBreaker() {
+    if (isCurrentToken(RIGHT_PAREN) 
+    || isCurrentToken(SEMICOLON) 
+    || isCurrentToken(COMMA) 
+    || isCurrentToken(RIGHT_BRACKET)
+    ) {
+        return true;
+    }
+    return false;
 }
 
 void Parser::scan() {

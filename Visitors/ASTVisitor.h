@@ -5,7 +5,12 @@
     Description:
 
     This is the header file for the ASTVisitor and all of
-    its subclasses. 
+    its subclasses. The visitor pattern was used to prevent
+    having to dig through all of the AST node files when I 
+    want to work specifically on one similar behaviour.
+
+    The visitor pattern allows you to align things by there 
+    behavior.
     
 */
 
@@ -19,7 +24,7 @@
 class AST;
 
 class ContextManager;
-/*Abstract*/ class ASTVisitor {
+class ASTVisitor {
     public:
         virtual ~ASTVisitor() {}
         virtual void visitChildren(AST* astree)=0;
@@ -57,7 +62,6 @@ class ContextManager;
         virtual void visitFunctionCallTree (AST* astree)=0;
         virtual void visitAssignOpTree (AST* astree)=0;
         virtual void visitArrowOpTree (AST* astree)=0;
-        virtual void visitPrintTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -98,7 +102,6 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
-        void visitPrintTree(AST* astree) override;
 
         void printIndent();
         void printer(const std::string& type, AST* node, const std::string& symbol);
@@ -148,7 +151,6 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
-        void visitPrintTree(AST* astree) override;
 
         void deAllocateChildren();
         void deallocate(AST* node);
@@ -159,6 +161,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
 
 class ASTInterpreter: public ASTVisitor {
     public:
+        friend class ASTChecker;
         ASTInterpreter(TypeManager* typeManager);
         ASTInterpreter(TypeManager* typeManager, ContextManager* contextManager);
         ASTInterpreter(ContextManager* cm);
@@ -198,7 +201,6 @@ class ASTInterpreter: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
-        void visitPrintTree(AST* astree) override;
 
         void visitLValArrowOpTree(AST* astree);
         void visitLValArrayAccessTree(AST* astree);
@@ -206,9 +208,8 @@ class ASTInterpreter: public ASTVisitor {
         void visitFunctionChildren(AST* astree);
         void printCallIndent();
 
-        bool temporary;
-
     private:
+        bool temporary;
         ContextManager* contextManager;
         TypeManager* typeManager;
         ASTChecker* lValBubbler;
@@ -220,6 +221,7 @@ class ASTInterpreter: public ASTVisitor {
 
 class ASTChecker: public ASTVisitor {
     public:
+        friend class ASTInterpreter;
         ASTChecker(TypeManager* typeManager);
         ~ASTChecker();
         //INHERITED FUNCTIONS
@@ -258,7 +260,6 @@ class ASTChecker: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
-        void visitPrintTree(AST* astree) override;
 
         void visitLValArrowOpTree(AST* astree);
         void visitLValArrayAccessTree(AST* astree);

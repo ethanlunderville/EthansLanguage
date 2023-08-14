@@ -3,6 +3,11 @@
 
 Declarable::~Declarable(){}
 
+Declarable::Declarable(std::string type, std::string identifier, int line)
+: identifier(identifier),
+  type(type),
+  line(line) {}
+
 std::string Declarable::getIdentifier(){
     return this->identifier;
 }

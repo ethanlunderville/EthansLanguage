@@ -2,23 +2,15 @@
 #include "SymbolTable/ContextManager.h"
 class SymbolTable;
 
-Struct::Struct(SymbolTable* baseStruct, const std::string& identifier) {
-    this->baseStruct = baseStruct;
-    this->structIdentifier = identifier;
+Struct::Struct(SymbolTable* baseStruct, const std::string& identifier) : 
+baseStruct(baseStruct), 
+structIdentifier(identifier) 
+{
     this->baseStruct->setTypeName(this->structIdentifier);
 }
 
 Struct::Struct(const std::string& identifier) {
     this->structIdentifier = identifier;
-}
-
-std::any Struct::getBaseArray() {
-    std::vector<SymbolTable*> structArray;
-    return structArray;
-}
-
-void Struct::checkAssignment(Assignable* assign) {
-    assign->checkType(this);
 }
 
 bool Struct::checkType(std::any value) {
@@ -28,10 +20,6 @@ bool Struct::checkType(std::any value) {
         }
     }
     return false;
-}
-
-bool Struct::checkExpression(AST* node, int line, ContextManager* contextManager) {
-    return true;
 }
 
 std::any Struct::getNullValue() {

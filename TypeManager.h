@@ -2,6 +2,8 @@
 #include "SymbolTable/Types/Types.h"
 #include "Keywords.h"
 
+/* MANAGES TYPES THROUGHOUT INTERPRETER */
+
 class TypeManager {
     public:
         TypeManager();

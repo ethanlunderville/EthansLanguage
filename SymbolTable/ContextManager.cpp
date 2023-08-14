@@ -5,6 +5,7 @@ ContextManager::ContextManager(TypeManager* typeManager)  {
     this->globalScopeLinkedList = nullptr;
     this->typeManager = typeManager;
 }
+
 ContextManager::~ContextManager() {
     while (this->contextStack.size() != 0) {
         SymbolTable* pointer = this->contextStack.top();
@@ -15,6 +16,7 @@ ContextManager::~ContextManager() {
     delete this->globalContext;
     this->globalContext = nullptr; 
 }
+
 void ContextManager::pushContext() {
     SymbolTable* sTable = new SymbolTable();
     this->globalContext->tableReference = sTable;

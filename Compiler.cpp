@@ -56,7 +56,7 @@ int main () {
     #ifdef INTERPRETEROUTPUT
         #ifdef PRINTTOKENS
             std::cout << "***PRINTING LEXEMES***" << std::endl;  
-            lexer->printLexemes(lexer->scanTokens());
+            lexer->printLexemes(std::move(lexer->scanTokens()));
         #endif
     #endif
     AST* abstractSyntaxTree = parser->parse();

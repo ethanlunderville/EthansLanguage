@@ -2,6 +2,9 @@
 #include "Visitors/ASTVisitor.h"
 #include <string>
 #include <functional>
+
+/*BUILT IN FUNCTIONS*/
+
 class ASTInterpreter;
 class ASTChecker;
 

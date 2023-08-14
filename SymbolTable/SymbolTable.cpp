@@ -21,22 +21,6 @@ SymbolTable::~SymbolTable() {
     
 }
 
-void SymbolTable::pushScope() {
-    scopeStack.push(this->getCurrentSize());
-}
-
-void SymbolTable::popScope(){
-    if (scopeStack.size() == 0) {
-        std::cerr << "Cannot pop an empty scope" << std::endl;
-    }
-    int popCounter = this->getCurrentSize() - scopeStack.top();
-    scopeStack.pop();
-    for (int i = 0 ; i < popCounter ; i++) {
-        stringToSymbolMap.erase(intToStringVector[this->getCurrentSize() - 1]);
-        intToStringVector.erase(intToStringVector.begin() + (this->getCurrentSize() - 1));
-    }
-}
-
 void SymbolTable::declareSymbol(int line, std::string identifier, Type* typeHandler) {
     this->intToStringVector.push_back(identifier);
     if (dynamic_cast<PrimitiveType*>(typeHandler) == nullptr && typeid(*typeHandler) != typeid(Struct)) { // If the type is not primitve then it must be manually deallocated

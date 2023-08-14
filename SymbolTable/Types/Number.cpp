@@ -4,21 +4,12 @@
 
 Number::Number() {}
 
-std::any Number::getBaseArray() {
-    std::vector<double> doubleVector;
-    return doubleVector;
-}
-
 std::any Number::getNullValue() {
     return std::any(0.00);
 }
 
 AST* Number::getNewTreenode(std::string value) {
     return new NumberTree(value);
-}
-
-void Number::checkAssignment(Assignable* assign) {
-    assign->checkType(this);
 }
 
 bool Number::checkType(std::any value) {
@@ -47,25 +38,4 @@ void Number::printArrayOfType(std::any vector) {
             std::cout << ", ";
         } 
     }
-}
-
-bool Number::checkExpression(AST* node, int line, ContextManager* contextManager) {
-    for (AST* child : node->getChildren()) {
-        if (typeid(*child) == typeid(StringTree)) {
-            std::cerr << "Invlalid string found on line " << line <<  std::endl;
-            std::cerr << "Integer expressions can not evaluate include string" <<  std::endl;
-            return false;
-        } else if (typeid(*child) == typeid(IdentifierTree)) {
-            IdentifierTree* ident = dynamic_cast<IdentifierTree*>(child);
-            if (typeid(*(contextManager->getTypeOfSymbol(ident->getIdentifier()))) == typeid(String)) {
-                std::cerr << "Invlalid string identifier found on line " << line <<  std::endl;
-                std::cerr << "Integer expressions can not evaluate include string" <<  std::endl;
-                return false;
-            } 
-        }
-        if (!checkExpression(child, line, contextManager)) {
-            return false;
-        }
-    }
-    return true;
 }

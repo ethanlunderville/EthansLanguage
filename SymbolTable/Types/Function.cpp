@@ -1,27 +1,12 @@
 #include "Types.h"
 #include "SymbolTable/ContextManager.h"
 
-Function::Function(Type* returnType) {
-    this->type = returnType;
-}
+Function::Function(Type* returnType) : type(returnType) {}
 
 Function::~Function() {}
 
-std::any Function::getBaseArray() {
-    return 0;
-}
-
-bool Function::checkExpression(AST* node, int line, ContextManager* contextManager) {
-    return false;
-}
-
-void Function::checkAssignment(Assignable* assign) {
-    this->type->checkAssignment(assign);
-}
-
 bool Function::checkType(std::any value) {
     return false;
-    //assign->checkType(this);
 }
 Type* Function::getFunctionType() {
     return this->type;

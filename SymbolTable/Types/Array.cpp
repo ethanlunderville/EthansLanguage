@@ -1,23 +1,9 @@
 #include "Types.h"
 #include "SymbolTable/ContextManager.h"
 
-Array::Array(Type* arrayType) {
-    this->type = arrayType;
-}
+Array::Array(Type* arrayType) : type(arrayType) {}
 
 Array::~Array() {}
-
-std::any Array::getBaseArray() {
-    return 0;
-}
-
-bool Array::checkExpression(AST* node, int line, ContextManager* contextManager) {
-    return this->type->checkExpression(node, line, contextManager);
-}
-
-void Array::checkAssignment(Assignable* assign) {
-    this->type->checkAssignment(assign);
-}
 
 bool Array::checkType(std::any value) {
     return true;

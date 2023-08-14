@@ -13,6 +13,7 @@
     The Parser holds a pointer to the Lexer.
     
 */
+
 #pragma once
 #include "SyntaxTree/AST.h"
 #include "TypeManager.h"
@@ -53,6 +54,7 @@ class Parser {
         bool onOperator();
         bool onOperand();
         bool isCurrentToken(int tokenType);
+        bool onExpressionBreaker();
         //NO RETURN
         void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
         void scan();
@@ -71,7 +73,7 @@ static std::map< TokenType, std::function<Operator*()>> OperatorMap = {
     { LESS, []() { return new LessTree(); } },
     { LESS_EQUAL, []() { return new LessEqualTree(); } },
     { EQUAL_EQUAL, []() { return new EqualTree(); } },
-    { BANG_EQUAL, []() { return new NotEqualTree(); } },
+    { EXCLAIM_EQUAL, []() { return new NotEqualTree(); } },
     { AND, []() { return new AndTree(); } },
     { OR, []() { return new OrTree(); } },
     { ARROW, []() { return new ArrowOpTree(); } },
