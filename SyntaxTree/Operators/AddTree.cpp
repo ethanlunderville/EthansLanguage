@@ -6,13 +6,39 @@ AddTree::AddTree() : Operator() {
 }
 
 std::any AddTree::add(std::any operand1, std::any operand2) {
+    auto doubleStringProcessor = [] (int* stringSize, std::string& dToString) -> void {
+        while ((*stringSize) != -1) {
+            if (dToString[(*stringSize)] == '.' ) {
+                (*stringSize)--;
+                break;
+            } else if (dToString[(*stringSize)] == '0') {
+                (*stringSize)--;
+            } else {
+                break;
+            }
+        }
+    };
     std::any res;
     if (typeid(std::string)==operand1.type() && typeid(std::string)==operand2.type()) {
         res = static_cast<std::string>(std::any_cast<std::string>(operand1) + std::any_cast<std::string>(operand2));
     } else if (typeid(std::string)==operand1.type() && typeid(double)==operand2.type()) {
-        res = static_cast<std::string>(std::any_cast<std::string>(operand1) + std::to_string(std::any_cast<double>(operand2)));
+        std::string dToString = std::to_string(std::any_cast<double>(operand2));
+        int stringSize = dToString.size() - 1;
+        doubleStringProcessor(&stringSize, dToString);
+        if (stringSize == -1) {
+            res = std::any_cast<std::string>(operand1) + "0";
+        } else {
+            res = std::any_cast<std::string>(operand1) + dToString.substr(0, stringSize+1);
+        }
     } else if (typeid(double)==operand1.type() && typeid(std::string)==operand2.type()) {
-        res = static_cast<std::string>(std::to_string(std::any_cast<double>(operand1)) + std::any_cast<std::string>(operand2));
+        std::string dToString = std::to_string(std::any_cast<double>(operand1));
+        int stringSize = dToString.size() - 1;
+        doubleStringProcessor(&stringSize, dToString);
+        if (stringSize == -1) {
+            res =  "0" + std::any_cast<std::string>(operand2);
+        } else {
+            res = dToString.substr(0, stringSize+1) + std::any_cast<std::string>(operand2);
+        }
     } else if (typeid(double)==operand1.type() && typeid(double)==operand2.type()) {
         res = static_cast<double>(std::any_cast<double>(operand1) + std::any_cast<double>(operand2));
     } else if (typeid(std::vector<std::any>)==operand1.type() && typeid(std::vector<std::any>)==operand2.type()) {

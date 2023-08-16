@@ -1,0 +1,1 @@
+g++ -g scratch.cpp -o a.out && ./a.out
