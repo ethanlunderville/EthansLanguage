@@ -570,6 +570,8 @@ void ASTInterpreter::visitStringTree (AST* astree) {
     sTree->setVal(sTree->getString());
 }
 
+void ASTInterpreter::visitRegexSectionTree(AST* astree) {this->visitChildren(astree);}
+
 void ASTInterpreter::printCallIndent() {
     std::string indent = "";
     for (int i = 0 ; i < this->callStack.size() ; i++) {

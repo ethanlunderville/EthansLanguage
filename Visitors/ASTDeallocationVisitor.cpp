@@ -61,3 +61,4 @@ void ASTDeallocationVisitor::visitAndTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitOrTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitAssignOpTree (AST* astree) {deallocate(astree);}
 void ASTDeallocationVisitor::visitArrowOpTree (AST* astree) {deallocate(astree);}
+void ASTDeallocationVisitor::visitRegexSectionTree (AST* astree) {deallocate(astree);}

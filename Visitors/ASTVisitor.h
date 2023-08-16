@@ -62,6 +62,7 @@ class ASTVisitor {
         virtual void visitFunctionCallTree (AST* astree)=0;
         virtual void visitAssignOpTree (AST* astree)=0;
         virtual void visitArrowOpTree (AST* astree)=0;
+        virtual void visitRegexSectionTree (AST* astree)=0;
 };
 
 class ASTPrintVisitor: public ASTVisitor {
@@ -102,6 +103,7 @@ class ASTPrintVisitor: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitRegexSectionTree(AST* astree) override;
 
         void printIndent();
         void printer(const std::string& type, AST* node, const std::string& symbol);
@@ -151,6 +153,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitRegexSectionTree(AST* astree) override;
 
         void deAllocateChildren();
         void deallocate(AST* node);
@@ -201,6 +204,7 @@ class ASTInterpreter: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitRegexSectionTree(AST* astree) override;
 
         void visitLValArrowOpTree(AST* astree);
         void visitLValArrayAccessTree(AST* astree);
@@ -260,6 +264,7 @@ class ASTChecker: public ASTVisitor {
         void visitFunctionCallTree(AST* astree) override;
         void visitAssignOpTree (AST* astree) override;
         void visitArrowOpTree(AST* astree) override;
+        void visitRegexSectionTree(AST* astree) override;
 
         void visitLValArrowOpTree(AST* astree);
         void visitLValArrayAccessTree(AST* astree);

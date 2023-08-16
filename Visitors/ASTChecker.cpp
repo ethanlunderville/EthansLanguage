@@ -519,3 +519,4 @@ void ASTChecker::visitIfTree(AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitProgramTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitWhileTree (AST* astree) {this->visitChildren(astree);}
 void ASTChecker::visitElseTree (AST* astree) {this->visitChildren(astree);}
+void ASTChecker::visitRegexSectionTree (AST* astree) {/*this->visitChildren(astree);*/}

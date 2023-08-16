@@ -13,7 +13,6 @@ std::vector<Token> Lexer::scanTokens() {
         char c = inStream.get();
         SKIP:
         switch (c) {
-            // Single-character lexemes
             case '(': addToken(LEFT_PAREN, line, "("); break;
             case ')': addToken(RIGHT_PAREN, line, ")"); break;
             case '[': addToken(LEFT_BRACKET, line, "["); break;
@@ -114,6 +113,14 @@ std::vector<Token> Lexer::scanTokens() {
                 }
                 addToken(PLUS, line, "+"); 
             break;
+            case '#':
+                regexProcessor(&c, line);
+                goto SKIP;
+            break;
+            case '$':
+                regexIdentifierProcessor(&c, line);
+                goto SKIP;
+            break;
             //White space
             case ' ':
             case '\r':
@@ -141,8 +148,8 @@ std::vector<Token> Lexer::scanTokens() {
 
 void Lexer::printLexemes(const std::vector<Token>& tokens) {
     for (int i = 0 ; i < tokens.size() ; i++) {
-        if (tokens[i].type == IDENTIFIER || this->typeManager->tokenIsRValue(tokens[i].type)) {
-            std::cout << tokenToStringMap[tokens[i].type] << ": [" << tokens[i].lexeme << "]" << std::endl;
+        if ( tokens[i].type == REGEX || tokens[i].type == IDENTIFIER || this->typeManager->tokenIsRValue(tokens[i].type)) {
+            std::cout << tokenToStringMap[tokens[i].type] << " " << tokens[i].lexeme << std::endl;
         } else {
             std::cout << tokenToStringMap[tokens[i].type] << std::endl;        
         }
@@ -185,7 +192,7 @@ void Lexer::number (char *c, int line, bool isNegative) {
 
 void Lexer::alphaProcessor (char *c , int line) {
     std::string ident; 
-    while (isalpha(*c)) {
+    while ( isalpha(*c) || isdigit(*c) ) {
         ident.push_back(*c);
         *c = inStream.get();
     }
@@ -195,6 +202,41 @@ void Lexer::alphaProcessor (char *c , int line) {
     }
     addToken(IDENTIFIER, line, ident);
 }
+
+void Lexer::regexProcessor (char *c , int line) {
+    std::string regex; 
+    regex.push_back(*c);
+    *c = inStream.get();
+    while (!inStream.eof()) {
+        if (!isspace(*c)) {
+            regex.push_back(*c);
+        }
+        if (*c == '#') {
+            *c = inStream.get();
+            break;
+        }
+        *c = inStream.get();
+    }
+    addToken(REGEX, line, regex);
+}
+
+void Lexer::regexIdentifierProcessor(char* c, int line) {
+    std::string regex; 
+    regex.push_back(*c);
+    *c = inStream.get();
+    while (!inStream.eof()) {
+        if (!isspace(*c)) {
+            regex.push_back(*c);
+        }
+        if (*c == '$') {
+            *c = inStream.get();
+            break;
+        }
+        *c = inStream.get();
+    }
+    addToken(IDENTIFIER, line, regex);
+}
+
 
 bool Lexer::previousTokenTypeWas(TokenType t) {
     if (this->tokens[this->tokens.size()-1].type == t) {

@@ -36,6 +36,9 @@ private:
     void string(int line);
     void number(char* c, int line, bool isNegative);
     void alphaProcessor(char* c, int line);
+    void regexProcessor(char* c, int line);
+    bool isEndOfString(char c);
+    void regexIdentifierProcessor(char* c, int line);
     bool previousTokenTypeWas(TokenType t);
     bool previousTokenWasOperator();
 };

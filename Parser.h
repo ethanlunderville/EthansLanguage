@@ -42,6 +42,8 @@ class Parser {
         AST* sBlock();
         AST* sContext(AST* pTree);
         AST* sAssignment(std::string identifier);
+        AST* sRegexSection();
+        AST* sForTreeBuilder();
         //HELPER FUNCTIONS
         TokenType getCurrentToken();
         bool onUserDefinedType();

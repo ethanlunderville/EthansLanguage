@@ -16,7 +16,7 @@ enum TokenType {
     GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
     NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
     WHILE, INT, STRINGTYPE, COLON ,EOF_TOKEN, LEFT_BRACKET,
-    RIGHT_BRACKET, STRUCT, NEW, EQUALARROW
+    RIGHT_BRACKET, STRUCT, NEW, EQUALARROW, REGEX
 };
 
 static const TokenType OperatorArray[] = {   
@@ -88,7 +88,8 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {STRUCT,"STRUCT"},
     {NEW, "NEW"},
     {FOR, "FOR"},
-    {EQUALARROW, "EQUALARROW"}
+    {EQUALARROW, "EQUALARROW"},
+    {REGEX, "REGEX"}
 };
 
 static std::map<std::string, TokenType> stringToTokenMap = {

@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <any>
+#include <map>
 
 class ASTVisitor;
 class Type;
@@ -58,6 +59,16 @@ class BlockTree : public AST {
     public:
         BlockTree();
         void accept(ASTVisitor* v) override;
+};
+
+
+class RegexSectionTree : public AST {
+    public:
+        RegexSectionTree(std::string& regex);
+        std::string& getRegex();
+        void accept(ASTVisitor* v) override;
+    private:
+        std::string regex;
 };
 
 //AssignTrees
@@ -183,6 +194,7 @@ class StringTree : public Evaluatable {
         StringTree(std::string sString);
         std::string getString();
         void accept(ASTVisitor* v) override;
+        
     private:
         std::string sString;
 };

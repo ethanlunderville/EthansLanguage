@@ -95,6 +95,7 @@ void ASTPrintVisitor::visitBlockTree (AST* astree) {printer("BlockTree", astree)
 void ASTPrintVisitor::visitReturnTree (AST* astree) {printer("ReturnTree", astree);}
 void ASTPrintVisitor::visitProgramTree (AST* astree) {printer("ProgramTree", astree); this->lineNum = 1;}
 void ASTPrintVisitor::visitFunctionDeclarationTree (AST* astree) {printer("FunctionDeclarationTree", astree, ((FunctionDeclarationTree*)astree)->getIdentifier());}
+void ASTPrintVisitor::visitRegexSectionTree (AST* astree) {printer("RegexSectionTree", astree, ((RegexSectionTree*)astree)->getRegex());}
 void ASTPrintVisitor::visitArrayDeclarationTree (AST* astree) {printer("ArrayDeclarationTree", astree, ((ArrayDeclarationTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitStructDeclarationTree (AST* astree) {printer("StructDeclarationTree", astree, ((StructDeclarationTree*)astree)->getIdentifier());}
 void ASTPrintVisitor::visitFunctionCallTree (AST* astree) {printer("FunctionCallTree", astree, ((FunctionCallTree*)astree)->getIdentifier() );}
@@ -122,4 +123,5 @@ void ASTPrintVisitor::visitDeclarationTree (AST* astree) {
     info.push_back(((DeclarationTree*)astree)->getIdentifier()); 
     printer("DeclarationTree", astree, info);
 }
+
 
