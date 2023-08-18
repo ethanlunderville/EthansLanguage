@@ -451,7 +451,7 @@ AST* Parser::sForTreeBuilder() {
     return outerEnclosure;
 }
 
-TokenType Parser::getCurrentToken() {
+Tokens Parser::getCurrentToken() {
     return tokens[currentTokenIndex].type;
 }
 std::string& Parser::getCurrentLexeme() {
@@ -522,10 +522,10 @@ bool Parser::onData() {
     }
     return false;
 }
-bool Parser::isCurrentToken(int tokenType) {
-    TokenType type = TokenType::PLACEHOLDER;
+bool Parser::isCurrentToken(int tokenInt) {
+    Tokens type = Tokens::PLACEHOLDER;
     type = tokens[currentTokenIndex].type;
-    if (type != tokenType) {
+    if (type != tokenInt) {
         return false;
     }
     return true;
@@ -567,14 +567,14 @@ void Parser::nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int
     }
 
 }
-void Parser::expect(TokenType tokenType) {
-    if (isCurrentToken(tokenType)) {
+void Parser::expect(Tokens token) {
+    if (isCurrentToken(token)) {
         scan();
         return;
     }
     std::cerr << "COMPILATION TERMINATED \n\n";
     std::cerr << "There was a syntax error on line : " << getCurrentLine();
     std::cerr << " Unexpected Token : " << getCurrentLexeme() << std::endl;
-    std::cerr << "Compiler expected: " << tokenToStringMap[tokenType] << std::endl;
+    std::cerr << "Compiler expected: " << tokenToStringMap[token] << std::endl;
     exit(1);
 }

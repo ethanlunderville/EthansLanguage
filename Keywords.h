@@ -9,17 +9,17 @@
 #include <map>
 #include <string>
 
-enum TokenType {
+enum Tokens {
     PLACEHOLDER, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-    COMMA, ARROW, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+    COMMA, ARROW, MINUS, PLUS, SEMICOLON, DIVIDE, STAR,
     KARAT, EXCLAIM, EXCLAIM_EQUAL, EQUAL, EQUAL_EQUAL, GREATER,
     GREATER_EQUAL, LESS, LESS_EQUAL, IDENTIFIER, STRING,
-    NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, PRINT, RETURN,
+    NUMBER, AND, ELSE, FOR, IF, NULLTYPE, OR, RETURN,
     WHILE, INT, STRINGTYPE, COLON ,EOF_TOKEN, LEFT_BRACKET,
     RIGHT_BRACKET, STRUCT, NEW, EQUALARROW, REGEX
 };
 
-static const TokenType OperatorArray[] = {   
+static const Tokens OperatorArray[] = {   
     LESS,
     GREATER,
     LESS_EQUAL,
@@ -32,12 +32,12 @@ static const TokenType OperatorArray[] = {
     MINUS,
     AND,
     OR,
-    SLASH,
+    DIVIDE,
     ARROW,
     EQUAL
 };
 
-static const TokenType Statement[] = {   
+static const Tokens Statement[] = {   
     IF,
     WHILE,
     RETURN,
@@ -46,7 +46,7 @@ static const TokenType Statement[] = {
 };
 
 
-static std::map<TokenType, std::string> tokenToStringMap = {
+static std::map<Tokens, std::string> tokenToStringMap = {
     {LEFT_PAREN, "LEFT_PAREN"},
     {RIGHT_PAREN, "RIGHT_PAREN"},
     {LEFT_BRACE, "LEFT_BRACE"},
@@ -57,7 +57,7 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {PLUS, "PLUS"},
     {SEMICOLON, "SEMICOLON"},
     {COLON, "COLON"},
-    {SLASH, "SLASH"},
+    {DIVIDE, "DIVIDE"},
     {STAR, "STAR"},
     {EXCLAIM, "EXCLAIM"},
     {EXCLAIM_EQUAL, "EXCLAIM_EQUAL"},
@@ -75,7 +75,6 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {IF, "IF"},
     {NULLTYPE, "NULLTYPE"},
     {OR, "OR"},
-    {PRINT, "PRINT"},
     {RETURN, "RETURN"},
     {WHILE, "WHILE"},
     {EOF_TOKEN, "EOF_TOKEN"},
@@ -92,7 +91,7 @@ static std::map<TokenType, std::string> tokenToStringMap = {
     {REGEX, "REGEX"}
 };
 
-static std::map<std::string, TokenType> stringToTokenMap = {
+static std::map<std::string, Tokens> stringToTokenMap = {
     {"else", ELSE},
     {"if", IF},
     {"NULL", NULLTYPE},
@@ -107,7 +106,7 @@ static std::map<std::string, TokenType> stringToTokenMap = {
 };
 
 struct Token {
-    TokenType type;
+    Tokens type;
     int line;
     std::string lexeme;
 };

@@ -17,17 +17,17 @@ Type* TypeManager::getTypeHandler(const std::string& type){
     exit(1);
 }
 
-Type* TypeManager::getTypeHandler(TokenType type){
+Type* TypeManager::getTypeHandler(Tokens type){
     return this->tokenToTypeHandler[type];
 }
 
-void TypeManager::addTypeDecl(const std::string& sString, TokenType token, Type* typeHandle) { 
+void TypeManager::addTypeDecl(const std::string& sString, Tokens token, Type* typeHandle) { 
     this->stringToTypeHandler[sString] = typeHandle;
     this->tokenToTypeHandler[token] = typeHandle;
     this->Declarator.push_back(token);
 } 
 
-void TypeManager::addTypeRVal(TokenType token, Type* typeHandle) { 
+void TypeManager::addTypeRVal(Tokens token, Type* typeHandle) { 
     this->tokenToTypeHandler[token] = typeHandle;
     this->Data.push_back(token);
 } 
@@ -42,8 +42,8 @@ void TypeManager::createType(const std::string& sString, Struct* typeHandle) {
     }
 }
 
-bool TypeManager::tokenIsRValue(TokenType tokenType) {
-    if (this->tokenToTypeHandler.count(tokenType) > 0) {
+bool TypeManager::tokenIsRValue(Tokens token) {
+    if (this->tokenToTypeHandler.count(token) > 0) {
         return true;
     }
     return false;

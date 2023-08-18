@@ -45,7 +45,7 @@ class Parser {
         AST* sRegexSection();
         AST* sForTreeBuilder();
         //HELPER FUNCTIONS
-        TokenType getCurrentToken();
+        Tokens getCurrentToken();
         bool onUserDefinedType();
         std::string& getCurrentLexeme();
         int getCurrentLine();
@@ -55,19 +55,19 @@ class Parser {
         bool onData();
         bool onOperator();
         bool onOperand();
-        bool isCurrentToken(int tokenType);
+        bool isCurrentToken(int tokenInt);
         bool onExpressionBreaker();
         //NO RETURN
         void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
         void scan();
-        void expect(TokenType tokenType);
+        void expect(Tokens token);
 };
 
 
-static std::map< TokenType, std::function<Operator*()>> OperatorMap = {
+static std::map<Tokens, std::function<Operator*()>> OperatorMap = {
     { KARAT, []() { return new ExponentTree(); } },
     { STAR, []() { return new MultiplyTree(); } },
-    { SLASH, []() { return new DivideTree(); } },
+    { DIVIDE, []() { return new DivideTree(); } },
     { PLUS, []() { return new AddTree(); } },
     { MINUS, []() { return new SubtractTree(); } },
     { GREATER, []() { return new GreaterTree(); } },

@@ -9,15 +9,15 @@ class TypeManager {
         TypeManager();
         ~TypeManager();
         Type* getTypeHandler(const std::string& type);
-        Type* getTypeHandler(TokenType type);
+        Type* getTypeHandler(Tokens type);
         void createType(const std::string& sString, Struct* typeHandle);
-        void addTypeDecl(const std::string& sString, TokenType token, Type* typeHandle);
-        void addTypeRVal(TokenType token, Type* typeHandle); 
-        bool tokenIsRValue(TokenType tokenType);
-        std::vector<TokenType> Data;
-        std::vector<TokenType> Declarator;
+        void addTypeDecl(const std::string& sString, Tokens token, Type* typeHandle);
+        void addTypeRVal(Tokens token, Type* typeHandle); 
+        bool tokenIsRValue(Tokens token);
+        std::vector<Tokens> Data;
+        std::vector<Tokens> Declarator;
     private:
         std::map<std::string ,Type*> stringToTypeHandler;
-        std::map<TokenType, Type*> tokenToTypeHandler;
+        std::map<Tokens, Type*> tokenToTypeHandler;
         std::vector<Struct*> holderForStructTypeDestructor;
 };

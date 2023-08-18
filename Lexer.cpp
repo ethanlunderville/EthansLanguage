@@ -70,7 +70,7 @@ std::vector<Token> Lexer::scanTokens() {
                     addToken(GREATER, line, ">");
                 }
             break;
-            // Negatives numbers, Comments and Slashes
+            // Negatives numbers, Comments and DIVIDEes
             case '-': 
                 if (tokens[tokens.size() - 1].type == IDENTIFIER && inStream.peek() == '-') { // ++ operator
                     addToken(EQUAL, line, "=");
@@ -97,7 +97,7 @@ std::vector<Token> Lexer::scanTokens() {
                     while (inStream && inStream.get() != '\n');
                     line++;
                 } else {
-                    addToken(SLASH, line, "/");
+                    addToken(DIVIDE, line, "/");
                 }
                 break;
             case '+': 
@@ -140,7 +140,7 @@ std::vector<Token> Lexer::scanTokens() {
                     alphaProcessor(&c, line);
                     goto SKIP;
                 }
-                break;
+            break;
         }
     }
     return tokens;
@@ -156,7 +156,7 @@ void Lexer::printLexemes(const std::vector<Token>& tokens) {
     }
 }
 
-void Lexer::addToken(TokenType type, int line, const std::string& lexeme) {
+void Lexer::addToken(Tokens type, int line, const std::string& lexeme) {
     struct Token token = {type, line, lexeme};
     tokens.push_back(token);
 }
@@ -238,7 +238,7 @@ void Lexer::regexIdentifierProcessor(char* c, int line) {
 }
 
 
-bool Lexer::previousTokenTypeWas(TokenType t) {
+bool Lexer::previousTokenWas(Tokens t) {
     if (this->tokens[this->tokens.size()-1].type == t) {
         return true;
     }
@@ -247,7 +247,7 @@ bool Lexer::previousTokenTypeWas(TokenType t) {
 
 bool Lexer::previousTokenWasOperator() {
     for (int i = 0 ; i < (sizeof(OperatorArray)/sizeof(OperatorArray[0])) ; i++) {
-        if (previousTokenTypeWas(OperatorArray[i])) {
+        if (previousTokenWas(OperatorArray[i])) {
             return true;
         }
     }
