@@ -1,1 +1,1 @@
-g++ -g scratch.cpp -o a.out && ./a.out
+g++ -std=c++17 -g scratch.cpp -o a.out && ./a.out
