@@ -22,8 +22,8 @@
 #include <iostream>
 
 class AST;
-
 class ContextManager;
+struct RegexInterpreterManager;
 class ASTVisitor {
     public:
         virtual ~ASTVisitor() {}
@@ -165,6 +165,7 @@ class ASTDeallocationVisitor: public ASTVisitor {
 class ASTInterpreter: public ASTVisitor {
     public:
         friend class ASTChecker;
+        friend struct RegexInterpreterManager;
         ASTInterpreter(TypeManager* typeManager);
         ASTInterpreter(TypeManager* typeManager, ContextManager* contextManager);
         ASTInterpreter(ContextManager* cm);

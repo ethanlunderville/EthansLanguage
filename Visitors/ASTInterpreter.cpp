@@ -1,6 +1,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
+#include "Library/Regex.cpp"
 
 /*
     IMPORTANT: READ THE ASTChecker 
@@ -570,7 +571,25 @@ void ASTInterpreter::visitStringTree (AST* astree) {
     sTree->setVal(sTree->getString());
 }
 
-void ASTInterpreter::visitRegexSectionTree(AST* astree) {this->visitChildren(astree);}
+void ASTInterpreter::visitRegexSectionTree(AST* astree) {
+    std::any inputAny = this->contextManager->getValueStoredInSymbol(
+        dynamic_cast<RegexSectionTree*>(astree)->getRegex()
+    );
+    std::string input = std::any_cast<std::string>(inputAny);
+    std::vector<AST*> regexSections = astree->getChildren();
+    RegexInterpreterManager* rManage = new RegexInterpreterManager();
+    for (int i = 0 ; i < regexSections.size() ; i++) {
+        std::string inputRegex = dynamic_cast<RegexSectionTree*>(regexSections[i])->getRegex();
+        inputRegex = inputRegex.substr(1, inputRegex.size() - 2);
+        rManage->runRegexSection(
+            inputRegex, 
+            input, 
+            this, 
+            regexSections[i] 
+        );
+    }
+    delete rManage;
+}
 
 void ASTInterpreter::printCallIndent() {
     std::string indent = "";

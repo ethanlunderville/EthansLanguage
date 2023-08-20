@@ -9,8 +9,6 @@
 #include <any>
 #include <fstream>
 
-
-
 struct Rule {
 
     Rule() {}
@@ -169,10 +167,199 @@ void printMatches(std::vector<Rule*>& ruleVector) {
 
 int breakPoint() { return 1; }
 
+struct RegexInterpreterManager {
+    void runRegexSection(std::string inputRegex, std::string input) {
+        std::vector<Rule*> ruleVector;
+        std::map<std::string, Rule*> ruleToObjectMap;
+        int size = inputRegex.size();
+        auto getRuleObject = [&ruleToObjectMap] (std::string rule) -> Rule* {
+            return ruleToObjectMap[rule];
+        };
+        auto checkRuleMap = [&ruleToObjectMap] (std::string rule) -> bool {
+            if (ruleToObjectMap[rule] == nullptr) {
+                return false;
+            }
+            return true;
+        };
+        auto checkDelimiter = [] (char c) -> bool {
+            const char* delimiters = "[{.*?\0";
+            for (int i = 0 ; i < strlen(delimiters) ; i++) {
+                if (delimiters[i] == c) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        auto increment = [&size] (int * i) -> bool {
+            if ((*i) != size - 1) {
+                ++(*i);
+                return true;
+            } else {
+                return false;
+            }
+        };
+        bool finished = false;
+        int start = 0;
+        /*PARSE REGEX*/
+        for (int i = 0 ; i < size ; i++) {
+            std::string spanRule = "";
+            switch (inputRegex[i]) {
+                case '[':
+                    while (inputRegex[i] != ']') {
+                        spanRule.push_back(inputRegex[i]);
+                        increment(&i);
+                    }
+                    spanRule.push_back(inputRegex[i]);
+                    if (checkRuleMap(spanRule)) {
+                        ruleVector.push_back(getRuleObject(spanRule));
+                        break;
+                    }
+                    ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
+                break;
+                case '{':
+                    start = i;
+                    while (inputRegex[i] != '}') {
+                        spanRule.push_back(inputRegex[i]);
+                        increment(&i);
+                        if ( 
+                        (i - start == 4 || (i - start == 1 || i - start == 3) && !isdigit(inputRegex[i])) 
+                        || 
+                        (i - start == 2 && inputRegex[i] != ',' && inputRegex[i] != '}')
+                        ) {
+                            std::cerr 
+                            << "Error:: bad regex, regexes may only contain one whole number or two whole numbers seperated by a comma"
+                            << std::endl;
+                            exit(1);
+                        }
+                    }
+                    spanRule.push_back(inputRegex[i]);
+                    if (ruleVector.size() == 0) {
+                        std::cerr << "{} rule may not be the first rule in a regex." << std::endl;
+                        exit(1);
+                    }
+                    if (checkRuleMap(ruleVector[ruleVector.size()-1]->getRule()+spanRule)) {
+                        ruleVector.push_back(
+                            getRuleObject(ruleVector[ruleVector.size()-1]->getRule()+spanRule)
+                        );
+                        ruleVector.erase(ruleVector.begin()+ruleVector.size()-2);
+                        break;
+                    }
+                    new CompoundRule(spanRule, ruleVector ,ruleToObjectMap);
+                break;
+                case '.':
+                    spanRule.push_back('.');
+                    if (checkRuleMap(spanRule)) {
+                        ruleVector.push_back(getRuleObject(spanRule));
+                        break;
+                    }
+                    ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
+                break;
+                case '+':
+                case '*':
+                    spanRule.push_back('+');
+                    if (ruleVector.size() == 0) {
+                        std::cerr << "+ and * rules may not be the first rule in a regex." << std::endl;
+                        exit(1);
+                    }
+                    if (checkRuleMap(ruleVector[ruleVector.size()-1]->getRule()+spanRule)) {
+                        ruleVector.push_back(
+                            getRuleObject(ruleVector[ruleVector.size()-1]->getRule()+spanRule)
+                        );
+                        ruleVector.erase(ruleVector.begin()+ruleVector.size()-2);
+                        break;
+                    }
+                    new CompoundRule(spanRule, ruleVector ,ruleToObjectMap);
+                break;
+                case '?':
+                    spanRule.push_back('?');
+                    if (ruleVector.size() == 0) {
+                        std::cerr << "? rule may not be the first rule in a regex." << std::endl;
+                        exit(1);
+                    }
+                    if (checkRuleMap(ruleVector[ruleVector.size()-1]->getRule()+spanRule)) { 
+                        ruleVector.push_back(
+                            getRuleObject(ruleVector[ruleVector.size()-1]->getRule()+spanRule)
+                        );
+                        ruleVector.erase(ruleVector.begin()+ruleVector.size()-2);
+                        break;
+                    }
+                    new CompoundRule(spanRule, ruleVector ,ruleToObjectMap);
+                break;
+                case '\\':
+                    if (!increment(&i)) {
+                        std::cerr 
+                        << "escape cannot be the last character in the sequence"
+                        << std::endl;
+                        exit(1);
+                    }
+                    spanRule.push_back('\\');
+                    spanRule.push_back(inputRegex[i]);
+                    ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
+                break;
+                default: 
+                    while (!checkDelimiter(inputRegex[i])) {
+                        spanRule.push_back(inputRegex[i]);
+                        if (!increment(&i)) {
+                            finished = true;
+                            break; 
+                        }
+                    }
+                    --i;
+                    if (checkRuleMap(spanRule)) {
+                        ruleVector.push_back(getRuleObject(spanRule));
+                        if (finished) 
+                            goto END;
+                        break;
+                    }
+                    ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
+                    if (finished) 
+                        goto END;
+                break;
+            }
+        }
+        END:
+        std::string reg = buildRegex(ruleVector);
+        std::cout << reg << "\n\n";
+        std::regex phonePattern(reg, std::regex_constants::awk);
+        std::smatch match;
+        if (ruleVector.size() == 1) {
+            delete ruleVector[0];
+            ruleVector[0] = new Rule(inputRegex);
+        } else {
+            ruleVector.emplace(ruleVector.begin(), new Rule(inputRegex));
+        }
+        ruleToObjectMap.clear();
+        while (std::regex_search(input, match, phonePattern)) {
+            for (int i = 0 ; i < ruleVector.size() ;i++) {
+                if (ruleToObjectMap[ruleVector[i]->getRule()] != nullptr) {
+                    ruleToObjectMap[ruleVector[i]->getRule()]
+                    ->appendToMatchVector(std::string(match[i]));
+                } else {
+                    ruleVector[i]->setMatch(match[i]);
+                    ruleToObjectMap[ruleVector[i]->getRule()] = ruleVector[i];
+                }
+            }
+            std::cout << "\n";
+            printMatches(ruleVector);
+            for (int i = 0 ; i < ruleVector.size() ; i++) {
+                
+            }
+            std::cout << "\n";
+            ruleToObjectMap.clear();
+            input = match.suffix().str();
+        }
+        std::sort(ruleVector.begin(), ruleVector.end());
+        ruleVector.erase(
+            std::unique(ruleVector.begin(), ruleVector.end()), 
+            ruleVector.end()
+        );
+        deallocateRules(ruleVector);
+    }
+};
 int main () {
     // },] does not have to be escaped
     // {,[ does have to be escaped    
-    std::string inputRegex = "\\?";
+    std::string inputRegex = "\\\\\\?";
     std::ifstream inputFile("./test");
     if (!inputFile) {
         std::cerr << "Failed to open the file." << std::endl;
@@ -181,195 +368,8 @@ int main () {
         (std::istreambuf_iterator<char>(inputFile)), 
         (std::istreambuf_iterator<char>())
     );
-    std::vector<Rule*> ruleVector;
-    std::map<std::string, Rule*> ruleToObjectMap;
-
-    int size = inputRegex.size();
-    
-    auto getRuleObject = [&ruleToObjectMap] (std::string rule) -> Rule* {
-        return ruleToObjectMap[rule];
-    };
-
-    auto checkRuleMap = [&ruleToObjectMap] (std::string rule) -> bool {
-        if (ruleToObjectMap[rule] == nullptr) {
-            return false;
-        }
-        return true;
-    };
-
-    auto checkDelimiter = [] (char c) -> bool {
-        const char* delimiters = "[{.*?\0";
-        for (int i = 0 ; i < strlen(delimiters) ; i++) {
-            if (delimiters[i] == c) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    auto increment = [&size] (int * i) -> bool {
-        if ((*i) != size - 1) {
-            ++(*i);
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-    bool finished = false;
-    int start = 0;
-    /*PARSE REGEX*/
-    for (int i = 0 ; i < size ; i++) {
-        std::string spanRule = "";
-        switch (inputRegex[i]) {
-            case '[':
-                while (inputRegex[i] != ']') {
-                    spanRule.push_back(inputRegex[i]);
-                    increment(&i);
-                }
-                spanRule.push_back(inputRegex[i]);
-                if (checkRuleMap(spanRule)) {
-                    ruleVector.push_back(getRuleObject(spanRule));
-                    break;
-                }
-                ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
-            break;
-            case '{':
-                start = i;
-                while (inputRegex[i] != '}') {
-                    spanRule.push_back(inputRegex[i]);
-                    increment(&i);
-                    if ((i - start == 1 || i - start == 3) && !isdigit(inputRegex[i]) || i - start == 2 && inputRegex[i] != ',') {
-                        std::cerr 
-                        << "Error:: bad regex, regexes may only contain one whole number or two whole numbers seperated by a comma"
-                        << std::endl;
-                        exit(1);
-                    }
-                }
-                spanRule.push_back(inputRegex[i]);
-                if (ruleVector.size() == 0) {
-                    std::cerr << "{} rule may not be the first rule in a regex." << std::endl;
-                    exit(1);
-                }
-                if (checkRuleMap(ruleVector[ruleVector.size()-1]->getRule()+spanRule)) {
-                    ruleVector.push_back(
-                        getRuleObject(ruleVector[ruleVector.size()-1]->getRule()+spanRule)
-                    );
-                    ruleVector.erase(ruleVector.begin()+ruleVector.size()-2);
-                    break;
-                }
-                new CompoundRule(spanRule, ruleVector ,ruleToObjectMap);
-            break;
-            case '.':
-                spanRule.push_back('.');
-                if (checkRuleMap(spanRule)) {
-                    ruleVector.push_back(getRuleObject(spanRule));
-                    break;
-                }
-                ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
-            break;
-            case '+':
-            case '*':
-                spanRule.push_back('+');
-                if (ruleVector.size() == 0) {
-                    std::cerr << "+ and * rules may not be the first rule in a regex." << std::endl;
-                    exit(1);
-                }
-                if (checkRuleMap(ruleVector[ruleVector.size()-1]->getRule()+spanRule)) {
-                    ruleVector.push_back(
-                        getRuleObject(ruleVector[ruleVector.size()-1]->getRule()+spanRule)
-                    );
-                    ruleVector.erase(ruleVector.begin()+ruleVector.size()-2);
-                    break;
-                }
-                new CompoundRule(spanRule, ruleVector ,ruleToObjectMap);
-            break;
-            case '?':
-                spanRule.push_back('?');
-                if (ruleVector.size() == 0) {
-                    std::cerr << "? rule may not be the first rule in a regex." << std::endl;
-                    exit(1);
-                }
-                if (checkRuleMap(ruleVector[ruleVector.size()-1]->getRule()+spanRule)) { 
-                    ruleVector.push_back(
-                        getRuleObject(ruleVector[ruleVector.size()-1]->getRule()+spanRule)
-                    );
-                    ruleVector.erase(ruleVector.begin()+ruleVector.size()-2);
-                    break;
-                }
-                new CompoundRule(spanRule, ruleVector ,ruleToObjectMap);
-            break;
-            case '\\':
-                if (!increment(&i)) {
-                    std::cerr 
-                    << "escape cannot be the last character in the sequence"
-                    << std::endl;
-                    exit(1);
-                }
-                spanRule.push_back('\\');
-                spanRule.push_back(inputRegex[i]);
-                ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
-            break;
-            default: 
-                while (!checkDelimiter(inputRegex[i])) {
-                    spanRule.push_back(inputRegex[i]);
-                    if (!increment(&i)) {
-                        finished = true;
-                        break; 
-                    }
-                }
-                --i;
-                if (checkRuleMap(spanRule)) {
-                    ruleVector.push_back(getRuleObject(spanRule));
-                    if (finished) 
-                        goto END;
-                    break;
-                }
-                ruleToObjectMap[spanRule] = new Rule(spanRule, ruleVector);
-                if (finished) 
-                    goto END;
-            break;
-        }
-    }
-
-    END:
-    std::string reg = buildRegex(ruleVector);
-    std::cout << reg << "\n\n";
-    std::regex phonePattern(reg, std::regex_constants::awk);
-    std::smatch match;
-
-    if (ruleVector.size() == 1) {
-        delete ruleVector[0];
-        ruleVector[0] = new Rule(inputRegex);
-    } else {
-        ruleVector.emplace(ruleVector.begin(), new Rule(inputRegex));
-    }
-
-    ruleToObjectMap.clear();
-    breakPoint();
-    while (std::regex_search(input, match, phonePattern)) {
-        for (int i = 0 ; i < ruleVector.size() ;i++) {
-            if (ruleToObjectMap[ruleVector[i]->getRule()] != nullptr) {
-                ruleToObjectMap[ruleVector[i]->getRule()]
-                ->appendToMatchVector(std::string(match[i]));
-            } else {
-                ruleVector[i]->setMatch(match[i]);
-                ruleToObjectMap[ruleVector[i]->getRule()] = ruleVector[i];
-            }
-        }
-        std::cout << "\n";
-        printMatches(ruleVector);
-        std::cout << "\n";
-        ruleToObjectMap.clear();
-        input = match.suffix().str();
-    }
-
-    std::sort(ruleVector.begin(), ruleVector.end());
-    ruleVector.erase(
-        std::unique(ruleVector.begin(), ruleVector.end()), 
-        ruleVector.end()
-    );
-    deallocateRules(ruleVector);
-
+    RegexInterpreterManager* rManage = new RegexInterpreterManager();
+    rManage->runRegexSection(inputRegex, input);
+    delete rManage;
     return 0;
 }
