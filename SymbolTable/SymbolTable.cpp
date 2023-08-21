@@ -59,8 +59,13 @@ std::any SymbolTable::getValueStoredInSymbol(std::string identifier, int subscri
 
 std::any* SymbolTable::getReferenceOfValueStoredInSymbol(std::string identifier, int subscript) {
     if (this->stringToSymbolMap[identifier].value.type() == typeid(std::string)) {
-        std::cerr << "Unable to assign string subscripts" << std::endl;
-        exit(1);
+        std::any& actualValue = this->stringToSymbolMap[identifier].value;
+        char* charPointer = &(std::any_cast<std::string>(actualValue)[subscript]);
+        std::any returner = std::any(charPointer);
+        std::any* returnPointer = &returner;
+        return returnPointer;
+        //std::cerr << "Unable to assign string subscripts" << std::endl;
+        //exit(1);
     }
     std::any actualValue = std::move(this->stringToSymbolMap[identifier].value);
     std::any* returnPointer = &(std::any_cast<std::vector<std::any>>(actualValue)[subscript]);

@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include <any>
 #include <vector>
 #include <map>
@@ -200,7 +200,7 @@ struct RegexInterpreterManager {
         };
         bool finished = false;
         int start = 0;
-        /*PARSE REGEX*/
+        /*PARSE REGEX
         for (int i = 0 ; i < size ; i++) {
             std::string spanRule = "";
             switch (inputRegex[i]) {
@@ -373,3 +373,4 @@ int main () {
     delete rManage;
     return 0;
 }
+*/

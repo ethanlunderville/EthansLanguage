@@ -1,7 +1,7 @@
 #include "SyntaxTree/AST.h"
 #include "Visitors/ASTVisitor.h"
 #include "SymbolTable/ContextManager.h"
-#include "Library/Regex.cpp"
+#include "Library/Regex.h"
 
 /*
     IMPORTANT: READ THE ASTChecker 

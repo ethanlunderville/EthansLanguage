@@ -35,15 +35,21 @@ class Parser {
         std::vector<Token> tokens;
         TypeManager* typeManager;
         std::vector<std::string> userDefinedTypes;
+        std::stack<Operator*> operatorStack;
+        std::stack<AST*> operandStack;
         //PARSER FUNCTIONS
         AST* sProgram();
         AST* sStatement();
-        AST* sExpression();
         AST* sBlock();
         AST* sContext(AST* pTree);
         AST* sAssignment(std::string identifier);
         AST* sRegexSection();
         AST* sForTreeBuilder();
+        //EXPRESSION PARSER AND HELPERS
+        AST* sExpression();
+        void handleOperand();
+        void handleOperator();
+        void stackPopper();
         //HELPER FUNCTIONS
         Tokens getCurrentToken();
         bool onUserDefinedType();

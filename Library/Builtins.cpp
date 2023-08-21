@@ -91,7 +91,7 @@ namespace Builtins {
         std::vector<std::string> flags;
         std::vector<std::any> retVec; 
         if (args.size() != 0) {
-            for (int i = 0 ; i < args.size() - 1 ; i++) {
+            for (int i = 0 ; i < args.size() ; i++) {
                 flags.push_back(
                     std::any_cast<std::string>(
                         dynamic_cast<ExpressionTree*>(args[i])->getVal()
@@ -100,12 +100,12 @@ namespace Builtins {
             }
         }
         std::string path = "./";
-        if (std::find(flags.begin(), flags.end(), std::string("r")) != flags.end()) {
-            Helpers::recursiveList(retVec,path,std::filesystem::absolute(path));
-        } else {
+        if (std::find(flags.begin(), flags.end(), std::string("r")) == flags.end()) {
             for (const auto& entry : std::filesystem::directory_iterator(path)) {
                 retVec.push_back(path+entry.path().filename().string());
             }
+        } else {
+            Helpers::recursiveList(retVec,path,std::filesystem::absolute(path));
         }
         return std::any(retVec);
     }
