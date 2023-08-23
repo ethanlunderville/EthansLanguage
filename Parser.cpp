@@ -281,13 +281,14 @@ AST* Parser::sContext(AST* pTree) {
 }
 
 AST* Parser::sRegexSection() {
-    if (!isCurrentToken(IDENTIFIER)) {
-        std::cerr 
-        << "Regex section must be on string identier" 
-        << std::endl;
-    }
+    //if (!isCurrentToken(IDENTIFIER)) {
+    //    std::cerr 
+    //    << "Regex section must be on string identier" 
+    //    << std::endl;
+    //}
+    //scan();
     RegexSectionTree* rTree = new RegexSectionTree(getCurrentLexeme());
-    scan();
+    rTree->addChild(sExpression());
     expect(RIGHT_PAREN);
     expect(GREATER);
     expect(EQUALARROW);
@@ -438,9 +439,7 @@ AST* Parser::sForTreeBuilder() {
     AssignOpTree* iterAssign = new AssignOpTree();
     iterator->addChild(iterAssign);
     iterAssign->addChild(new IdentifierTree(ident));
-    ExpressionTree* addExpr = new ExpressionTree(getCurrentLine());
     AddTree* adderTree = new AddTree();
-    addExpr->addChild(adderTree);
     adderTree->addChild(new IdentifierTree(ident));
     adderTree->addChild(new NumberTree("1.00"));
     ExpressionTree* padderExpression = new ExpressionTree(getCurrentLine());

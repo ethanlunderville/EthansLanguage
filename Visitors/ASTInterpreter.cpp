@@ -572,13 +572,12 @@ void ASTInterpreter::visitStringTree (AST* astree) {
 }
 
 void ASTInterpreter::visitRegexSectionTree(AST* astree) {
-    std::any inputAny = this->contextManager->getValueStoredInSymbol(
-        dynamic_cast<RegexSectionTree*>(astree)->getRegex()
-    );
-    std::string input = std::any_cast<std::string>(inputAny);
+    ExpressionTree* regexSectionExpr = dynamic_cast<ExpressionTree*>(astree->getChildren()[0]);
+    regexSectionExpr->accept(this);
+    std::string input = std::any_cast<std::string>(regexSectionExpr->getVal());
     std::vector<AST*> regexSections = astree->getChildren();
     RegexInterpreterManager* rManage = new RegexInterpreterManager();
-    for (int i = 0 ; i < regexSections.size() ; i++) {
+    for (int i = 1 ; i < regexSections.size() ; i++) {
         std::string inputRegex = dynamic_cast<RegexSectionTree*>(regexSections[i])->getRegex();
         inputRegex = inputRegex.substr(1, inputRegex.size() - 2);
         rManage->runRegexSection(

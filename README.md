@@ -16,17 +16,17 @@
 
 Check out some examples of what you can achieve with Neoawk:
 
-- 1) Powerful Regular Expression Matching
-- 2) Text extraction and manipulation
-- 3) Functional Programming with first class functions
+- Powerful Regular Expression Matching
+- Text extraction and manipulation
+- Functional Programming with first class functions
 
  ##### file.txt
 ```nawk
-Contact us at 111-222-333 or 444-555-6666 or 777-888-9999
+Contact us at 111-222-3333 or 444-555-6666 or 777-888-9999
 ```
 
 #### Example 1
-###### regex.nawk
+###### regex.neoawk
 ```nawk
 string file = read("file.txt");
 
@@ -67,7 +67,7 @@ Area Code: 777
 Remaining phone number: 888-9999
 ```
 #### Example 2
-###### splitAndReplace.nawk
+###### splitAndReplace.neoawk
 ```nawk
 string file = read("file.txt");
 
@@ -100,7 +100,7 @@ for (i:size(fileStrings)) {
 7778889999
 ```
 #### Example 3
-###### firstClassFunctions.nawk
+###### firstClassFunctions.neoawk
 ```nawk
 int() fib = (int n) => {
 

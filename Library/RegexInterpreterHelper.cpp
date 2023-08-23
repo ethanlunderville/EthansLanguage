@@ -49,6 +49,8 @@ static void printMatches(std::vector<Rule*>& ruleVector) {
     }
 }
 
+static void breakPoint() {return;}
+
 void RegexInterpreterManager::runRegexSection (
     std::string inputRegex, std::string input, 
     ASTInterpreter* interpreter, AST* regexSectionTree
@@ -203,7 +205,9 @@ void RegexInterpreterManager::runRegexSection (
     }
     END:
     std::string reg = buildRegex(ruleVector);
-    //std::cout << reg << "\n\n";
+    #ifdef REGEXDEBUG
+        std::cout << reg << "\n\n";
+    #endif
     std::regex phonePattern(reg, std::regex_constants::awk);
     std::smatch match;
     if (ruleVector.size() == 1) {
@@ -223,11 +227,14 @@ void RegexInterpreterManager::runRegexSection (
                 ruleToObjectMap[ruleVector[i]->getRule()] = ruleVector[i];
             }
         }
-        //std::cout << "\n";
-        //printMatches(ruleVector);
+        #ifdef REGEXDEBUG
+            std::cout << "\n";
+            printMatches(ruleVector);
+        #endif
         std::vector<std::string> memorizer;
         interpreter->contextManager->pushScope();
         for (int i = 0 ; i < ruleVector.size() ; i++) {
+            breakPoint();
             std::string rule = "$"+ruleVector[i]->getRule()+"$";
             auto it = std::find(memorizer.begin(), memorizer.end(), rule);
             if (it == memorizer.end() ) {
@@ -241,7 +248,9 @@ void RegexInterpreterManager::runRegexSection (
         }
         interpreter->visitChildren(regexSectionTree);
         interpreter->contextManager->popScope(false);
-        std::cout << "\n";
+        #ifdef REGEXDEBUG
+            std::cout << "\n";
+        #endif
         ruleToObjectMap.clear();
         input = match.suffix().str();
     }    

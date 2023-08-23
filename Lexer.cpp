@@ -92,7 +92,17 @@ std::vector<Token> Lexer::scanTokens() {
                 } 
             break;
             case '/':
-                if (inStream.peek() == '/') {
+                if (inStream.peek() == '*') {
+                    while(!inStream.eof()) {
+                        if (c == '\n') {
+                            line++;
+                        } else if (c == '*' && inStream.peek() == '/') {
+                            c = inStream.get();
+                            break;
+                        }
+                        c = inStream.get();
+                    }
+                } else if (inStream.peek() == '/') {
                     // A comment goes until the end of the line.
                     while (inStream && inStream.get() != '\n');
                     line++;

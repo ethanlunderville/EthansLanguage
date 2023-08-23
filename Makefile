@@ -7,7 +7,7 @@ LDFLAGS = -I$(shell pwd)
 OBJDIR = obj
 
 # Output executable
-TARGET = program
+TARGET = neoawk
 
 # Source files and object files
 SRCS = ./SymbolTable/*.cpp  Library/*.cpp Visitors/*.cpp TypeManager.cpp ./SymbolTable/Types/*.cpp Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp   SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp SyntaxTree/Lvalues/*.cpp SyntaxTree/Declarations/*.cpp Lexer.cpp Parser.cpp    
@@ -34,6 +34,6 @@ clean:
 
 # Run the program
 run: $(TARGET)
-	./$(TARGET) $(ARGS)
+	./$(TARGET) test1.c
 
 .PHONY: all clean run

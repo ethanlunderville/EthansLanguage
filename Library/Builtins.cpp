@@ -10,13 +10,15 @@ namespace Builtins {
 
     namespace Helpers {
 
+        std::string FILEPATH = "./";
+
         void recursiveList( std::vector<std::any>& retVec,
         const std::filesystem::path& directory, 
         const std::filesystem::path& basePath ) {
             for (const auto& entry : std::filesystem::directory_iterator(directory)) {
                 std::filesystem::path relativePath = std::filesystem::relative(entry, basePath);
                 std::string path = relativePath.string();
-                retVec.push_back("./" + path);
+                retVec.push_back(FILEPATH + path);
                 if (std::filesystem::is_directory(entry)) {
                     recursiveList(retVec, entry, basePath);
                 }
@@ -41,6 +43,25 @@ namespace Builtins {
     }
 
     std::string pointer = "";
+
+    void setFilePath(const char* ePath) {
+        char separator = std::filesystem::path::preferred_separator;
+        std::filesystem::path currentDir = std::filesystem::current_path();
+        std::string path = currentDir.string(); 
+        path.push_back('/');
+        int i = 0;
+        std::string execPath = std::string(ePath);
+        for (i = execPath.size() ; i > - 1 ; i--) {
+            if (execPath[i] == separator) {
+                break;
+            }
+        }
+        if (i == 0) {
+            Helpers::FILEPATH = path;
+            return;
+        }
+        Helpers::FILEPATH = path + execPath.substr(0, i + 1);
+    }
 
     std::any fPrint(std::vector<AST*>& args){
         if (args.size() != 1) {return std::any(0.00);}
@@ -99,7 +120,7 @@ namespace Builtins {
                 );
             }
         }
-        std::string path = "./";
+        std::string path = Helpers::FILEPATH;
         if (std::find(flags.begin(), flags.end(), std::string("r")) == flags.end()) {
             for (const auto& entry : std::filesystem::directory_iterator(path)) {
                 retVec.push_back(path+entry.path().filename().string());
@@ -206,16 +227,18 @@ namespace Builtins {
 
     std::any fRead(std::vector<AST*>& args) {
         std::string fileName;
-        if (pointer.compare("") == 0) {
+        if (args.size() == 1) {
             fileName = std::any_cast<std::string>(
                 dynamic_cast<ExpressionTree*>(args[0])->getVal()
             );
-        } else {
+        } else if (args.size() == 0) {
             fileName = pointer;
-        }
-        std::ifstream inputFile(fileName);
-        if (!inputFile) {
-            std::cerr << "Failed to open the file." << std::endl;
+        } 
+        std::string currentFileToBeOpened = Helpers::FILEPATH+fileName;
+        std::ifstream inputFile(currentFileToBeOpened);
+        if (!inputFile.is_open()) {
+            std::cerr << " Failed to open the file :: ";
+            std::cerr << currentFileToBeOpened << std::endl;
             return std::any("");
         }
         std::string fileContent(
@@ -226,17 +249,17 @@ namespace Builtins {
         return std::any(fileContent);
     }
     std::any fAppend(std::vector<AST*>& args) {
-        int argIndex = 0;
         std::string fileName;
-        if (pointer.compare("") == 0) {
+        int argIndex = 0;
+        if (args.size() == 2) {
             fileName = std::any_cast<std::string>(
                 dynamic_cast<ExpressionTree*>(args[argIndex])->getVal()
             );
             argIndex++;
-        } else {
+        } else if (args.size() == 1) {
             fileName = pointer;
         }
-        std::ofstream file(fileName, std::ios::app);
+        std::ofstream file(Helpers::FILEPATH+fileName, std::ios::app);
         if (!file) {
             std::cerr << 
             "Failed to create/open the file." 
@@ -251,17 +274,17 @@ namespace Builtins {
         return (1);
     }
     std::any fWrite(std::vector<AST*>& args) {
-        int argIndex = 0;
         std::string fileName;
-        if (pointer.compare("") == 0) {
+        int argIndex = 0;
+        if (args.size() == 2) {
             fileName = std::any_cast<std::string>(
                 dynamic_cast<ExpressionTree*>(args[argIndex])->getVal()
             );
             argIndex++;
-        } else {
+        } else if (args.size() == 1) {
             fileName = pointer;
         }
-        std::ofstream file(fileName);
+        std::ofstream file(Helpers::FILEPATH+fileName);
         if (!file) {
             std::cerr 
             << "Failed to create/open the file." 

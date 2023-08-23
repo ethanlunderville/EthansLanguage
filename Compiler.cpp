@@ -47,10 +47,30 @@ TypeManager* initPrimitiveTypes(){
     return tManage;
 }
 
-int main () {
+
+int main (int argc, char* argv[]) {
+    int a = argc;
+    if (argc != 2) {
+        std::cerr 
+        << "ERROR:: Source file not specified. Please speciy the source file as the first argument" 
+        << std::endl; 
+        exit(1);
+    }
+    //const char* execPath = "Examples/test3.c\n";
+    //std::ifstream file("Examples/test3.c");
+    std::string sourceFile = std::string(argv[1]);
+    std::ifstream file(sourceFile);
+    if (!file.is_open()) {
+        std::cerr 
+        << "ERROR:: Source file "
+        << sourceFile
+        << " could not be opened" 
+        << std::endl; 
+        exit(1);
+    }
+    Builtins::setFilePath(argv[1]);
     TypeManager* typeManager = initPrimitiveTypes();
     ASTPrintVisitor* pVisit = new ASTPrintVisitor();
-    std::ifstream file("./test.c");
     Lexer* lexer = new Lexer(file, typeManager);
     Parser* parser = new Parser(lexer, typeManager);
     #ifdef INTERPRETEROUTPUT

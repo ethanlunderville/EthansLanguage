@@ -9,10 +9,7 @@ class ASTInterpreter;
 class ASTChecker;
 
 namespace Builtins {
-    std::any fPrint(std::vector<AST*>& args);
-    std::any fPrintln(std::vector<AST*>& args);
-    std::any fLs(std::vector<AST*>& args);
-    std::any fSize(std::vector<AST*>& args);
+    void setFilePath(const char* ePath);
     using FunctionType = std::function<std::any(std::vector<AST*>& args)>;
     extern std::map<std::string, FunctionType> builtInFunctions;
     extern std::map<std::string, std::any> baseValues;
