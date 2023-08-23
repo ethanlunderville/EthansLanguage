@@ -30,6 +30,7 @@ string() i = (string x) => {
 ##### Comment
 ```nawk
 // THIS IS A COMMENT
+/* THIS IS A COMMENT */
 ```
 ### Control Flow
 ##### If-Else Statements
@@ -76,9 +77,8 @@ for (i : size(helloArray)) {
 }
 
 // Outputs: Hello World
-
 ```
-### Builtin Library Functions
+### Built-in Library Functions
 ##### Files
 ###### Note: There is a string internally that can act as a default argument to the file functions
 
@@ -105,11 +105,56 @@ replace();
 split();
 ```
 
+##### Regex Sections
+
+```nawk
+string testString = "Contact us at 111-222-333 or 444-555-6666 or 777-888-9999";
+
+<(testString)> => {
+
+	# [0-9]{3}-[0-9]{3}-[0-9]{4} # { 
+    
+    	/* Regex is broken into sub rules which can be used as identifiers */
+        
+        println("Match number: " + i);
+        
+        println("Full phone number: " + $ [0-9]{3}-[0-9]{3}-[0-9]{4} $);
+        
+        println("Area Code: " + $[0-9]{3}$[0]);
+        
+        println("Remaining phone number: " + $[0-9]{3}$[1] + "-" + $[0-9]{4}$);
+        
+        i++;
+        
+    }
+
+}
+```
+###### Output
+
+```nawk
+Match number: 1
+Full phone number: 111-222-3333
+Area Code: 111
+Remaining phone number: 222-3333
+
+Match number: 2
+Full phone number: 444-555-6666
+Area Code: 444
+Remaining phone number: 555-6666
+
+Match number: 3
+Full phone number: 777-888-9999
+Area Code: 777
+Remaining phone number: 888-9999
+```
+
+
 ##### Miscellaneous
 ```nawk
 ls(); // Returns string[].
 
-ls("r"); // Returns string[].
+ls("r"); // Returns string[] containg all files in the current directory as well as all sub-directories.
 
 size(); // Returns an integer and accepts a single argument that can be either a string or an integer.
 
@@ -124,5 +169,4 @@ stringcast(); // Returns a string and accepts a single argument that can be eith
 input(); // Returns a string. Program is blocked and user input is retrieved.
 
 system(); // Returns an integer and accepts a single string argument. The passed string will be executed by the system
-
 ```
