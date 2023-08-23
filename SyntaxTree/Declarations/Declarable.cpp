@@ -20,6 +20,6 @@ std::string Declarable::getType(){
 void Declarable::setType(std::string& type){
     this->type = type;
 }
-int Declarable::getLine() {
-    return this->line;
-}
+//int Declarable::getLine() {
+//    return this->line;
+//}

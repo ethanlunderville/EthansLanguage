@@ -1,4 +1,5 @@
 #include "Lexer.h"
+#include "Error.h"
 #include <iostream>
 
 Lexer::Lexer(std::istream& inStream, TypeManager* typeManager) 
@@ -158,10 +159,19 @@ std::vector<Token> Lexer::scanTokens() {
 
 void Lexer::printLexemes(const std::vector<Token>& tokens) {
     for (int i = 0 ; i < tokens.size() ; i++) {
-        if ( tokens[i].type == REGEX || tokens[i].type == IDENTIFIER || this->typeManager->tokenIsRValue(tokens[i].type)) {
-            std::cout << tokenToStringMap[tokens[i].type] << " " << tokens[i].lexeme << std::endl;
+        if ( tokens[i].type == REGEX 
+        || tokens[i].type == IDENTIFIER 
+        || this->typeManager->tokenIsRValue(tokens[i].type)
+        ) {
+            std::cout 
+            << tokenToStringMap[tokens[i].type] 
+            << " " 
+            << tokens[i].lexeme 
+            << std::endl;
         } else {
-            std::cout << tokenToStringMap[tokens[i].type] << std::endl;        
+            std::cout 
+            << tokenToStringMap[tokens[i].type] 
+            << std::endl;        
         }
     }
 }
@@ -183,8 +193,12 @@ void Lexer::string(int line) {
             return;    
         }
     }
-    std::cerr << "Error: String was not closed starting on line: " << line << std::endl;
-    exit(1);
+    //Error* error = new Error(
+    //    "Error: String was not closed starting on line: ",
+    //    SCANNINGERROR,
+    //    line
+    //);
+    //error->throw();
 }
 
 void Lexer::number (char *c, int line, bool isNegative) {

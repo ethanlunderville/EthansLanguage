@@ -35,9 +35,8 @@ class Parser {
         std::vector<Token> tokens;
         TypeManager* typeManager;
         std::vector<std::string> userDefinedTypes;
-        std::stack<Operator*> operatorStack;
-        std::stack<AST*> operandStack;
         //PARSER FUNCTIONS
+        AST* createNewNode(AST* node);
         AST* sProgram();
         AST* sStatement();
         AST* sBlock();
@@ -64,7 +63,11 @@ class Parser {
         bool isCurrentToken(int tokenInt);
         bool onExpressionBreaker();
         //NO RETURN
-        void nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int currentTreePrecedence);
+        void nonAssociativeTypeFlipper(
+            AST* currentTree, 
+            Operator* nextTree, 
+            int currentTreePrecedence
+        );
         void scan();
         void expect(Tokens token);
 };

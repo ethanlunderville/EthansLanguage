@@ -11,7 +11,9 @@ AST* Parser::parse() {
 }
 
 AST* Parser::sProgram() {
-    ProgramTree* pTree {new ProgramTree()};
+    AST* pTree = createNewNode(
+        new ProgramTree()
+    );
     sContext(pTree);
     return pTree;
 }
@@ -19,7 +21,7 @@ AST* Parser::sProgram() {
 AST* Parser::sStatement() {
     AST* t;
     if (isCurrentToken(IF)) {
-        t = new IfTree();
+        t = createNewNode(new IfTree());
         scan();
         expect(LEFT_PAREN);
         t->addChild(sExpression());
@@ -27,7 +29,7 @@ AST* Parser::sStatement() {
         t->addChild(sBlock());
         if (isCurrentToken(ELSE)) {
             scan(); 
-            ElseTree* eTree = new ElseTree();
+            AST* eTree = createNewNode(new ElseTree());
             if (isCurrentToken(IF)) {
                 eTree->addChild(sStatement());
             } else {
@@ -36,7 +38,7 @@ AST* Parser::sStatement() {
             t->addChild(eTree);
         }
     } else if (isCurrentToken(WHILE)) {
-        t = new WhileTree();
+        t = createNewNode(new WhileTree());
         scan();                
         expect(LEFT_PAREN);
         t->addChild(sExpression());
@@ -46,7 +48,7 @@ AST* Parser::sStatement() {
         return sForTreeBuilder();
     } else if (isCurrentToken(RETURN)) {
         scan();
-        t = new ReturnTree();
+        t = createNewNode(new ReturnTree());
         if (!isCurrentToken(SEMICOLON)) {
             t->addChild(sExpression());
         }
@@ -61,7 +63,9 @@ AST* Parser::sStatement() {
 
 /*EXPRESSIONS ARE FULLY PARSED HERE. NO PASSES IN THIS LANGUAGE*/
 AST* Parser::sExpression() {
-    AST* t = new ExpressionTree(getCurrentLine());
+    AST* t = createNewNode(
+        new ExpressionTree(getCurrentLine())
+    );
     std::stack<Operator*> operatorStack;
     std::stack<AST*> operandStack;
     Operator* bottom = new Operator();
@@ -87,13 +91,17 @@ AST* Parser::sExpression() {
                 std::string identifier = getCurrentLexeme();
                 scan();
                 if (isCurrentToken(LEFT_BRACKET)) {
-                    identTree = new ArrayAccessTree(identifier);
+                    identTree = createNewNode(
+                        new ArrayAccessTree(identifier)
+                    );
                     scan();
                     identTree->addChild(sExpression());
                     expect(RIGHT_BRACKET);
                 } else if (isCurrentToken(LEFT_PAREN)) {
                     scan();
-                    identTree = new FunctionCallTree(identifier);
+                    identTree = createNewNode(
+                        new FunctionCallTree(identifier)
+                    );
                     while (!isCurrentToken(RIGHT_PAREN)) {
                         identTree->addChild(sExpression());
                         if (isCurrentToken(COMMA)) {
@@ -102,13 +110,15 @@ AST* Parser::sExpression() {
                     }
                     scan();
                 } else {
-                    identTree = new IdentifierTree(identifier);
+                    identTree = createNewNode(
+                        new IdentifierTree(identifier)
+                    );
                 }
                 operandStack.push(identTree);
             } else if (onData()) {
-                AST* nTree = dynamic_cast<PrimitiveType*>(
+                AST* nTree = createNewNode(dynamic_cast<PrimitiveType*>(
                     this->typeManager->getTypeHandler(getCurrentToken())
-                )->getNewTreenode(getCurrentLexeme());
+                )->getNewTreenode(getCurrentLexeme()));
                 operandStack.push(nTree);
                 scan();
             } else if (onExpressionBreaker()){
@@ -185,10 +195,16 @@ AST* Parser::sExpression() {
        NUMBER TREE
     */
     if (typeid(*(operandStack.top())) == typeid(AssignOpTree)) {
-        Assignable* expressionTop = dynamic_cast<Assignable*>(operandStack.top()->getChildren()[1]);
+        Assignable* expressionTop = dynamic_cast<Assignable*>(
+            operandStack.top()->getChildren()[1]
+        );
         if (expressionTop == nullptr) {
-            AssignOpTree* aOpTree = dynamic_cast<AssignOpTree*>(operandStack.top());
-            ExpressionTree* exprTree = new ExpressionTree(getCurrentLine());
+            AssignOpTree* aOpTree = dynamic_cast<AssignOpTree*>(
+                operandStack.top()
+            );
+            AST* exprTree = createNewNode(
+                new ExpressionTree(getCurrentLine())
+            );
             exprTree->addChild(aOpTree->getChildren()[1]);
             std::vector<AST*>& assignOpKidRef = aOpTree->getChildren();
             assignOpKidRef[1] = exprTree;
@@ -203,7 +219,7 @@ AST* Parser::sExpression() {
 }
 
 AST* Parser::sBlock() {
-    AST* blockTree =  new BlockTree();
+    AST* blockTree = createNewNode(new BlockTree());
     expect(LEFT_BRACE);
     sContext(blockTree);
     expect(RIGHT_BRACE);
@@ -222,21 +238,36 @@ AST* Parser::sContext(AST* pTree) {
                 scan();
                 expect(RIGHT_BRACKET);
                 name = getCurrentLexeme();
-                AST* arrayDeclaration = new ArrayDeclarationTree(type,name, getCurrentLine());
+                AST* arrayDeclaration = createNewNode(
+                    new ArrayDeclarationTree(
+                        type,
+                        name, 
+                        getCurrentLine()
+                    )
+                );
                 pTree->addChild(arrayDeclaration);
                 scan();
             } else if (isCurrentToken(LEFT_PAREN)) {
                 scan();
                 expect(RIGHT_PAREN);
                 name = getCurrentLexeme();
-                AST* functionDeclaration = new FunctionDeclarationTree(type, name, getCurrentLine());
+                AST* functionDeclaration = createNewNode(
+                    new FunctionDeclarationTree(
+                        type, 
+                        name, 
+                        getCurrentLine())
+                );
                 pTree->addChild(functionDeclaration);
                 scan();
             } else if (isCurrentToken(IDENTIFIER)) { 
                 name = getCurrentLexeme();
                 AST* declaration;
                 if (type.compare("struct") == 0) { // HARDCODED SINCE IT IS A VERY SPECIAL CASE
-                    declaration = new StructDeclarationTree(type, name, getCurrentLine());
+                    declaration = createNewNode(
+                        new StructDeclarationTree(type, 
+                        name, 
+                        getCurrentLine())
+                    );
                     this->userDefinedTypes.push_back(name);
                     while (!isCurrentToken(LEFT_BRACE)) {
                         scan();
@@ -245,7 +276,13 @@ AST* Parser::sContext(AST* pTree) {
                     pTree->addChild(declaration);
                     continue;
                 } else {
-                    declaration = new DeclarationTree(type,name,getCurrentLine());
+                    declaration = createNewNode(
+                        new DeclarationTree(
+                            type,
+                            name,
+                            getCurrentLine()
+                        )
+                    );
                 }
                 pTree->addChild(declaration);
                 scan();
@@ -261,8 +298,12 @@ AST* Parser::sContext(AST* pTree) {
             if (isCurrentToken(EQUAL)) {
                 scan();
                 AST* assignOp = sAssignment(name);
-                ExpressionTree* expressionForParent = new ExpressionTree(getCurrentLine());
-                assignOp->prependToChildren(new IdentifierTree(name));
+                AST* expressionForParent = createNewNode(
+                    new ExpressionTree(getCurrentLine())
+                );
+                assignOp->prependToChildren(
+                    createNewNode(new IdentifierTree(name))
+                );
                 expressionForParent->addChild(assignOp);
                 pTree->addChild(expressionForParent);                    
             } 
@@ -281,20 +322,18 @@ AST* Parser::sContext(AST* pTree) {
 }
 
 AST* Parser::sRegexSection() {
-    //if (!isCurrentToken(IDENTIFIER)) {
-    //    std::cerr 
-    //    << "Regex section must be on string identier" 
-    //    << std::endl;
-    //}
-    //scan();
-    RegexSectionTree* rTree = new RegexSectionTree(getCurrentLexeme());
+    AST* rTree = createNewNode(
+        new RegexSectionTree(getCurrentLexeme())
+    );
     rTree->addChild(sExpression());
     expect(RIGHT_PAREN);
     expect(GREATER);
     expect(EQUALARROW);
     expect(LEFT_BRACE);
     while (isCurrentToken(REGEX)) {
-        RegexSectionTree* subtree = new RegexSectionTree(getCurrentLexeme());
+        AST* subtree = createNewNode(
+            new RegexSectionTree(getCurrentLexeme())
+        );
         scan();
         subtree->addChild(sBlock());
         rTree->addChild(subtree);
@@ -304,11 +343,16 @@ AST* Parser::sRegexSection() {
 }
 
 AST* Parser::sAssignment(std::string identifier) {
-    AST* aTree = new AssignOpTree();
+    AST* aTree = createNewNode(new AssignOpTree());
     if (isCurrentToken(NEW)) {
         scan();
         if (onUserDefinedType()) {
-            aTree->addChild(new StructAssignTree(getCurrentLexeme() ,getCurrentLine()));
+            aTree->addChild(
+                createNewNode(
+                    new StructAssignTree(getCurrentLexeme(),
+                    getCurrentLine())
+                )
+            );
             scan();
             expect(LEFT_PAREN);
             expect(RIGHT_PAREN);
@@ -323,13 +367,23 @@ AST* Parser::sAssignment(std::string identifier) {
             exit(1);
         }
     } else if (isCurrentToken(LEFT_BRACE)) {
-        StructAssignTree* sAssignTree = new StructAssignTree(identifier, getCurrentLine());
+        AST* sAssignTree = createNewNode(
+            new StructAssignTree(
+                identifier, 
+                getCurrentLine()
+            )
+        );
         sAssignTree->addChild(sBlock());
         aTree->addChild(sAssignTree);
         return aTree;
     } else if (isCurrentToken(LEFT_PAREN)) {
         scan();
-        FunctionAssignTree* functionAssignTree = new FunctionAssignTree(getCurrentLexeme(), getCurrentLine());
+        AST* functionAssignTree = createNewNode(
+            new FunctionAssignTree(
+                getCurrentLexeme(), 
+                getCurrentLine()
+            )
+        );
         while (onDeclaration()) {
             std::string type = getCurrentLexeme();
             scan();
@@ -338,17 +392,37 @@ AST* Parser::sAssignment(std::string identifier) {
                 scan();
                 expect(RIGHT_BRACKET);
                 name = getCurrentLexeme();
-                functionAssignTree->addChild(new ArrayDeclarationTree(type,name, getCurrentLine()));
+                functionAssignTree->addChild(
+                    createNewNode(
+                        new ArrayDeclarationTree (
+                            type,
+                            name, 
+                            getCurrentLine()
+                        )
+                    )
+                );
                 scan();
             } else if (isCurrentToken(LEFT_PAREN)) {
                 scan();
                 expect(RIGHT_PAREN);
                 name = getCurrentLexeme();
-                functionAssignTree->addChild(new FunctionDeclarationTree(type, name, getCurrentLine()));
+                functionAssignTree->addChild(
+                    createNewNode(
+                        new FunctionDeclarationTree(
+                            type, 
+                            name, 
+                            getCurrentLine()
+                        )
+                    )
+                );
                 scan();
             } else if (isCurrentToken(IDENTIFIER)) { 
                 name = getCurrentLexeme();
-                functionAssignTree->addChild(new DeclarationTree(type,name,1));
+                functionAssignTree->addChild(
+                    createNewNode(
+                        new DeclarationTree(type,name,1)
+                    )
+                );
                 scan();
             } else {
                 std::cerr 
@@ -370,7 +444,12 @@ AST* Parser::sAssignment(std::string identifier) {
         aTree->addChild(functionAssignTree);
         return aTree;
     } else if (isCurrentToken(LEFT_BRACKET)) {
-        ArrayAssignTree* arrayAssignTree = new ArrayAssignTree(getCurrentLexeme(), getCurrentLine());
+        AST* arrayAssignTree = createNewNode(
+            new ArrayAssignTree(
+                getCurrentLexeme(), 
+                getCurrentLine()
+            )
+        );
         scan();
         while (1) { 
             arrayAssignTree->addChild(sExpression());
@@ -398,7 +477,7 @@ AST* Parser::sAssignment(std::string identifier) {
 }
 
 AST* Parser::sForTreeBuilder() {
-    BlockTree* outerEnclosure = new BlockTree();
+    AST* outerEnclosure = createNewNode(new BlockTree());
     scan();
     expect(LEFT_PAREN);
     if (!isCurrentToken(IDENTIFIER)) { 
@@ -407,42 +486,73 @@ AST* Parser::sForTreeBuilder() {
         << std::endl; 
     }
     outerEnclosure->addChild(
-        new DeclarationTree(std::string("int"),
-        getCurrentLexeme(),
-        getCurrentLine())
+        createNewNode (
+            new DeclarationTree(std::string("int"),
+            getCurrentLexeme(),
+            getCurrentLine())
+        )
     );
-    ExpressionTree* eTree = new ExpressionTree(getCurrentLine());
-    AssignOpTree* aOpTree = new AssignOpTree();
+    AST* eTree = createNewNode(
+        new ExpressionTree(getCurrentLine())
+    );
+    AST* aOpTree = createNewNode(
+        new AssignOpTree()
+    );
     eTree->addChild(aOpTree);
     std::string ident = getCurrentLexeme();
-    aOpTree->addChild(new IdentifierTree(ident));
-    ExpressionTree* rValExpression = new ExpressionTree(getCurrentLine());
-    rValExpression->addChild(new NumberTree(std::string("0.00")));
+    aOpTree->addChild(createNewNode(
+            new IdentifierTree(ident)
+        )
+    );
+    AST* rValExpression = createNewNode(
+        new ExpressionTree(getCurrentLine())
+    );
+    rValExpression->addChild(
+        createNewNode(
+            new NumberTree(std::string("0.00"))
+        )
+    );
     aOpTree->addChild(rValExpression);
     outerEnclosure->addChild(eTree);
     scan();
     expect(COLON);
-    AST* t = new WhileTree();
+    AST* t = createNewNode(new WhileTree());
     outerEnclosure->addChild(t);
     //
     AST* exprCopy = sExpression();
-    LessTree* lTree = new LessTree();
-    lTree->addChild(new IdentifierTree(ident));
+    AST* lTree = createNewNode(new LessTree());
+    lTree->addChild(
+        createNewNode(new IdentifierTree(ident))
+    );
     lTree->addChild(exprCopy);
-    ExpressionTree* whileExpr = new ExpressionTree(getCurrentLine());
+    AST* whileExpr = createNewNode(
+        new ExpressionTree(getCurrentLine())
+    );
     whileExpr->addChild(lTree);
     t->addChild(whileExpr);
     expect(RIGHT_PAREN);
     //
     AST* subBlock = sBlock();
-    ExpressionTree* iterator = new ExpressionTree(getCurrentLine());
-    AssignOpTree* iterAssign = new AssignOpTree();
+    AST* iterator = createNewNode(
+        new ExpressionTree(getCurrentLine())
+    );
+    AST* iterAssign = createNewNode(
+        new AssignOpTree()
+    );
     iterator->addChild(iterAssign);
-    iterAssign->addChild(new IdentifierTree(ident));
-    AddTree* adderTree = new AddTree();
-    adderTree->addChild(new IdentifierTree(ident));
-    adderTree->addChild(new NumberTree("1.00"));
-    ExpressionTree* padderExpression = new ExpressionTree(getCurrentLine());
+    iterAssign->addChild(createNewNode(
+        new IdentifierTree(ident)
+    ));
+    AST* adderTree = createNewNode(new AddTree());
+    adderTree->addChild(
+        createNewNode(new IdentifierTree(ident))
+    );
+    adderTree->addChild(
+        createNewNode(new NumberTree("1.00"))
+    );
+    AST* padderExpression = createNewNode(
+        new ExpressionTree(getCurrentLine())
+    );
     padderExpression->addChild(adderTree);
     iterAssign->addChild(padderExpression);
     subBlock->addChild(iterator);
@@ -451,12 +561,18 @@ AST* Parser::sForTreeBuilder() {
 }
 
 Tokens Parser::getCurrentToken() {
+    if (currentTokenIndex >= tokens.size()) {
+        return PLACEHOLDER;
+    }
     return tokens[currentTokenIndex].type;
 }
 std::string& Parser::getCurrentLexeme() {
     return tokens[currentTokenIndex].lexeme;
 }
 int Parser::getCurrentLine() {
+    if (currentTokenIndex >= tokens.size()) {
+        return -1;
+    }
     return tokens[currentTokenIndex].line;
 }
 
@@ -507,7 +623,10 @@ bool Parser::onOperator() {
 }
 
 bool Parser::onOperand() {
-    if ( isCurrentToken(RIGHT_PAREN) || isCurrentToken(LEFT_PAREN) || isCurrentToken(IDENTIFIER) || onData() ) {
+    if ( isCurrentToken(RIGHT_PAREN) 
+    || isCurrentToken(LEFT_PAREN) 
+    || isCurrentToken(IDENTIFIER) 
+    || onData() ) {
         return true;
     }
     return false;
@@ -522,8 +641,10 @@ bool Parser::onData() {
     return false;
 }
 bool Parser::isCurrentToken(int tokenInt) {
-    Tokens type = Tokens::PLACEHOLDER;
-    type = tokens[currentTokenIndex].type;
+    if (currentTokenIndex >= tokens.size()) {
+        return false;
+    }
+    Tokens type = tokens[currentTokenIndex].type;
     if (type != tokenInt) {
         return false;
     }
@@ -550,22 +671,23 @@ void Parser::nonAssociativeTypeFlipper(AST* currentTree, Operator* nextTree, int
     if (typeid(*nextTree) == typeid(DivideTree) && currentTreePrecedence == 3){
         if (typeid(*currentTree) == typeid(DivideTree)) {
             delete currentTree;
-            currentTree = new MultiplyTree(); //9-9+9<9-2
+            currentTree = createNewNode(new MultiplyTree()); //9-9+9<9-2
         } else if (typeid(*currentTree) == typeid(MultiplyTree)) {
             delete currentTree;
-            currentTree = new DivideTree();
+            currentTree = createNewNode(new DivideTree());
         }
     } else if (typeid(*nextTree) == typeid(SubtractTree) && currentTreePrecedence == 2) {
         if (typeid(*currentTree) == typeid(SubtractTree)) {
             delete currentTree;
-            currentTree = new AddTree();
+            currentTree = createNewNode(new AddTree());
         } else if (typeid(*currentTree) == typeid(AddTree)) {
             delete currentTree;
-            currentTree = new SubtractTree();
+            currentTree = createNewNode(new SubtractTree());
         }
     }
 
 }
+
 void Parser::expect(Tokens token) {
     if (isCurrentToken(token)) {
         scan();
@@ -576,4 +698,13 @@ void Parser::expect(Tokens token) {
     std::cerr << " Unexpected Token : " << getCurrentLexeme() << std::endl;
     std::cerr << "Compiler expected: " << tokenToStringMap[token] << std::endl;
     exit(1);
+}
+
+void ERROR(std::string message) {
+
+}
+
+AST* Parser::createNewNode(AST* node) {
+    node->setLine(getCurrentLine());
+    return node;
 }

@@ -10,7 +10,7 @@ OBJDIR = obj
 TARGET = neoawk
 
 # Source files and object files
-SRCS = ./SymbolTable/*.cpp  Library/*.cpp Visitors/*.cpp TypeManager.cpp ./SymbolTable/Types/*.cpp Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp   SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp SyntaxTree/Lvalues/*.cpp SyntaxTree/Declarations/*.cpp Lexer.cpp Parser.cpp    
+SRCS = Parser.cpp ./SymbolTable/*.cpp  Library/*.cpp Visitors/*.cpp TypeManager.cpp ./SymbolTable/Types/*.cpp Compiler.cpp  Visitors/*.cpp SyntaxTree/*.cpp   SyntaxTree/Operators/*.cpp SyntaxTree/Operands/*.cpp SyntaxTree/Rvalues/*.cpp SyntaxTree/Lvalues/*.cpp SyntaxTree/Declarations/*.cpp Lexer.cpp     
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
 # Default target
@@ -34,6 +34,6 @@ clean:
 
 # Run the program
 run: $(TARGET)
-	./$(TARGET) test1.c
+	./$(TARGET) Examples/test1.c
 
 .PHONY: all clean run

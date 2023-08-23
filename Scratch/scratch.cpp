@@ -79,9 +79,4 @@ private:
     std::map<std::string, int> messageToLine;    
 };
 
-int main () {
-    Error* newErr = new Error("./test");
-    newErr->addError("There was an issue", SCANNINGERROR, 21);
-    newErr->throwError();
-    return 0;
-}
+

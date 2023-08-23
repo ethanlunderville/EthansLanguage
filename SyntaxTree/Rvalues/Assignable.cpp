@@ -7,9 +7,9 @@ Assignable::Assignable() : type(nullptr) {
 }
 Assignable::~Assignable() {}
 
-int Assignable::getLine() {
-    return this->line; 
-}
+//int Assignable::getLine() {
+//    return this->line; 
+//}
 
 void Assignable::setLine(int line ) {
     this->line = line;

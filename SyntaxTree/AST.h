@@ -27,8 +27,11 @@ class AST {
         std::vector<AST*>& getChildren();
         virtual void accept(ASTVisitor* v) = 0;
         void prependToChildren(AST* prependNode);
+        int getLine();
+        void setLine(int line);
     private:
         std::vector<AST*> children;
+        int line;
 };
 
 class ProgramTree : public AST {
@@ -100,7 +103,7 @@ class Assignable : public Evaluatable {
         virtual ~Assignable();
         virtual Type* getType();
         virtual void setType(Type* type);
-        virtual int getLine();
+        //virtual int getLine();
         virtual void setLine(int line);
         virtual void setCheckerReference(ASTChecker* checkerReference); 
         virtual ASTChecker* getCheckerReference();
@@ -147,7 +150,7 @@ class Declarable : public AST {
         virtual void setIdentifier(std::string& identifier);
         virtual std::string getType();
         virtual void setType(std::string& identifier);
-        virtual int getLine();
+        //virtual int getLine();
     private:
         std::string identifier;
         std::string type;
