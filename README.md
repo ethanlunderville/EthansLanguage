@@ -1,24 +1,6 @@
-# Neoawk Scripting Language
-
-**Neoawk** is a strongly typed scripting language designed to optimize text parsing tasks. It combines the syntax characteristics of C, JavaScript and Bash while maintaining the simplicity of Python. Neoawk is currently operational and Turing complete.
-
-> Please note that Neoawk's development is ongoing, with continuous efforts to expand its capabilities.
-
-## Features
-
-- **Text Parsing Optimization:** Neoawk is engineered to excel at text parsing tasks, making it a powerful tool for data manipulation and processing.
-
-- **C-JavaScript-Bash Hybrid Syntax:** The language's syntax draws inspiration from C, JavaScript, and Bash providing a familiar yet expressive coding experience.
-
-- **Simplicity:** Despite its powerful capabilities, Neoawk remains simple to learn and use, allowing users to quickly get started with text processing tasks.
+A strongly typed scripting language that combines the syntax characteristics of C, JavaScript and Bash while maintaining the simplicity of Python. It is currently operational and Turing complete.
 
 ## Examples
-
-Check out some examples of what you can achieve with Neoawk:
-
-- Powerful Regular Expression Matching
-- Text extraction and manipulation
-- Functional Programming with first class functions
 
  ##### file.txt
 ```nawk
@@ -137,4 +119,4 @@ println(fibonacciTimesTwo(fib, fib, 10));
 
 ## License
 
-Neoawk is distributed under the [MIT License](LICENSE). Feel free to use and modify it according to your needs.
+This language is distributed under the [MIT License](LICENSE). Feel free to use and modify it according to your needs.
