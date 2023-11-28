@@ -1,4 +1,4 @@
-A strongly typed scripting language that combines the syntax characteristics of C, JavaScript and Bash while maintaining the simplicity of Python. It is currently operational and Turing complete.
+A strongly typed scripting language that combines the syntax characteristics of C, JavaScript and Bash while maintaining the simplicity of Python.
 
 ## Examples
 
